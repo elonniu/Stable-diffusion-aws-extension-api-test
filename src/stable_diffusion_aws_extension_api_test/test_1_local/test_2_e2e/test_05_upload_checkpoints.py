@@ -469,8 +469,7 @@ class TestCheckPointE2E:
         if config.is_gcr:
             url = "https://aws-gcr-solutions.s3.cn-north-1.amazonaws.com.cn/stable-diffusion-aws-extension-github-mainline/models/cartoony.safetensors"
         else:
-            # todo will use global link
-            url = "https://aws-gcr-solutions.s3.cn-north-1.amazonaws.com.cn/stable-diffusion-aws-extension-github-mainline/models/cartoony.safetensors"
+            url = "https://raw.githubusercontent.com/elonniu/safetensors/main/cartoony.safetensors"
 
         data = {
             "checkpoint_type": "Lora",
