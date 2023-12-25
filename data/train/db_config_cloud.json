@@ -67,7 +67,7 @@
   "model_name": "test-model",
   "model_path": "",
   "noise_scheduler": "DDPM",
-  "num_train_epochs": 100,
+  "num_train_epochs": 1,
   "offset_noise": 0,
   "optimizer": "8bit AdamW",
   "pad_tokens": true,
