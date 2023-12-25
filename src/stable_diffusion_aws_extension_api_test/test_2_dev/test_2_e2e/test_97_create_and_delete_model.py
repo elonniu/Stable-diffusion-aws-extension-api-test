@@ -6,6 +6,7 @@ import time
 from datetime import datetime
 from datetime import timedelta
 
+import pytest
 import stable_diffusion_aws_extension_api_test.config as config
 from stable_diffusion_aws_extension_api_test.utils.api import Api
 from stable_diffusion_aws_extension_api_test.utils.helper import clear_model_item, \
@@ -28,6 +29,7 @@ class TestModelE2E:
     def teardown_class(cls):
         pass
 
+    @pytest.mark.skipif(config.fast_test, reason="fast_test")
     def test_1_model_v15_post(self):
         filename = "v1-5-pruned-emaonly.safetensors"
         model_type = "Stable-diffusion"
@@ -62,21 +64,23 @@ class TestModelE2E:
             }
         }
 
-        resp = self.api.create_model(headers=headers, data=data)
+        resp = self.api.create_model_new(headers=headers, data=data)
 
         assert resp.status_code == 200
         assert resp.json()["statusCode"] == 200
-        assert resp.json()["job"]['model_type'] == model_type
-        assert resp.json()["job"]['status'] == "Initial"
-        assert len(resp.json()["job"]['id']) == 36
+        job = resp.json()['data']["job"]
+        assert job['model_type'] == model_type
+        assert job['status'] == "Initial"
+        assert len(job['id']) == 36
         global job_id
-        job_id = resp.json()["job"]['id']
+        job_id = job['id']
         global signed_urls
-        signed_urls = resp.json()["s3PresignUrl"][filename]
-        s3_base = resp.json()["job"]["s3_base"]
+        signed_urls = resp.json()['data']["s3PresignUrl"][filename]
+        s3_base = job["s3_base"]
         print(f"Upload to S3 {s3_base}")
         print(f"Model ID: {job_id}")
 
+    @pytest.mark.skipif(config.fast_test, reason="fast_test")
     def test_2_model_v15_put(self):
         filename = "v1-5-pruned-emaonly.safetensors"
         tar_filename = f"data/models/Stable-diffusion/{filename}.tar"
@@ -95,16 +99,16 @@ class TestModelE2E:
         }
 
         data = {
-            "model_id": job_id,
             "status": "Creating",
             "multi_parts_tags": {filename: multiparts_tags}
         }
 
-        resp = self.api.update_model(headers=headers, data=data)
+        resp = self.api.update_model_new(model_id=job_id, headers=headers, data=data)
         assert resp.status_code == 200
         assert resp.json()["statusCode"] == 200
-        assert resp.json()["job"]["endpointName"] == "aigc-utils-endpoint"
+        assert resp.json()['data']["job"]["endpointName"] == "aigc-utils-endpoint"
 
+    @pytest.mark.skipif(config.fast_test, reason="fast_test")
     def test_3_models_v15_check_list(self):
         headers = {
             "x-api-key": config.api_key,
@@ -114,7 +118,8 @@ class TestModelE2E:
         resp = self.api.list_models(headers=headers)
 
         global job_id
-        assert job_id in [model["id"] for model in resp.json()["models"]]
+        models = resp.json()['data']["models"]
+        assert job_id in [model["id"] for model in models]
 
         timeout = datetime.now() + timedelta(minutes=15)
 
@@ -136,7 +141,8 @@ class TestModelE2E:
 
         resp = self.api.list_models(headers=headers)
         assert resp.status_code == 200
-        for model in resp.json()["models"]:
+        models = resp.json()['data']["models"]
+        for model in models:
             if model["id"] == job_id:
                 print(f"Model {job_id} is {model['status']}...")
                 if model["status"] == "Deleting":

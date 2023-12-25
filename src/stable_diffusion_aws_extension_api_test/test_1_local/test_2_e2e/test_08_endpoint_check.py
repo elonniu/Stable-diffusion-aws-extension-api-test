@@ -81,7 +81,7 @@ class TestEndpointCheckE2E:
         data = {
             "endpoint_name": config.endpoint_name,
             "instance_type": config.instance_type,
-            "initial_instance_count": "1",
+            "initial_instance_count": 1,
             "autoscaling_enabled": False,
             "assign_to_roles": ["IT Operator"],
             "creator": config.username

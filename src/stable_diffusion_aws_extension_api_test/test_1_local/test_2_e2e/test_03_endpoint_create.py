@@ -77,7 +77,7 @@ class TestEndpointCreateE2E:
         data = {
             "endpoint_name": config.endpoint_name,
             "instance_type": config.instance_type,
-            "initial_instance_count": "1",
+            "initial_instance_count": 1,
             "autoscaling_enabled": False,
             "assign_to_roles": ["IT Operator"],
             "creator": config.username
@@ -96,7 +96,7 @@ class TestEndpointCreateE2E:
         data = {
             "endpoint_name": config.endpoint_name,
             "instance_type": config.instance_type,
-            "initial_instance_count": config.initial_instance_count,
+            "initial_instance_count": int(config.initial_instance_count),
             "autoscaling_enabled": False,
             "assign_to_roles": ["Designer"],
             "creator": config.username

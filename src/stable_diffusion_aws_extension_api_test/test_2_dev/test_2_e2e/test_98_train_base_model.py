@@ -5,6 +5,7 @@ import time
 from datetime import datetime
 from datetime import timedelta
 
+import pytest
 import stable_diffusion_aws_extension_api_test.config as config
 from stable_diffusion_aws_extension_api_test.utils.api import Api
 from stable_diffusion_aws_extension_api_test.utils.helper import get_test_model, \
@@ -23,7 +24,8 @@ class TestTrainE2E:
     def teardown_class(cls):
         pass
 
-    def test_1_train_post(self):
+    @pytest.mark.skipif(config.fast_test, reason="fast_test")
+    def test_1_train_job_create(self):
         models = get_test_model()
 
         assert 'Items' in models
@@ -72,15 +74,17 @@ class TestTrainE2E:
                 }
             }
 
-            resp = self.api.create_train(headers=headers, data=data)
+            resp = self.api.create_training_job(headers=headers, data=data)
             assert resp.status_code == 200
             assert resp.json()["statusCode"] == 200
-            assert resp.json()["job"]["status"] == "Initial"
+            job = resp.json()['data']["job"]
+            assert job["status"] == "Initial"
             global train_job_id
-            train_job_id = resp.json()["job"]["id"]
-            s3_presign_url = resp.json()["s3PresignUrl"]["db_config.tar"]
+            train_job_id = job["id"]
+            s3_presign_url = resp.json()['data']["s3PresignUrl"]["db_config.tar"]
             upload_db_config(s3_presign_url)
 
+    @pytest.mark.skipif(config.fast_test, reason="fast_test")
     def test_2_train_put(self):
         global train_job_id
         headers = {
@@ -89,26 +93,28 @@ class TestTrainE2E:
         }
 
         data = {
-            "train_job_id": train_job_id,
             "status": "Training"
         }
 
-        resp = self.api.start_train(headers=headers, data=data)
+        resp = self.api.start_training_job(training_id=train_job_id, headers=headers, data=data)
         assert resp.status_code == 200
         assert resp.json()["statusCode"] == 200
 
+    @pytest.mark.skipif(config.fast_test, reason="fast_test")
     def test_3_trains_get(self):
         headers = {
             "x-api-key": config.api_key,
             "Authorization": config.bearer_token
         }
 
-        resp = self.api.list_trains(headers=headers)
+        resp = self.api.list_trainings(headers=headers)
         assert resp.status_code == 200
         assert resp.json()["statusCode"] == 200
         global train_job_id
-        assert train_job_id in [train["id"] for train in resp.json()["trainJobs"]]
+        jobs = resp.json()['data']["trainJobs"]
+        assert train_job_id in [train["id"] for train in jobs]
 
+    @pytest.mark.skipif(config.fast_test, reason="fast_test")
     def test_4_train_post_wait_for_complete(self):
 
         headers = {
@@ -116,11 +122,12 @@ class TestTrainE2E:
             "Authorization": config.bearer_token
         }
 
-        resp = self.api.list_trains(headers=headers)
+        resp = self.api.list_trainings(headers=headers)
         assert resp.status_code == 200
         assert resp.json()["statusCode"] == 200
         global train_job_id
-        assert train_job_id in [train["id"] for train in resp.json()["trainJobs"]]
+        jobs = resp.json()['data']["trainJobs"]
+        assert train_job_id in [train["id"] for train in jobs]
 
         timeout = datetime.now() + timedelta(minutes=50)
 
@@ -140,10 +147,11 @@ class TestTrainE2E:
             "Authorization": config.bearer_token
         }
 
-        resp = self.api.list_trains(headers=headers)
+        resp = self.api.list_trainings(headers=headers)
 
         assert resp.status_code == 200
-        for train in resp.json()["trainJobs"]:
+        jobs = resp.json()['data']["trainJobs"]
+        for train in jobs:
             if train["id"] == train_job_id:
                 if train["status"] == "Complete":
                     return True

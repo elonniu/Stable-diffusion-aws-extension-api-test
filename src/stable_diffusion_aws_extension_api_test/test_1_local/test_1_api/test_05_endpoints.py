@@ -97,7 +97,7 @@ class TestEndpointsApi:
 
         data = {
             "instance_type": config.instance_type,
-            "initial_instance_count": "1000",
+            "initial_instance_count": 1000,
             "autoscaling_enabled": True,
             "assign_to_roles": ["Designer", "IT Operator"],
             "creator": config.username
@@ -117,7 +117,7 @@ class TestEndpointsApi:
         data = {
             "endpoint_name": "dev-test",
             "instance_type": instance_type,
-            "initial_instance_count": "9",
+            "initial_instance_count": 9,
             "autoscaling_enabled": True,
             "assign_to_roles": ["Designer", "IT Operator"],
             "creator": config.username
