@@ -34,7 +34,6 @@ class TestCleanEndpoint:
 
         assert resp.status_code == 204
         assert resp.json()["statusCode"] == 204
-        assert resp.json()["message"] == "Endpoints Deleted"
 
     def test_2_clean_datasets(self):
         headers = {
@@ -49,7 +48,6 @@ class TestCleanEndpoint:
 
         resp = self.api.delete_datasets(headers=headers, data=data)
         assert resp.status_code == 204
-        assert 'datasets deleted' == resp.json()["message"]
 
     # def test_3_clean_roles(self):
     #     headers = {

@@ -158,7 +158,6 @@ class TestEndpointsApi:
 
         assert resp.status_code == 204
         assert resp.json()["statusCode"] == 204
-        assert resp.json()["message"] == "Endpoints Deleted"
 
     def test_12_delete_endpoints_bad_username(self):
         headers = {

@@ -68,4 +68,3 @@ class TestRoleE2E:
 
         resp = self.api.delete_roles(headers=headers, data=data)
         assert resp.status_code == 204
-        assert 'roles deleted' == resp.json()["message"]

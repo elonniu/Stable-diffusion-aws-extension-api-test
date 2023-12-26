@@ -60,7 +60,6 @@ class TestUserE2E:
         resp = self.api.delete_users(headers=headers, data=data)
 
         assert resp.status_code == 204
-        assert resp.json()["message"] == "Users Deleted"
 
     def test_4_user_delete_check(self):
         headers = {

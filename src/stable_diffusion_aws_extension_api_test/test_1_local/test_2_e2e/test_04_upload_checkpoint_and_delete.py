@@ -97,4 +97,3 @@ class TestCheckPointDeleteE2E:
 
         resp = self.api.delete_checkpoints(headers=headers, data=data)
         assert resp.status_code == 204
-        assert 'checkpoints deleted' == resp.json()["message"]

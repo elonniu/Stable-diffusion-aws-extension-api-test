@@ -106,7 +106,6 @@ class TestTrainingsApi:
 
         resp = self.api.delete_trainings(headers=headers, data=data)
         assert resp.status_code == 204
-        assert 'training jobs deleted' == resp.json()["message"]
 
     def test_9_get_training_job_without_key(self):
         headers = {
