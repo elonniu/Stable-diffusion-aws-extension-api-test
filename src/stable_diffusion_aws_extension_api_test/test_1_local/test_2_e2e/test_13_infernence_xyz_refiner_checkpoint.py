@@ -76,7 +76,7 @@ class TestXyzRefinerCheckpointE2E:
         }
 
         resp = self.api.start_inference_job(job_id=inference_id, headers=headers)
-        assert resp.status_code == 200
+        assert resp.status_code == 202
         assert resp.json()['data']["inference"]["status"] == InferenceStatus.INPROGRESS.value
 
         timeout = datetime.now() + timedelta(minutes=2)

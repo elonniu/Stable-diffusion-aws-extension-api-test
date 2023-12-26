@@ -155,7 +155,7 @@ class TestSLaTxt2Img:
             logger.error(resp.json())
             return False
 
-        if resp.json()['statusCode'] != 200:
+        if resp.json()['statusCode'] != 202:
             logger.error(resp.json())
             return False
 
