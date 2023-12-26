@@ -108,7 +108,7 @@ class TestInferencesApi:
         }
 
         resp = self.api.delete_inferences(headers=headers, data=data)
-        assert resp.status_code == 200
+        assert resp.status_code == 204
         assert 'inferences deleted' == resp.json()["message"]
 
     def test_18_get_inference_job_without_key(self):

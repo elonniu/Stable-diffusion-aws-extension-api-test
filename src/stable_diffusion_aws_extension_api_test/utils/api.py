@@ -1,4 +1,3 @@
-import json
 import logging
 
 import requests
@@ -14,9 +13,6 @@ class Api:
         self.debug = debug
 
     def req(self, method: str, path: str, headers=None, data=None, params=None):
-
-        if data is not None:
-            data = json.dumps(data)
 
         url = f"{self.config.host_url}/prod/{path}"
 

@@ -109,5 +109,5 @@ class TestCreateAndDeleteDatasetE2E:
         }
 
         resp = self.api.delete_datasets(headers=headers, data=data)
-        assert resp.status_code == 200
+        assert resp.status_code == 204
         assert 'datasets deleted' == resp.json()["message"]

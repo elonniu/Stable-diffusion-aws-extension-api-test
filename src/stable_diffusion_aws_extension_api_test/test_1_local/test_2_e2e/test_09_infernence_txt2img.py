@@ -120,5 +120,5 @@ class TestTxt2ImgInferenceE2E:
         }
 
         resp = self.api.delete_inferences(headers=headers, data=data)
-        assert resp.status_code == 200
+        assert resp.status_code == 204
         assert 'inferences deleted' == resp.json()["message"]

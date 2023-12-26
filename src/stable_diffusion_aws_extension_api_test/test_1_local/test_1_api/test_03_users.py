@@ -65,7 +65,7 @@ class TestUsersApi:
 
         resp = self.api.delete_users(headers=headers, data=data)
 
-        assert resp.status_code == 200
+        assert resp.status_code == 204
         assert resp.json()["message"] == "Users Deleted"
 
     def test_6_create_user_bad_creator(self):
