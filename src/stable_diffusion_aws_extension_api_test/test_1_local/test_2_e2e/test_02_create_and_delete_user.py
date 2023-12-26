@@ -32,8 +32,8 @@ class TestUserE2E:
 
         resp = self.api.create_user_new(headers=headers, data=data)
 
-        assert resp.status_code == 200
-        assert resp.json()["statusCode"] == 200
+        assert resp.status_code == 201
+        assert resp.json()["statusCode"] == 201
 
     def test_2_list_users_exists_name(self):
         headers = {

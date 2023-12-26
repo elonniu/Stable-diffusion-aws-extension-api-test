@@ -29,8 +29,8 @@ class TestRoleE2E:
         }
 
         resp = self.api.create_role_new(headers=headers, data=data)
-        assert resp.status_code == 200
-        assert resp.json()["statusCode"] == 200
+        assert resp.status_code == 201
+        assert resp.json()["statusCode"] == 201
         assert resp.json()["data"]['role_name'] == config.role_name
 
     def test_2_list_roles_exists(self):

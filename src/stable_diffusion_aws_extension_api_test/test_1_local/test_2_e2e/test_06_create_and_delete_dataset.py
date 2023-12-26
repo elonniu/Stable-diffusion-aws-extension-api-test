@@ -44,11 +44,11 @@ class TestCreateAndDeleteDatasetE2E:
         }
 
         resp = self.api.create_dataset_new(headers=headers, data=data)
-        assert resp.status_code == 200
+        assert resp.status_code == 201
         global dataset
         dataset = resp.json()
 
-        assert dataset["statusCode"] == 200
+        assert dataset["statusCode"] == 201
         assert dataset['data']["datasetName"] == dataset_name
 
     def test_2_dataset_img_upload(self):

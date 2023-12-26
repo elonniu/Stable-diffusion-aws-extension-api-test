@@ -56,8 +56,8 @@ class TestTurboE2E:
 
         resp = self.api.create_checkpoint_new(headers=headers, data=data)
 
-        assert resp.status_code == 200
-        assert resp.json()["statusCode"] == 200
+        assert resp.status_code == 201
+        assert resp.json()["statusCode"] == 201
         assert resp.json()['data']["checkpoint"]['type'] == checkpoint_type
         assert len(resp.json()['data']["checkpoint"]['id']) == 36
 
@@ -128,11 +128,11 @@ class TestTurboE2E:
         }
 
         resp = self.api.create_inference_new(headers=headers, data=data)
-        assert resp.status_code == 200
+        assert resp.status_code == 201
         global inference_data
         inference_data = resp.json()['data']["inference"]
 
-        assert resp.json()["statusCode"] == 200
+        assert resp.json()["statusCode"] == 201
         assert inference_data["type"] == InferenceType.TXT2IMG.value
         assert len(inference_data["api_params_s3_upload_url"]) > 0
 

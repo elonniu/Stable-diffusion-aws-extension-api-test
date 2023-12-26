@@ -66,8 +66,8 @@ class TestModelE2E:
 
         resp = self.api.create_model_new(headers=headers, data=data)
 
-        assert resp.status_code == 200
-        assert resp.json()["statusCode"] == 200
+        assert resp.status_code == 201
+        assert resp.json()["statusCode"] == 201
         job = resp.json()['data']["job"]
         assert job['model_type'] == model_type
         assert job['status'] == "Initial"

@@ -75,8 +75,8 @@ class TestTrainE2E:
             }
 
             resp = self.api.create_training_job(headers=headers, data=data)
-            assert resp.status_code == 200
-            assert resp.json()["statusCode"] == 200
+            assert resp.status_code == 201
+            assert resp.json()["statusCode"] == 201
             job = resp.json()['data']["job"]
             assert job["status"] == "Initial"
             global train_job_id

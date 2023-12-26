@@ -31,7 +31,7 @@ class TestRolesApi:
 
         resp = self.api.create_user_new(headers=headers, data=data)
 
-        assert resp.status_code == 200
+        assert resp.status_code == 201
         assert resp.json()["message"] == "OK"
 
     def test_2_list_roles_without_api_key(self):

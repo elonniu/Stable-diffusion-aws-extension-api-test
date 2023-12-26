@@ -51,8 +51,8 @@ class TestCheckPointDeleteE2E:
 
         resp = self.api.create_checkpoint_new(headers=headers, data=data)
 
-        assert resp.status_code == 200
-        assert resp.json()["statusCode"] == 200
+        assert resp.status_code == 201
+        assert resp.json()["statusCode"] == 201
         assert resp.json()['data']["checkpoint"]['type'] == checkpoint_type
         assert len(resp.json()['data']["checkpoint"]['id']) == 36
 
