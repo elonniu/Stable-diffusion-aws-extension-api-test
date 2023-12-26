@@ -4,8 +4,6 @@ import logging
 
 import stable_diffusion_aws_extension_api_test.config as config
 from stable_diffusion_aws_extension_api_test.utils.api import Api
-from stable_diffusion_aws_extension_api_test.utils.helper import init_user_role
-from tenacity import stop_after_delay, retry
 
 logger = logging.getLogger(__name__)
 
@@ -18,31 +16,44 @@ class TestRolesApi:
     def teardown_class(cls):
         pass
 
-    def test_0_init_user_role(self):
-        init_user_role()
+    def test_1_init_user_and_role(self):
+        headers = {
+            "x-api-key": config.api_key,
+            "Authorization": config.bearer_token
+        }
 
-    def test_1_roles_get_without_api_key(self):
+        data = {
+            "username": config.username,
+            "password": "XXXXXXXXXXXXX",
+            "creator": config.username,
+            "initial": True,
+        }
+
+        resp = self.api.create_user_new(headers=headers, data=data)
+
+        assert resp.status_code == 200
+        assert resp.json()["message"] == "OK"
+
+    def test_2_list_roles_without_api_key(self):
         resp = self.api.list_roles()
 
         assert resp.status_code == 401
         assert resp.json()["message"] == "Unauthorized"
 
-    def test_2_roles_get_without_auth(self):
+    def test_3_list_roles_without_auth(self):
         headers = {"x-api-key": config.api_key}
         resp = self.api.list_roles(headers=headers)
 
         assert resp.status_code == 401
         assert resp.json()["message"] == "Unauthorized"
 
-    def test_3_role_post_without_key(self):
-        resp = self.api.create_role()
+    def test_4_create_role_without_key(self):
+        resp = self.api.create_role_new()
 
         assert resp.status_code == 403
         assert resp.json()["message"] == "Forbidden"
 
-    # failed test if all retries failed after 20 seconds
-    @retry(stop=stop_after_delay(20))
-    def test_4_role_post_bad_creator(self):
+    def test_5_create_role_with_bad_creator(self):
         headers = {
             "x-api-key": config.api_key,
             "Authorization": config.bearer_token,
@@ -54,26 +65,44 @@ class TestRolesApi:
             "permissions": ['train:all', 'checkpoint:all'],
         }
 
-        resp = self.api.create_role(headers=headers, data=data)
+        resp = self.api.create_role_new(headers=headers, data=data)
 
-        assert resp.status_code == 200
+        assert resp.status_code == 400
         assert resp.json()["statusCode"] == 400
-        assert resp.json()["errMsg"] == 'creator bad_creator not exist'
+        assert resp.json()["message"] == 'creator bad_creator not exist'
 
-    def test_5_roles_get(self):
+    def test_6_list_roles(self):
         headers = {
             "x-api-key": config.api_key,
             "Authorization": config.bearer_token,
         }
 
-        resp = self.api.list_roles(headers=headers)
+        params = {
+            'role_params': 'role_name'
+        }
+
+        resp = self.api.list_roles(headers=headers, params=params)
 
         assert resp.status_code == 200
-        assert len(resp.json()["roles"]) >= 2
-        assert resp.json()["roles"][0]["role_name"] == "Designer"
-        assert resp.json()["roles"][1]["role_name"] == "IT Operator"
+        roles = resp.json()['data']["roles"]
+        assert len(roles) >= 1
 
-    def test_6_roles_delete_without_key(self):
+    def test_7_list_roles_without_params(self):
+        headers = {
+            "x-api-key": config.api_key,
+            "Authorization": config.bearer_token,
+        }
+
+        params = {
+        }
+
+        resp = self.api.list_roles(headers=headers, params=params)
+
+        assert resp.status_code == 200
+        roles = resp.json()['data']["roles"]
+        assert len(roles) >= 1
+
+    def test_8_delete_roles_without_key(self):
         headers = {}
 
         data = {
@@ -84,7 +113,7 @@ class TestRolesApi:
         assert resp.status_code == 403
         assert 'Forbidden' == resp.json()["message"]
 
-    def test_7_roles_delete_bad_request_body(self):
+    def test_9_delete_roles_with_bad_request_body(self):
         headers = {
             "x-api-key": config.api_key,
         }

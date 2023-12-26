@@ -9,8 +9,8 @@ import pytest
 import stable_diffusion_aws_extension_api_test.config as config
 from stable_diffusion_aws_extension_api_test.utils.api import Api
 from stable_diffusion_aws_extension_api_test.utils.enums import InferenceStatus, InferenceType
-from stable_diffusion_aws_extension_api_test.utils.helper import upload_with_put, get_inference_job_status, \
-    delete_inference_job
+from stable_diffusion_aws_extension_api_test.utils.helper import upload_with_put, get_inference_job_status_new, \
+    delete_inference_jobs
 
 logger = logging.getLogger(__name__)
 
@@ -30,7 +30,7 @@ class TestXyzRefinerCheckpointE2E:
 
         global inference_data
         if 'id' in inference_data:
-            delete_inference_job(inference_data['id'])
+            delete_inference_jobs([inference_data['id']])
 
     @pytest.mark.skip(reason="not ready")
     def test_1_xyz_refiner_checkpoint_txt2img_inference_job_create(self):
@@ -51,7 +51,7 @@ class TestXyzRefinerCheckpointE2E:
             }
         }
 
-        resp = self.api.create_inference(headers=headers, data=data)
+        resp = self.api.create_inference_new(headers=headers, data=data)
         assert resp.status_code == 200
         global inference_data
         inference_data = resp.json()["inference"]
@@ -75,14 +75,14 @@ class TestXyzRefinerCheckpointE2E:
             "Authorization": config.bearer_token
         }
 
-        resp = self.api.inference_run(job_id=inference_id, headers=headers)
+        resp = self.api.start_inference_job(job_id=inference_id, headers=headers)
         assert resp.status_code == 200
-        assert resp.json()["inference"]["status"] == InferenceStatus.INPROGRESS.value
+        assert resp.json()['data']["inference"]["status"] == InferenceStatus.INPROGRESS.value
 
         timeout = datetime.now() + timedelta(minutes=2)
 
         while datetime.now() < timeout:
-            status = get_inference_job_status(
+            status = get_inference_job_status_new(
                 api_instance=self.api,
                 job_id=inference_id
             )

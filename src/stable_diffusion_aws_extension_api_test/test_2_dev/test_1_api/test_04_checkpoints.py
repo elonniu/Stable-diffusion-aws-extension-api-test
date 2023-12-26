@@ -18,13 +18,13 @@ class TestCheckpointsApi:
     def teardown_class(cls):
         pass
 
-    def test_1_checkpoints_get_without_key(self):
+    def test_1_list_checkpoints_without_key(self):
         resp = self.api.list_checkpoints()
 
         assert resp.status_code == 401
         assert resp.json()["message"] == "Unauthorized"
 
-    def test_2_checkpoints_get_without_auth(self):
+    def test_2_list_checkpoints_without_auth(self):
         headers = {"x-api-key": config.api_key}
 
         resp = self.api.list_checkpoints(headers=headers)
@@ -32,7 +32,7 @@ class TestCheckpointsApi:
         assert resp.status_code == 401
         assert resp.json()["message"] == "Unauthorized"
 
-    def test_3_checkpoints_get_without_username(self):
+    def test_3_list_checkpoints_without_username(self):
         headers = {
             "x-api-key": config.api_key,
             "Authorization": config.bearer_token
@@ -42,9 +42,9 @@ class TestCheckpointsApi:
 
         assert resp.status_code == 200
         assert resp.json()["statusCode"] == 200
-        assert len(resp.json()["checkpoints"]) >= 0
+        assert len(resp.json()['data']["checkpoints"]) >= 0
 
-    def test_4_checkpoints_get_with_user_name(self):
+    def test_4_list_checkpoints_with_user_name(self):
         headers = {
             "x-api-key": config.api_key,
             "Authorization": config.bearer_token
@@ -59,9 +59,9 @@ class TestCheckpointsApi:
 
         assert resp.status_code == 200
         assert resp.json()["statusCode"] == 200
-        assert len(resp.json()["checkpoints"]) >= 0
+        assert len(resp.json()['data']["checkpoints"]) >= 0
 
-    def test_5_checkpoint_with_bad_username(self):
+    def test_5_create_checkpoint_with_bad_username(self):
         filename = "v1-5-pruned-emaonly.safetensors"
         checkpoint_type = "Stable-diffusion"
 
@@ -83,19 +83,13 @@ class TestCheckpointsApi:
             }
         }
 
-        resp = self.api.create_checkpoint(headers=headers, data=data)
+        resp = self.api.create_checkpoint_new(headers=headers, data=data)
 
-        assert resp.status_code == 200
+        assert resp.status_code == 500
         assert resp.json()["statusCode"] == 500
-        assert "user: \"bad_username\" not exist" in resp.json()["error"]
+        assert "user: \"bad_username\" not exist" in resp.json()["message"]
 
-    def test_6_upload_checkpoint_without_key(self):
-        resp = self.api.upload_checkpoint()
-
-        assert resp.status_code == 403
-        assert resp.json()["message"] == "Forbidden"
-
-    def test_7_checkpoints_delete_bad_request_body(self):
+    def test_7_delete_checkpoints_with_bad_request_body(self):
         headers = {
             "x-api-key": config.api_key,
         }
@@ -109,7 +103,7 @@ class TestCheckpointsApi:
         assert 'object has missing required properties' in resp.json()["message"]
         assert 'checkpoint_id_list' in resp.json()["message"]
 
-    def test_8_checkpoints_delete_without_key(self):
+    def test_8_delete_roles_without_key(self):
         headers = {}
 
         data = {
@@ -118,4 +112,10 @@ class TestCheckpointsApi:
 
         resp = self.api.delete_roles(headers=headers, data=data)
         assert resp.status_code == 403
-        assert 'Forbidden' == resp.json()["message"]
+        assert resp.json()["message"] == 'Forbidden'
+
+    def test_9_update_checkpoint_without_key(self):
+        resp = self.api.update_checkpoint_new(checkpoint_id="1111-2222-3333-4444")
+
+        assert resp.status_code == 403
+        assert resp.json()["message"] == "Forbidden"

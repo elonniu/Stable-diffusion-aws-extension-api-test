@@ -16,7 +16,7 @@ class TestRoleE2E:
     def teardown_class(cls):
         pass
 
-    def test_1_role_post(self):
+    def test_1_create_role(self):
         headers = {
             "x-api-key": config.api_key,
             "Authorization": config.bearer_token,
@@ -28,12 +28,12 @@ class TestRoleE2E:
             "permissions": ['train:all', 'checkpoint:all'],
         }
 
-        resp = self.api.create_role(headers=headers, data=data)
+        resp = self.api.create_role_new(headers=headers, data=data)
         assert resp.status_code == 200
         assert resp.json()["statusCode"] == 200
-        assert resp.json()["role"]['role_name'] == config.role_name
+        assert resp.json()["data"]['role_name'] == config.role_name
 
-    def test_2_role_post_exists(self):
+    def test_2_list_roles_exists(self):
         headers = {
             "x-api-key": config.api_key,
             "Authorization": config.bearer_token,
@@ -42,9 +42,10 @@ class TestRoleE2E:
         resp = self.api.list_roles(headers=headers)
         assert resp.status_code == 200
         assert resp.json()["statusCode"] == 200
-        assert config.role_name in [user["role_name"] for user in resp.json()["roles"]]
+        roles = resp.json()['data']["roles"]
+        assert config.role_name in [user["role_name"] for user in roles]
 
-    def test_3_role_delete_default(self):
+    def test_3_delete_roles_default(self):
         headers = {
             "x-api-key": config.api_key,
         }
@@ -56,7 +57,7 @@ class TestRoleE2E:
         resp = self.api.delete_roles(headers=headers, data=data)
         assert 'cannot delete default role' in resp.json()["message"]
 
-    def test_4_roles_delete_succeed(self):
+    def test_4_delete_roles_succeed(self):
         headers = {
             "x-api-key": config.api_key,
         }

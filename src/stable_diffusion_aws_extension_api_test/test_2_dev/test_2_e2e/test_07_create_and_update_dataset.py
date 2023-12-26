@@ -47,17 +47,17 @@ class TestDatasetE2E:
             'params': {'description': 'this is description'}
         }
 
-        resp = self.api.create_dataset(headers=headers, data=data)
+        resp = self.api.create_dataset_new(headers=headers, data=data)
         assert resp.status_code == 200
         global dataset
         dataset = resp.json()
 
         assert resp.json()["statusCode"] == 200
-        assert resp.json()["datasetName"] == config.dataset_name
+        assert resp.json()['data']["datasetName"] == config.dataset_name
 
     def test_2_dataset_img_upload(self):
         global dataset
-        for filename, presign_url in dataset['s3PresignUrl'].items():
+        for filename, presign_url in dataset['data']['s3PresignUrl'].items():
             file_path = f"./data/dataset/{filename}"
             with open(file_path, 'rb') as file:
                 logger.info(f"Uploading {file_path}")
@@ -73,10 +73,10 @@ class TestDatasetE2E:
         }
 
         data = {
-            "dataset_name": config.dataset_name,
             "status": "Enabled"
         }
-        resp = self.api.update_dataset(headers=headers, data=data)
+
+        resp = self.api.update_dataset_new(dataset_id=config.dataset_name, headers=headers, data=data)
         assert resp.status_code == 200
 
         assert resp.json()["statusCode"] == 200
@@ -88,8 +88,9 @@ class TestDatasetE2E:
         }
 
         resp = self.api.list_datasets(headers=headers)
+        datasets = resp.json()['data']["datasets"]
 
-        assert config.dataset_name in [user["datasetName"] for user in resp.json()["datasets"]]
+        assert config.dataset_name in [user["datasetName"] for user in datasets]
 
     def test_5_dataset_get(self):
         dataset_name = config.dataset_name
@@ -99,6 +100,6 @@ class TestDatasetE2E:
             "Authorization": config.bearer_token,
         }
 
-        resp = self.api.get_dataset_data(name=dataset_name, headers=headers)
+        resp = self.api.get_dataset(name=dataset_name, headers=headers)
         assert resp.status_code == 200
         assert resp.json()["statusCode"] == 200

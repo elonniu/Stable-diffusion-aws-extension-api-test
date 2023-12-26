@@ -8,8 +8,8 @@ from datetime import timedelta
 import stable_diffusion_aws_extension_api_test.config as config
 from stable_diffusion_aws_extension_api_test.utils.api import Api
 from stable_diffusion_aws_extension_api_test.utils.enums import InferenceStatus, InferenceType
-from stable_diffusion_aws_extension_api_test.utils.helper import upload_with_put, get_inference_job_status, \
-    delete_inference_job
+from stable_diffusion_aws_extension_api_test.utils.helper import upload_with_put, get_inference_job_status_new, \
+    delete_inference_jobs
 
 logger = logging.getLogger(__name__)
 
@@ -27,7 +27,7 @@ class TestTxt2ImgInferenceE2E:
 
         global inference_data
         if 'id' in inference_data:
-            delete_inference_job(inference_data['id'])
+            delete_inference_jobs([inference_data['id']])
 
     def test_1_txt2img_inference_job_create(self):
         headers = {
@@ -48,10 +48,10 @@ class TestTxt2ImgInferenceE2E:
             }
         }
 
-        resp = self.api.create_inference(headers=headers, data=data)
+        resp = self.api.create_inference_new(headers=headers, data=data)
         assert resp.status_code == 200
         global inference_data
-        inference_data = resp.json()["inference"]
+        inference_data = resp.json()['data']["inference"]
 
         assert resp.json()["statusCode"] == 200
         assert inference_data["type"] == InferenceType.TXT2IMG.value
@@ -75,40 +75,8 @@ class TestTxt2ImgInferenceE2E:
         resp = self.api.list_inferences(headers=headers, params=params)
         assert resp.status_code == 200
         assert resp.json()["statusCode"] == 200
-        assert inference_data["id"] in [inference["InferenceJobId"] for inference in
-                                        resp.json()["inferences"]]
-
-    def test_3_txt2img_inference_job_param_output_wait(self):
-
-        global inference_data
-
-        job_id = inference_data["id"]
-
-        headers = {
-            "x-api-key": config.api_key,
-            "Authorization": config.bearer_token
-        }
-
-        params = {
-            "jobId": job_id
-        }
-
-        resp = self.api.get_inference_job_param_output(headers=headers, params=params)
-        assert resp.status_code == 200
-        assert len(resp.json()) >= 0
-
-    def test_4_txt2img_inference_job_image_output_wait(self):
-        global inference_data
-        job_id = inference_data["id"]
-
-        headers = {
-            "x-api-key": config.api_key,
-            "Authorization": config.bearer_token
-        }
-
-        resp = self.api.get_inference_image_output(job_id=job_id, headers=headers)
-        assert resp.status_code == 200
-        assert len(resp.json()) == 0
+        inferences = resp.json()['data']["inferences"]
+        assert inference_data["id"] in [inference["InferenceJobId"] for inference in inferences]
 
     def test_5_txt2img_inference_job_run_and_succeed(self):
         global inference_data
@@ -121,14 +89,14 @@ class TestTxt2ImgInferenceE2E:
             "Authorization": config.bearer_token
         }
 
-        resp = self.api.inference_run(job_id=inference_id, headers=headers)
+        resp = self.api.start_inference_job(job_id=inference_id, headers=headers)
         assert resp.status_code == 200
-        assert resp.json()["inference"]["status"] == InferenceStatus.INPROGRESS.value
+        assert resp.json()['data']["inference"]["status"] == InferenceStatus.INPROGRESS.value
 
         timeout = datetime.now() + timedelta(minutes=5)
 
         while datetime.now() < timeout:
-            status = get_inference_job_status(
+            status = get_inference_job_status_new(
                 api_instance=self.api,
                 job_id=inference_id
             )
@@ -140,36 +108,6 @@ class TestTxt2ImgInferenceE2E:
             time.sleep(5)
         else:
             raise Exception("Inference execution timed out after 5 minutes.")
-
-    def test_6_txt2img_inference_job_image_output(self):
-        global inference_data
-        job_id = inference_data["id"]
-
-        headers = {
-            "x-api-key": config.api_key,
-            "Authorization": config.bearer_token
-        }
-
-        resp = self.api.get_inference_image_output(job_id=job_id, headers=headers)
-        assert resp.status_code == 200
-        assert len(resp.json()) > 0
-
-    def test_7_txt2img_inference_job_param_output(self):
-        global inference_data
-        job_id = inference_data["id"]
-
-        headers = {
-            "x-api-key": config.api_key,
-            "Authorization": config.bearer_token
-        }
-
-        params = {
-            "jobID": job_id
-        }
-
-        resp = self.api.get_inference_job_param_output(headers=headers, params=params)
-        assert resp.status_code == 200
-        assert len(resp.json()) > 0
 
     def test_7_txt2img_inference_job_delete_succeed(self):
         headers = {

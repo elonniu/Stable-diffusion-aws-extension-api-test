@@ -2,6 +2,7 @@ from __future__ import print_function
 
 import logging
 
+import pytest
 import stable_diffusion_aws_extension_api_test.config as config
 from stable_diffusion_aws_extension_api_test.utils.api import Api
 from stable_diffusion_aws_extension_api_test.utils.helper import clear_checkpoint, upload_multipart_file, wget_file
@@ -23,7 +24,27 @@ class TestCheckPointE2E:
     def teardown_class(cls):
         pass
 
-    def test_1_checkpoint_v15_post(self):
+    def test_0_clean_checkpoints(self):
+        headers = {
+            "x-api-key": config.api_key,
+            "Authorization": config.bearer_token,
+        }
+
+        resp = self.api.list_checkpoints(headers=headers).json()
+        checkpoints = resp['data']["checkpoints"]
+
+        id_list = []
+        for checkpoint in checkpoints:
+            id_list.append(checkpoint['id'])
+
+        if id_list:
+            data = {
+                "checkpoint_id_list": id_list
+            }
+            resp = self.api.delete_checkpoints(headers=headers, data=data)
+            assert resp.status_code == 200
+
+    def test_1_create_checkpoint_v15(self):
         filename = "v1-5-pruned-emaonly.safetensors"
         checkpoint_type = "Stable-diffusion"
         headers = {
@@ -44,19 +65,19 @@ class TestCheckPointE2E:
             }
         }
 
-        resp = self.api.create_checkpoint(headers=headers, data=data)
+        resp = self.api.create_checkpoint_new(headers=headers, data=data)
 
         assert resp.status_code == 200
         assert resp.json()["statusCode"] == 200
-        assert resp.json()["checkpoint"]['type'] == checkpoint_type
-        assert len(resp.json()["checkpoint"]['id']) == 36
+        assert resp.json()['data']["checkpoint"]['type'] == checkpoint_type
+        assert len(resp.json()['data']["checkpoint"]['id']) == 36
 
         global checkpoint_id
-        checkpoint_id = resp.json()["checkpoint"]['id']
+        checkpoint_id = resp.json()['data']["checkpoint"]['id']
         global signed_urls
-        signed_urls = resp.json()["s3PresignUrl"][filename]
+        signed_urls = resp.json()['data']["s3PresignUrl"][filename]
 
-    def test_2_checkpoint_v15_put_with_bad_params(self):
+    def test_2_update_checkpoint_v15_with_bad_params(self):
         global checkpoint_id
 
         headers = {
@@ -64,17 +85,16 @@ class TestCheckPointE2E:
         }
 
         data = {
-            "checkpoint_id": checkpoint_id,
             "status": "Active",
             "bad_params": {}
         }
 
-        resp = self.api.update_checkpoint(headers=headers, data=data)
+        resp = self.api.update_checkpoint_new(checkpoint_id=checkpoint_id, headers=headers, data=data)
 
-        assert resp.status_code == 200
-        assert resp.json()["errorMessage"] == "__init__() got an unexpected keyword argument 'bad_params'"
+        assert resp.status_code == 400
+        assert 'object has missing required properties' in resp.json()["message"]
 
-    def test_3_checkpoint_v15_put(self):
+    def test_3_update_checkpoint_v15(self):
         filename = "v1-5-pruned-emaonly.safetensors"
         local_path = f"data/models/Stable-diffusion/{filename}"
         wget_file(
@@ -89,7 +109,6 @@ class TestCheckPointE2E:
         global checkpoint_id
 
         data = {
-            "checkpoint_id": checkpoint_id,
             "status": "Active",
             "multi_parts_tags": {filename: multiparts_tags}
         }
@@ -98,13 +117,13 @@ class TestCheckPointE2E:
             "x-api-key": config.api_key,
         }
 
-        resp = self.api.update_checkpoint(headers=headers, data=data)
+        resp = self.api.update_checkpoint_new(checkpoint_id=checkpoint_id, headers=headers, data=data)
 
         assert resp.status_code == 200
         assert resp.json()["statusCode"] == 200
-        assert resp.json()["checkpoint"]['type'] == checkpoint_type
+        assert resp.json()['data']["checkpoint"]['type'] == checkpoint_type
 
-    def test_4_checkpoint_v15_check_list(self):
+    def test_4_list_checkpoints_v15_check(self):
         headers = {
             "x-api-key": config.api_key,
             "Authorization": config.bearer_token,
@@ -117,9 +136,10 @@ class TestCheckPointE2E:
         resp = self.api.list_checkpoints(headers=headers, params=params)
         assert resp.status_code == 200
         global checkpoint_id
-        assert checkpoint_id in [checkpoint["id"] for checkpoint in resp.json()["checkpoints"]]
+        assert checkpoint_id in [checkpoint["id"] for checkpoint in resp.json()['data']["checkpoints"]]
 
-    def test_5_checkpoint_cute_post(self):
+    @pytest.mark.skipif(config.fast_test, reason="fast_test")
+    def test_5_create_checkpoint_cute(self):
         checkpoint_type = "Stable-diffusion"
         filename = "LahCuteCartoonSDXL_alpha.safetensors"
 
@@ -141,18 +161,19 @@ class TestCheckPointE2E:
             }
         }
 
-        resp = self.api.create_checkpoint(headers=headers, data=data)
+        resp = self.api.create_checkpoint_new(headers=headers, data=data)
 
         assert resp.status_code == 200
         assert resp.json()["statusCode"] == 200
-        assert resp.json()["checkpoint"]['type'] == checkpoint_type
-        assert len(resp.json()["checkpoint"]['id']) == 36
+        assert resp.json()['data']["checkpoint"]['type'] == checkpoint_type
+        assert len(resp.json()['data']["checkpoint"]['id']) == 36
         global checkpoint_id
-        checkpoint_id = resp.json()["checkpoint"]['id']
+        checkpoint_id = resp.json()['data']["checkpoint"]['id']
         global signed_urls
-        signed_urls = resp.json()["s3PresignUrl"][filename]
+        signed_urls = resp.json()['data']["s3PresignUrl"][filename]
 
-    def test_6_checkpoint_cute_put(self):
+    @pytest.mark.skipif(config.fast_test, reason="fast_test")
+    def test_6_update_checkpoint_cute(self):
         filename = "LahCuteCartoonSDXL_alpha.safetensors"
         local_path = f"data/models/Stable-diffusion/{filename}"
         wget_file(
@@ -166,7 +187,6 @@ class TestCheckPointE2E:
         global checkpoint_id
 
         data = {
-            "checkpoint_id": checkpoint_id,
             "status": "Active",
             "multi_parts_tags": {filename: multiparts_tags}
         }
@@ -175,13 +195,14 @@ class TestCheckPointE2E:
             "x-api-key": config.api_key,
         }
 
-        resp = self.api.update_checkpoint(headers=headers, data=data)
+        resp = self.api.update_checkpoint_new(checkpoint_id=checkpoint_id, headers=headers, data=data)
 
         assert resp.status_code == 200
         assert resp.json()["statusCode"] == 200
-        assert resp.json()["checkpoint"]['type'] == checkpoint_type
+        assert resp.json()['data']["checkpoint"]['type'] == checkpoint_type
 
-    def test_7_checkpoint_cute_check_list(self):
+    @pytest.mark.skipif(config.fast_test, reason="fast_test")
+    def test_7_list_checkpoints_cute_check(self):
         headers = {
             "x-api-key": config.api_key,
             "Authorization": config.bearer_token,
@@ -195,9 +216,10 @@ class TestCheckPointE2E:
 
         assert resp.status_code == 200
         global checkpoint_id
-        assert checkpoint_id in [checkpoint["id"] for checkpoint in resp.json()["checkpoints"]]
+        assert checkpoint_id in [checkpoint["id"] for checkpoint in resp.json()['data']["checkpoints"]]
 
-    def test_8_checkpoint_lora_post(self):
+    @pytest.mark.skipif(config.fast_test, reason="fast_test")
+    def test_8_create_checkpoint_lora(self):
         checkpoint_type = "Lora"
         filename = "nendoroid_xl_v7.safetensors"
 
@@ -220,18 +242,19 @@ class TestCheckPointE2E:
             }
         }
 
-        resp = self.api.create_checkpoint(headers=headers, data=data)
+        resp = self.api.create_checkpoint_new(headers=headers, data=data)
 
         assert resp.status_code == 200
         assert resp.json()["statusCode"] == 200
-        assert resp.json()["checkpoint"]['type'] == checkpoint_type
-        assert len(resp.json()["checkpoint"]['id']) == 36
+        assert resp.json()['data']["checkpoint"]['type'] == checkpoint_type
+        assert len(resp.json()['data']["checkpoint"]['id']) == 36
         global checkpoint_id
-        checkpoint_id = resp.json()["checkpoint"]['id']
+        checkpoint_id = resp.json()['data']["checkpoint"]['id']
         global signed_urls
-        signed_urls = resp.json()["s3PresignUrl"][filename]
+        signed_urls = resp.json()['data']["s3PresignUrl"][filename]
 
-    def test_9_checkpoint_lora_put(self):
+    @pytest.mark.skipif(config.fast_test, reason="fast_test")
+    def test_9_update_checkpoint_lora(self):
         filename = "nendoroid_xl_v7.safetensors"
         local_path = f"data/models/Lora/{filename}"
         wget_file(
@@ -245,7 +268,6 @@ class TestCheckPointE2E:
         global checkpoint_id
 
         data = {
-            "checkpoint_id": checkpoint_id,
             "status": "Active",
             "multi_parts_tags": {filename: multiparts_tags}
         }
@@ -255,13 +277,14 @@ class TestCheckPointE2E:
             "Authorization": config.bearer_token,
         }
 
-        resp = self.api.update_checkpoint(headers=headers, data=data)
+        resp = self.api.update_checkpoint_new(checkpoint_id=checkpoint_id, headers=headers, data=data)
 
         assert resp.status_code == 200
         assert resp.json()["statusCode"] == 200
-        assert resp.json()["checkpoint"]['type'] == checkpoint_type
+        assert resp.json()['data']["checkpoint"]['type'] == checkpoint_type
 
-    def test_10_checkpoint_lora_check_list(self):
+    @pytest.mark.skipif(config.fast_test, reason="fast_test")
+    def test_10_list_checkpoints_lora_check(self):
         headers = {
             "x-api-key": config.api_key,
             "Authorization": config.bearer_token,
@@ -275,9 +298,10 @@ class TestCheckPointE2E:
 
         assert resp.status_code == 200
         global checkpoint_id
-        assert checkpoint_id in [checkpoint["id"] for checkpoint in resp.json()["checkpoints"]]
+        assert checkpoint_id in [checkpoint["id"] for checkpoint in resp.json()['data']["checkpoints"]]
 
-    def test_11_checkpoint_canny_post(self):
+    @pytest.mark.skipif(config.fast_test, reason="fast_test")
+    def test_11_create_checkpoint_canny(self):
         checkpoint_type = "ControlNet"
         filename = "control_v11p_sd15_canny.pth"
 
@@ -300,18 +324,19 @@ class TestCheckPointE2E:
             }
         }
 
-        resp = self.api.create_checkpoint(headers=headers, data=data)
+        resp = self.api.create_checkpoint_new(headers=headers, data=data)
 
         assert resp.status_code == 200
         assert resp.json()["statusCode"] == 200
-        assert resp.json()["checkpoint"]['type'] == checkpoint_type
-        assert len(resp.json()["checkpoint"]['id']) == 36
+        assert resp.json()['data']["checkpoint"]['type'] == checkpoint_type
+        assert len(resp.json()['data']["checkpoint"]['id']) == 36
         global checkpoint_id
-        checkpoint_id = resp.json()["checkpoint"]['id']
+        checkpoint_id = resp.json()['data']["checkpoint"]['id']
         global signed_urls
-        signed_urls = resp.json()["s3PresignUrl"][filename]
+        signed_urls = resp.json()['data']["s3PresignUrl"][filename]
 
-    def test_12_checkpoint_canny_put(self):
+    @pytest.mark.skipif(config.fast_test, reason="fast_test")
+    def test_12_update_checkpoint_canny(self):
         filename = "control_v11p_sd15_canny.pth"
         local_path = f"data/models/ControlNet/{filename}"
         wget_file(
@@ -330,18 +355,18 @@ class TestCheckPointE2E:
         }
 
         data = {
-            "checkpoint_id": checkpoint_id,
             "status": "Active",
             "multi_parts_tags": {filename: multiparts_tags}
         }
 
-        resp = self.api.update_checkpoint(headers=headers, data=data)
+        resp = self.api.update_checkpoint_new(checkpoint_id=checkpoint_id, headers=headers, data=data)
 
         assert resp.status_code == 200
         assert resp.json()["statusCode"] == 200
-        assert resp.json()["checkpoint"]['type'] == checkpoint_type
+        assert resp.json()['data']["checkpoint"]['type'] == checkpoint_type
 
-    def test_13_checkpoint_canny_check_list(self):
+    @pytest.mark.skipif(config.fast_test, reason="fast_test")
+    def test_13_list_checkpoints_canny_check(self):
         headers = {
             "x-api-key": config.api_key,
             "Authorization": config.bearer_token,
@@ -355,9 +380,10 @@ class TestCheckPointE2E:
 
         assert resp.status_code == 200
         global checkpoint_id
-        assert checkpoint_id in [checkpoint["id"] for checkpoint in resp.json()["checkpoints"]]
+        assert checkpoint_id in [checkpoint["id"] for checkpoint in resp.json()['data']["checkpoints"]]
 
-    def test_14_checkpoint_openpose_post(self):
+    @pytest.mark.skipif(config.fast_test, reason="fast_test")
+    def test_14_create_checkpoint_openpose(self):
         checkpoint_type = "ControlNet"
         filename = "control_v11p_sd15_openpose.pth"
 
@@ -380,18 +406,19 @@ class TestCheckPointE2E:
             }
         }
 
-        resp = self.api.create_checkpoint(headers=headers, data=data)
+        resp = self.api.create_checkpoint_new(headers=headers, data=data)
 
         assert resp.status_code == 200
         assert resp.json()["statusCode"] == 200
-        assert resp.json()["checkpoint"]['type'] == checkpoint_type
-        assert len(resp.json()["checkpoint"]['id']) == 36
+        assert resp.json()['data']["checkpoint"]['type'] == checkpoint_type
+        assert len(resp.json()['data']["checkpoint"]['id']) == 36
         global checkpoint_id
-        checkpoint_id = resp.json()["checkpoint"]['id']
+        checkpoint_id = resp.json()['data']["checkpoint"]['id']
         global signed_urls
-        signed_urls = resp.json()["s3PresignUrl"][filename]
+        signed_urls = resp.json()['data']["s3PresignUrl"][filename]
 
-    def test_15_checkpoint_openpose_put(self):
+    @pytest.mark.skipif(config.fast_test, reason="fast_test")
+    def test_15_update_checkpoint_openpose(self):
         filename = "control_v11p_sd15_openpose.pth"
         local_path = f"data/models/ControlNet/{filename}"
         wget_file(
@@ -410,18 +437,18 @@ class TestCheckPointE2E:
         }
 
         data = {
-            "checkpoint_id": checkpoint_id,
             "status": "Active",
             "multi_parts_tags": {filename: multiparts_tags}
         }
 
-        resp = self.api.update_checkpoint(headers=headers, data=data)
+        resp = self.api.update_checkpoint_new(checkpoint_id=checkpoint_id, headers=headers, data=data)
 
         assert resp.status_code == 200
         assert resp.json()["statusCode"] == 200
-        assert resp.json()["checkpoint"]['type'] == checkpoint_type
+        assert resp.json()['data']["checkpoint"]['type'] == checkpoint_type
 
-    def test_16_checkpoint_openpose_check_list(self):
+    @pytest.mark.skipif(config.fast_test, reason="fast_test")
+    def test_16_list_checkpoints_openpose_check(self):
         headers = {
             "x-api-key": config.api_key,
             "Authorization": config.bearer_token,
@@ -435,19 +462,18 @@ class TestCheckPointE2E:
 
         assert resp.status_code == 200
         global checkpoint_id
-        assert checkpoint_id in [checkpoint["id"] for checkpoint in resp.json()["checkpoints"]]
+        assert checkpoint_id in [checkpoint["id"] for checkpoint in resp.json()['data']["checkpoints"]]
 
     def test_17_upload_lora_checkpoint_by_url(self):
         headers = {"x-api-key": config.api_key}
         if config.is_gcr:
             url = "https://aws-gcr-solutions.s3.cn-north-1.amazonaws.com.cn/stable-diffusion-aws-extension-github-mainline/models/cartoony.safetensors"
         else:
-            # todo will use global link
-            url = "https://aws-gcr-solutions.s3.cn-north-1.amazonaws.com.cn/stable-diffusion-aws-extension-github-mainline/models/cartoony.safetensors"
+            url = "https://raw.githubusercontent.com/elonniu/safetensors/main/cartoony.safetensors"
 
         data = {
-            "checkpointType": "Lora",
-            "modelUrl": [
+            "checkpoint_type": "Lora",
+            "urls": [
                 url
             ],
             "params": {
@@ -456,10 +482,8 @@ class TestCheckPointE2E:
             }
         }
 
-        resp = self.api.upload_checkpoint(headers=headers, data=data)
+        resp = self.api.create_checkpoint_new(headers=headers, data=data)
 
         assert resp.status_code == 200
         assert resp.json()["statusCode"] == 200
-        assert 'checkpoint' in resp.json()
-        assert resp.json()['checkpoint']["type"] == "Lora"
-        assert resp.json()['checkpoint']["status"] == "Active"
+        assert 'checkpoint' in resp.json()['data']

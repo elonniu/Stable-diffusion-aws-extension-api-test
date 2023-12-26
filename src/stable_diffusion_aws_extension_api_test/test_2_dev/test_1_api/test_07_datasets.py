@@ -16,20 +16,20 @@ class TestDatasetsApi:
     def teardown_class(cls):
         pass
 
-    def test_1_datasets_get_without_key(self):
+    def test_1_list_datasets_without_key(self):
         resp = self.api.list_datasets()
 
         assert resp.status_code == 401
         assert resp.json()["message"] == "Unauthorized"
 
-    def test_2_datasets_get_without_auth(self):
+    def test_2_list_datasets_without_auth(self):
         headers = {"x-api-key": config.api_key}
         resp = self.api.list_datasets(headers=headers)
 
         assert resp.status_code == 401
         assert resp.json()["message"] == "Unauthorized"
 
-    def test_3_datasets_get(self):
+    def test_3_list_datasets(self):
         headers = {
             "x-api-key": config.api_key,
             "Authorization": config.bearer_token,
@@ -38,51 +38,37 @@ class TestDatasetsApi:
         resp = self.api.list_datasets(headers=headers)
         assert resp.status_code == 200
 
-        assert len(resp.json()["datasets"]) >= 0
+        assert len(resp.json()['data']["datasets"]) >= 0
 
-    def test_4_dataset_get_missing_name(self):
+    def test_4_get_dataset_missing_name(self):
         headers = {
             "x-api-key": config.api_key,
             "Authorization": config.bearer_token,
         }
 
-        resp = self.api.get_dataset_data(
+        name = "not_exists"
+
+        resp = self.api.get_dataset(
             headers=headers,
-            name="not_exists"
+            name=name
         )
 
-        assert resp.status_code == 200
-        assert resp.json()["statusCode"] == 500
-        assert 'error' in resp.json()
+        assert resp.status_code == 404
+        assert f"dataset {name} is not found" in resp.json()['message']
 
-    def test_5_dataset_get_not_exists(self):
-        headers = {
-            "x-api-key": config.api_key,
-            "Authorization": config.bearer_token,
-        }
-
-        resp = self.api.get_dataset_data(
-            name="dataset_name_not_exists",
-            headers=headers,
-        )
-
-        assert resp.status_code == 200
-        assert resp.json()["statusCode"] == 500
-        assert 'not found' in resp.json()["error"]
-
-    def test_6_dataset_post_without_key(self):
-        resp = self.api.create_dataset()
+    def test_5_create_dataset_without_key(self):
+        resp = self.api.create_dataset_new()
 
         assert resp.status_code == 403
         assert resp.json()["message"] == "Forbidden"
 
-    def test_7_dataset_put_without_key(self):
-        resp = self.api.update_dataset()
+    def test_6_update_dataset_without_key(self):
+        resp = self.api.update_dataset_new(dataset_id="dataset_id")
 
         assert resp.status_code == 403
         assert resp.json()["message"] == "Forbidden"
 
-    def test_8_datasets_delete_without_key(self):
+    def test_7_delete_datasets_without_key(self):
         headers = {}
 
         data = {
@@ -93,7 +79,7 @@ class TestDatasetsApi:
         assert resp.status_code == 403
         assert 'Forbidden' == resp.json()["message"]
 
-    def test_9_datasets_delete_bad_request_body(self):
+    def test_8_delete_datasets_with_bad_request_body(self):
         headers = {
             "x-api-key": config.api_key,
         }

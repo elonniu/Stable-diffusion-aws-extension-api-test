@@ -17,7 +17,7 @@ class TestUserE2E:
     def teardown_class(cls):
         pass
 
-    def test_1_user_post(self):
+    def test_1_create_user(self):
         headers = {
             "x-api-key": config.api_key,
             "Authorization": config.bearer_token,
@@ -30,12 +30,12 @@ class TestUserE2E:
             "roles": ['IT Operator', 'Designer'],
         }
 
-        resp = self.api.create_user(headers=headers, data=data)
+        resp = self.api.create_user_new(headers=headers, data=data)
 
         assert resp.status_code == 200
         assert resp.json()["statusCode"] == 200
 
-    def test_2_user_post_check_exists_name(self):
+    def test_2_list_users_exists_name(self):
         headers = {
             "x-api-key": config.api_key,
             "Authorization": config.bearer_token,
@@ -44,20 +44,23 @@ class TestUserE2E:
         resp = self.api.list_users(headers=headers)
 
         assert resp.status_code == 200
-        assert resp.json()["status"] == 200
-        assert username in [user["username"] for user in resp.json()["users"]]
+        users = resp.json()["data"]["users"]
+        assert username in [user["username"] for user in users]
 
-    def test_3_user_delete(self):
+    def test_3_delete_users(self):
         headers = {
             "x-api-key": config.api_key,
             "Authorization": config.bearer_token,
         }
 
-        resp = self.api.user_delete(headers=headers, username=username)
+        data = {
+            "user_name_list": [username],
+        }
+
+        resp = self.api.delete_users(headers=headers, data=data)
 
         assert resp.status_code == 200
-        assert resp.json()["statusCode"] == 200
-        assert resp.json()["user"]["status"] == "deleted"
+        assert resp.json()["message"] == "Users Deleted"
 
     def test_4_user_delete_check(self):
         headers = {
@@ -68,5 +71,5 @@ class TestUserE2E:
         resp = self.api.list_users(headers=headers)
 
         assert resp.status_code == 200
-        assert resp.json()["status"] == 200
-        assert username not in [user["username"] for user in resp.json()["users"]]
+        users = resp.json()["data"]["users"]
+        assert username not in [user["username"] for user in users]

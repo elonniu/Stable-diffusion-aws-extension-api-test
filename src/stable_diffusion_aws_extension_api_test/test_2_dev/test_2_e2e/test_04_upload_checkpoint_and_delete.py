@@ -25,7 +25,7 @@ class TestCheckPointDeleteE2E:
     def teardown_class(cls):
         pass
 
-    def test_1_checkpoint_create(self):
+    def test_1_create_checkpoint(self):
         wget_file(
             local_path,
             "https://aws-gcr-solutions.s3.cn-north-1.amazonaws.com.cn/stable-diffusion-aws-extension-github-mainline/models/cartoony.safetensors"
@@ -49,26 +49,25 @@ class TestCheckPointDeleteE2E:
             }
         }
 
-        resp = self.api.create_checkpoint(headers=headers, data=data)
+        resp = self.api.create_checkpoint_new(headers=headers, data=data)
 
         assert resp.status_code == 200
         assert resp.json()["statusCode"] == 200
-        assert resp.json()["checkpoint"]['type'] == checkpoint_type
-        assert len(resp.json()["checkpoint"]['id']) == 36
+        assert resp.json()['data']["checkpoint"]['type'] == checkpoint_type
+        assert len(resp.json()['data']["checkpoint"]['id']) == 36
 
         global checkpoint_id
-        checkpoint_id = resp.json()["checkpoint"]['id']
+        checkpoint_id = resp.json()['data']["checkpoint"]['id']
         global signed_urls
-        signed_urls = resp.json()["s3PresignUrl"][filename]
+        signed_urls = resp.json()['data']["s3PresignUrl"][filename]
 
-    def test_2_checkpoint_put(self):
+    def test_2_update_checkpoint(self):
         global signed_urls
         multiparts_tags = upload_multipart_file(signed_urls, local_path)
 
         global checkpoint_id
 
         data = {
-            "checkpoint_id": checkpoint_id,
             "status": "Active",
             "multi_parts_tags": {filename: multiparts_tags}
         }
@@ -77,13 +76,13 @@ class TestCheckPointDeleteE2E:
             "x-api-key": config.api_key,
         }
 
-        resp = self.api.update_checkpoint(headers=headers, data=data)
+        resp = self.api.update_checkpoint_new(checkpoint_id=checkpoint_id, headers=headers, data=data)
 
         assert resp.status_code == 200
         assert resp.json()["statusCode"] == 200
-        assert resp.json()["checkpoint"]['type'] == checkpoint_type
+        assert resp.json()['data']["checkpoint"]['type'] == checkpoint_type
 
-    def test_3_checkpoints_delete_succeed(self):
+    def test_3_delete_checkpoints_succeed(self):
         global checkpoint_id
 
         headers = {

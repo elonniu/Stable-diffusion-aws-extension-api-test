@@ -16,13 +16,13 @@ class TestUsersApi:
     def teardown_class(cls):
         pass
 
-    def test_1_users_get_without_key(self):
+    def test_1_list_users_without_key(self):
         resp = self.api.list_users()
 
         assert resp.status_code == 401
         assert resp.json()["message"] == "Unauthorized"
 
-    def test_2_users_get_without_auth(self):
+    def test_2_list_users_without_auth(self):
         headers = {"x-api-key": config.api_key}
 
         resp = self.api.list_users(headers=headers)
@@ -30,7 +30,7 @@ class TestUsersApi:
         assert resp.status_code == 401
         assert resp.json()["message"] == "Unauthorized"
 
-    def test_3_users_get(self):
+    def test_3_list_users(self):
         headers = {
             "x-api-key": config.api_key,
             "Authorization": config.bearer_token
@@ -39,28 +39,36 @@ class TestUsersApi:
         resp = self.api.list_users(headers=headers)
 
         assert resp.status_code == 200
-        assert len(resp.json()["users"]) >= 0
-        assert resp.json()["users"][0]["username"] == config.username
+        users = resp.json()["data"]["users"]
+        assert len(users) >= 0
+        assert users[0]["username"] == config.username
 
-    def test_4_user_delete_without_key(self):
-        resp = self.api.user_delete("test")
+    def test_4_delete_users_without_key(self):
+        data = {
+            "user_name_list": ["test"],
+        }
+
+        resp = self.api.delete_users(headers={}, data=data)
 
         assert resp.status_code == 401
         assert resp.json()["message"] == "Unauthorized"
 
-    def test_5_user_delete_not_found(self):
+    def test_5_delete_users_not_found(self):
         headers = {
             "x-api-key": config.api_key,
             "Authorization": config.bearer_token
         }
 
-        resp = self.api.user_delete("username_not_found", headers=headers)
+        data = {
+            "user_name_list": ["test"],
+        }
+
+        resp = self.api.delete_users(headers=headers, data=data)
 
         assert resp.status_code == 200
-        assert 'user' in resp.json()
-        assert resp.json()["user"]['status'] == "deleted"
+        assert resp.json()["message"] == "Users Deleted"
 
-    def test_6_user_post_bad_creator(self):
+    def test_6_create_user_bad_creator(self):
         headers = {
             "x-api-key": config.api_key,
             "Authorization": config.bearer_token
@@ -73,13 +81,12 @@ class TestUsersApi:
             "roles": ['IT Operator', 'Designer'],
         }
 
-        resp = self.api.create_user(headers=headers, data=data)
+        resp = self.api.create_user_new(headers=headers, data=data)
 
-        assert resp.status_code == 200
-        assert resp.json()["statusCode"] == 400
-        assert resp.json()["errMsg"] == "creator bad_creator not exist"
+        assert resp.status_code == 400
+        assert resp.json()["message"] == "creator bad_creator not exist"
 
-    def test_7_user_post_bad_role(self):
+    def test_7_create_user_with_bad_role(self):
         headers = {
             "x-api-key": config.api_key,
             "Authorization": config.bearer_token
@@ -88,12 +95,40 @@ class TestUsersApi:
         data = {
             "username": "XXXXXXXXXXXXX",
             "password": "XXXXXXXXXXXXX",
-            "creator": "admin",
+            "creator": config.username,
             "roles": ["admin"],
         }
 
-        resp = self.api.create_user(headers=headers, data=data)
+        resp = self.api.create_user_new(headers=headers, data=data)
 
-        assert resp.status_code == 200
-        assert resp.json()["statusCode"] == 400
-        assert resp.json()["errMsg"] == 'user roles "admin" not exist'
+        assert resp.status_code == 400
+        assert resp.json()["message"] == 'user roles "admin" not exist'
+
+    def test_8_delete_users_with_bad_params(self):
+        headers = {
+            "x-api-key": config.api_key,
+            "Authorization": config.bearer_token
+        }
+
+        data = {
+        }
+
+        resp = self.api.delete_users(headers=headers, data=data)
+
+        assert resp.status_code == 400
+        assert 'object has missing required properties' in resp.json()["message"]
+
+    def test_9_delete_users_with_username_empty(self):
+        headers = {
+            "x-api-key": config.api_key,
+            "Authorization": config.bearer_token
+        }
+
+        data = {
+            "user_name_list": [""],
+        }
+
+        resp = self.api.delete_users(headers=headers, data=data)
+
+        assert resp.status_code == 400
+        assert 'required minimum: 1' in resp.json()["message"]

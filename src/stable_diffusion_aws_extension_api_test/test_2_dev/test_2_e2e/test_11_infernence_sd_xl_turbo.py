@@ -9,8 +9,8 @@ import stable_diffusion_aws_extension_api_test.config as config
 from stable_diffusion_aws_extension_api_test.utils.api import Api
 from stable_diffusion_aws_extension_api_test.utils.enums import InferenceStatus, InferenceType
 from stable_diffusion_aws_extension_api_test.utils.helper import upload_multipart_file, wget_file
-from stable_diffusion_aws_extension_api_test.utils.helper import upload_with_put, get_inference_job_status, \
-    delete_inference_job
+from stable_diffusion_aws_extension_api_test.utils.helper import upload_with_put, get_inference_job_status_new, \
+    delete_inference_jobs
 
 logger = logging.getLogger(__name__)
 checkpoint_id = None
@@ -33,7 +33,7 @@ class TestTurboE2E:
 
         global inference_data
         if 'id' in inference_data:
-            delete_inference_job(inference_data['id'])
+            delete_inference_jobs([inference_data['id']])
 
     def test_1_create_turbo_checkpoint(self):
         headers = {
@@ -54,17 +54,17 @@ class TestTurboE2E:
             }
         }
 
-        resp = self.api.create_checkpoint(headers=headers, data=data)
+        resp = self.api.create_checkpoint_new(headers=headers, data=data)
 
         assert resp.status_code == 200
         assert resp.json()["statusCode"] == 200
-        assert resp.json()["checkpoint"]['type'] == checkpoint_type
-        assert len(resp.json()["checkpoint"]['id']) == 36
+        assert resp.json()['data']["checkpoint"]['type'] == checkpoint_type
+        assert len(resp.json()['data']["checkpoint"]['id']) == 36
 
         global checkpoint_id
-        checkpoint_id = resp.json()["checkpoint"]['id']
+        checkpoint_id = resp.json()['data']["checkpoint"]['id']
         global signed_urls
-        signed_urls = resp.json()["s3PresignUrl"][filename]
+        signed_urls = resp.json()['data']["s3PresignUrl"][filename]
 
     def test_2_update_turbo_checkpoint(self):
         local_path = f"data/models/Stable-diffusion/{filename}"
@@ -79,7 +79,6 @@ class TestTurboE2E:
         global checkpoint_id
 
         data = {
-            "checkpoint_id": checkpoint_id,
             "status": "Active",
             "multi_parts_tags": {filename: multiparts_tags}
         }
@@ -88,11 +87,11 @@ class TestTurboE2E:
             "x-api-key": config.api_key,
         }
 
-        resp = self.api.update_checkpoint(headers=headers, data=data)
+        resp = self.api.update_checkpoint_new(checkpoint_id=checkpoint_id, headers=headers, data=data)
 
         assert resp.status_code == 200
         assert resp.json()["statusCode"] == 200
-        assert resp.json()["checkpoint"]['type'] == checkpoint_type
+        assert resp.json()['data']["checkpoint"]['type'] == checkpoint_type
 
     def test_3_list_turbo_checkpoint(self):
         headers = {
@@ -107,7 +106,7 @@ class TestTurboE2E:
         resp = self.api.list_checkpoints(headers=headers, params=params)
         assert resp.status_code == 200
         global checkpoint_id
-        assert checkpoint_id in [checkpoint["id"] for checkpoint in resp.json()["checkpoints"]]
+        assert checkpoint_id in [checkpoint["id"] for checkpoint in resp.json()['data']["checkpoints"]]
 
     def test_4_turbo_txt2img_inference_job_create(self):
         headers = {
@@ -128,10 +127,10 @@ class TestTurboE2E:
             }
         }
 
-        resp = self.api.create_inference(headers=headers, data=data)
+        resp = self.api.create_inference_new(headers=headers, data=data)
         assert resp.status_code == 200
         global inference_data
-        inference_data = resp.json()["inference"]
+        inference_data = resp.json()['data']["inference"]
 
         assert resp.json()["statusCode"] == 200
         assert inference_data["type"] == InferenceType.TXT2IMG.value
@@ -150,14 +149,14 @@ class TestTurboE2E:
             "Authorization": config.bearer_token
         }
 
-        resp = self.api.inference_run(job_id=inference_id, headers=headers)
+        resp = self.api.start_inference_job(job_id=inference_id, headers=headers)
         assert resp.status_code == 200
-        assert resp.json()["inference"]["status"] == InferenceStatus.INPROGRESS.value
+        assert resp.json()['data']["inference"]["status"] == InferenceStatus.INPROGRESS.value
 
-        timeout = datetime.now() + timedelta(minutes=2)
+        timeout = datetime.now() + timedelta(minutes=4)
 
         while datetime.now() < timeout:
-            status = get_inference_job_status(
+            status = get_inference_job_status_new(
                 api_instance=self.api,
                 job_id=inference_id
             )
@@ -168,4 +167,4 @@ class TestTurboE2E:
                 raise Exception("Inference job failed.")
             time.sleep(5)
         else:
-            raise Exception("Inference execution timed out after 2 minutes.")
+            raise Exception("Inference execution timed out after 4 minutes.")
