@@ -42,7 +42,7 @@ class TestCheckPointE2E:
                 "checkpoint_id_list": id_list
             }
             resp = self.api.delete_checkpoints(headers=headers, data=data)
-            assert resp.status_code == 200
+            assert resp.status_code == 204
 
     def test_1_create_checkpoint_v15(self):
         filename = "v1-5-pruned-emaonly.safetensors"
