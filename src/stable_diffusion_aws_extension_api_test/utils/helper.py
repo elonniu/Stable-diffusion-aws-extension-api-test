@@ -14,7 +14,7 @@ from stable_diffusion_aws_extension_api_test.utils.api import Api
 logger = logging.getLogger(__name__)
 ddb_client = boto3.client('dynamodb')
 s3_client = boto3.client('s3')
-
+s3 = boto3.resource('s3')
 
 def get_parts_number(local_path: str):
     file_size = os.stat(local_path).st_size
@@ -297,7 +297,6 @@ def delete_train_item():
 def delete_prefix_in_s3(prefix: str):
     if prefix.startswith("s3://"):
         prefix = prefix.replace(f"s3://{config.bucket}/", "")
-    s3 = boto3.resource('s3')
     bucket = s3.Bucket(config.bucket)
     bucket.objects.filter(Prefix=prefix).delete()
 
