@@ -96,7 +96,7 @@ class TestEndpointCreateE2E:
         assert resp.status_code == 400
         assert resp.json()["message"] == "endpoint status is Creating, can not delete"
 
-    def test_5_create_endpoint_exists(self):
+    def test_5_create_endpoint_model_exists(self):
         headers = {
             "x-api-key": config.api_key,
             "Authorization": config.bearer_token
@@ -107,7 +107,7 @@ class TestEndpointCreateE2E:
             "instance_type": config.instance_type,
             "initial_instance_count": int(config.initial_instance_count),
             "autoscaling_enabled": False,
-            "assign_to_roles": ["IT Operator"],
+            "assign_to_roles": ["Designer"],
             "creator": config.username
         }
 
