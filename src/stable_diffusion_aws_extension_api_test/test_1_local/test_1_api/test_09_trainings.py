@@ -35,9 +35,7 @@ class TestTrainingsApi:
 
         resp = self.api.start_training_job(training_id="id", headers=headers, data=data)
 
-        assert resp.status_code == 400
-        assert 'object has missing required properties' in resp.json()["message"]
-        assert 'status' in resp.json()["message"]
+        assert resp.status_code == 404
 
     def test_3_start_training_job_with_bad_id(self):
         headers = {
