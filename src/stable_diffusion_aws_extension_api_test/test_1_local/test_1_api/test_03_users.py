@@ -77,7 +77,7 @@ class TestUsersApi:
             "username": "XXXXXXXXXXXXX",
             "password": "XXXXXXXXXXXXX",
             "creator": "bad_creator",
-            "roles": ['IT Operator', 'Designer'],
+            "roles": ['IT Operator'],
         }
 
         resp = self.api.create_user_new(headers=headers, data=data)

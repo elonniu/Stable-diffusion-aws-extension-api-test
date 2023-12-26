@@ -99,7 +99,7 @@ class TestEndpointsApi:
             "instance_type": config.instance_type,
             "initial_instance_count": 1000,
             "autoscaling_enabled": True,
-            "assign_to_roles": ["Designer", "IT Operator"],
+            "assign_to_roles": ["IT Operator"],
             "creator": config.username
         }
 
@@ -119,7 +119,7 @@ class TestEndpointsApi:
             "instance_type": instance_type,
             "initial_instance_count": 9,
             "autoscaling_enabled": True,
-            "assign_to_roles": ["Designer", "IT Operator"],
+            "assign_to_roles": ["IT Operator"],
             "creator": config.username
         }
 
@@ -173,7 +173,6 @@ class TestEndpointsApi:
 
         resp = self.api.delete_endpoints(headers=headers, data=data)
 
-        assert resp.status_code == 500
-        assert resp.json()["statusCode"] == 500
-        assert "error deleting sagemaker endpoint with exception: user: \"bad_user\" not exist" in resp.json()[
-            "message"]
+        assert resp.status_code == 400
+        assert resp.json()["statusCode"] == 400
+        assert "user: \"bad_user\" not exist" in resp.json()["message"]

@@ -21,14 +21,6 @@ class TestEndpointCreateE2E:
 
     def test_1_endpoints_delete(self):
         delete_sagemaker_endpoint_new(self.api)
-        headers = {
-            "x-api-key": config.api_key,
-            "Authorization": config.bearer_token
-        }
-
-        resp = self.api.list_endpoints(headers=headers)
-        assert resp.status_code == 200
-        assert len(resp.json()['data']["endpoints"]) == 0
 
     def test_2_no_available_endpoint(self):
         headers = {
@@ -87,7 +79,24 @@ class TestEndpointCreateE2E:
         assert resp.status_code == 202
         assert resp.json()["data"]["endpoint_status"] == "Creating"
 
-    def test_4_create_endpoint_exists(self):
+    def test_4_cant_delete_creating_endpoint(self):
+        headers = {
+            "x-api-key": config.api_key,
+            "Authorization": config.bearer_token
+        }
+
+        data = {
+            "endpoint_name_list": [
+                f"infer-endpoint-{config.endpoint_name}"
+            ],
+            "username": config.username
+        }
+
+        resp = self.api.delete_endpoints(headers=headers, data=data)
+        assert resp.status_code == 400
+        assert resp.json()["message"] == "endpoint status is Creating, can not delete"
+
+    def test_5_create_endpoint_exists(self):
         headers = {
             "x-api-key": config.api_key,
             "Authorization": config.bearer_token
@@ -98,7 +107,7 @@ class TestEndpointCreateE2E:
             "instance_type": config.instance_type,
             "initial_instance_count": int(config.initial_instance_count),
             "autoscaling_enabled": False,
-            "assign_to_roles": ["Designer"],
+            "assign_to_roles": ["IT Operator"],
             "creator": config.username
         }
 

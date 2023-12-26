@@ -27,7 +27,7 @@ class TestUserE2E:
             "username": username,
             "password": "XXXXXXXXXXXXX",
             "creator": "admin",
-            "roles": ['IT Operator', 'Designer'],
+            "roles": ['IT Operator'],
         }
 
         resp = self.api.create_user_new(headers=headers, data=data)
