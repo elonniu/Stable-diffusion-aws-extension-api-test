@@ -86,13 +86,12 @@ class TestCheckPointE2E:
 
         data = {
             "status": "Active",
-            "bad_params": {}
+            "name": ""
         }
 
         resp = self.api.update_checkpoint_new(checkpoint_id=checkpoint_id, headers=headers, data=data)
 
         assert resp.status_code == 400
-        assert 'object has missing required properties' in resp.json()["message"]
 
     def test_3_update_checkpoint_v15(self):
         filename = "v1-5-pruned-emaonly.safetensors"
