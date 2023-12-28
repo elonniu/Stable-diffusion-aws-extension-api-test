@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 
-class TestCleanEndpoint:
+class TestCleanRoles:
     def setup_class(self):
         self.api = Api(config)
 
@@ -17,18 +17,21 @@ class TestCleanEndpoint:
     def teardown_class(cls):
         pass
 
-    def test_1_delete_endpoints(self):
+    def test_1_clean_roles(self):
         headers = {
             "x-api-key": config.api_key,
             "Authorization": config.bearer_token
         }
 
+        role_name_list = []
+        roles = self.api.list_roles(headers=headers).json()['data']['roles']
+        for role in roles:
+            role_name_list.append(role['role_name'])
+            logger.info(role['role_name'])
+
         data = {
-            "endpoint_name_list": [
-                f"infer-endpoint-{config.endpoint_name}"
-            ],
-            "username": config.username
+            "role_name_list": role_name_list,
         }
 
-        resp = self.api.delete_endpoints(headers=headers, data=data)
+        resp = self.api.delete_roles(headers=headers, data=data)
         assert resp.status_code == 204
