@@ -29,6 +29,10 @@ class TestCleanRoles:
             role_name_list.append(role['role_name'])
             logger.info(role['role_name'])
 
+        if len(role_name_list) == 0:
+            logger.info("No roles to delete")
+            return
+
         data = {
             "role_name_list": role_name_list,
         }
