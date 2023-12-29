@@ -26,6 +26,8 @@ class TestCleanRoles:
         role_name_list = []
         roles = self.api.list_roles(headers=headers).json()['data']['roles']
         for role in roles:
+            if role['role_name'] == 'IT Operator':
+                continue
             role_name_list.append(role['role_name'])
             logger.info(role['role_name'])
 
