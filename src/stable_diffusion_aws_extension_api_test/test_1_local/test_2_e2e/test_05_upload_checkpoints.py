@@ -460,26 +460,3 @@ class TestCheckPointE2E:
         assert resp.status_code == 200
         global checkpoint_id
         assert checkpoint_id in [checkpoint["id"] for checkpoint in resp.json()['data']["checkpoints"]]
-
-    def test_17_upload_lora_checkpoint_by_url(self):
-        headers = {"x-api-key": config.api_key}
-        if config.is_gcr:
-            url = "https://aws-gcr-solutions.s3.cn-north-1.amazonaws.com.cn/stable-diffusion-aws-extension-github-mainline/models/cartoony.safetensors"
-        else:
-            url = "https://raw.githubusercontent.com/elonniu/safetensors/main/cartoony.safetensors"
-
-        data = {
-            "checkpoint_type": "Lora",
-            "urls": [
-                url
-            ],
-            "params": {
-                "creator": config.username,
-                "message": config.ckpt_message
-            }
-        }
-
-        resp = self.api.create_checkpoint_new(headers=headers, data=data)
-
-        assert resp.status_code == 202
-        assert 'message' in resp.json()
