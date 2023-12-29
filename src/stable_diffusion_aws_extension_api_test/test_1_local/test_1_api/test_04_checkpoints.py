@@ -36,8 +36,7 @@ class TestCheckpointsApi:
             if not ckpt['params'] or 'message' not in ckpt['params']:
                 continue
 
-            if ckpt['params']['message'] == config.ckpt_message:
-                id_list.append(ckpt['id'])
+            id_list.append(ckpt['id'])
 
         if len(id_list) == 0:
             logger.info("No checkpoints to clean")
