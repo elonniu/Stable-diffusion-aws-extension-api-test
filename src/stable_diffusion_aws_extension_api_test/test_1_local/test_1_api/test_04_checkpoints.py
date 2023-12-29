@@ -33,11 +33,10 @@ class TestCheckpointsApi:
             if 'params' not in ckpt:
                 continue
 
-            logger.error(ckpt['params'])
-
             if ckpt['params'] and 'message' not in ckpt['params']:
                 continue
 
+            logger.error(ckpt['params']['message'])
             if ckpt['params']['message'] == config.ckpt_message:
                 id_list.append(ckpt['id'])
 
