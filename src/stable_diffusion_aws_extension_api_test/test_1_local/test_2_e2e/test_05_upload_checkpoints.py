@@ -11,14 +11,12 @@ logger = logging.getLogger(__name__)
 checkpoint_id = None
 signed_urls = None
 
-message = "api-test-message"
-
 
 class TestCheckPointE2E:
 
     def setup_class(self):
         self.api = Api(config)
-        clear_checkpoint(message)
+        clear_checkpoint(config.ckpt_message)
 
     @classmethod
     def teardown_class(cls):
@@ -60,7 +58,7 @@ class TestCheckPointE2E:
                 }
             ],
             "params": {
-                "message": message,
+                "message": config.ckpt_message,
                 "creator": config.username
             }
         }
@@ -155,7 +153,7 @@ class TestCheckPointE2E:
                 }
             ],
             "params": {
-                "message": message,
+                "message": config.ckpt_message,
                 "creator": config.username
             }
         }
@@ -236,7 +234,7 @@ class TestCheckPointE2E:
                 }
             ],
             "params": {
-                "message": message,
+                "message": config.ckpt_message,
                 "creator": config.username
             }
         }
@@ -318,7 +316,7 @@ class TestCheckPointE2E:
                 }
             ],
             "params": {
-                "message": message,
+                "message": config.ckpt_message,
                 "creator": config.username
             }
         }
@@ -400,7 +398,7 @@ class TestCheckPointE2E:
                 }
             ],
             "params": {
-                "message": message,
+                "message": config.ckpt_message,
                 "creator": config.username
             }
         }
@@ -477,7 +475,7 @@ class TestCheckPointE2E:
             ],
             "params": {
                 "creator": config.username,
-                "message": "api-test-message"
+                "message": config.ckpt_message
             }
         }
 

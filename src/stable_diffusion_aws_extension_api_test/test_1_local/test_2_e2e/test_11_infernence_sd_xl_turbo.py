@@ -16,7 +16,6 @@ logger = logging.getLogger(__name__)
 checkpoint_id = None
 signed_urls = None
 
-message = "api-test-message"
 filename = "sd_xl_turbo_1.0_fp16.safetensors"
 checkpoint_type = "Stable-diffusion"
 inference_data = {}
@@ -49,7 +48,7 @@ class TestTurboE2E:
                 }
             ],
             "params": {
-                "message": message,
+                "message": config.ckpt_message,
                 "creator": config.username
             }
         }

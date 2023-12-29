@@ -10,7 +10,6 @@ logger = logging.getLogger(__name__)
 checkpoint_id = None
 signed_urls = None
 
-message = "api-test-message"
 filename = "cartoony.safetensors"
 checkpoint_type = "Lora"
 local_path = f"data/models/{checkpoint_type}/{filename}"
@@ -44,7 +43,7 @@ class TestCheckPointDeleteE2E:
                 }
             ],
             "params": {
-                "message": message,
+                "message": config.ckpt_message,
                 "creator": config.username
             }
         }

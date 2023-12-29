@@ -70,3 +70,6 @@ logger.info(f"config.initial_instance_count: {initial_instance_count}")
 
 default_model_id = "v1-5-pruned-emaonly.safetensors"
 logger.info(f"config.default_model_id: {default_model_id}")
+
+ckpt_message = "placeholder for chkpts upload test"
+logger.info(f"config.ckpt_message: {ckpt_message}")

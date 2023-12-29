@@ -31,10 +31,10 @@ class TestCheckpointsApi:
         for ckpt in ckpts:
             if 'params' not in ckpt:
                 continue
-            if 'message' not in ckpt['params']:
+            if ckpt['params'] and 'message' not in ckpt['params']:
                 continue
 
-            if ckpt['params']['message'] == 'placeholder for chkpts upload test':
+            if ckpt['params']['message'] == config.ckpt_message:
                 id_list.append(ckpt['id'])
 
         data = {
@@ -104,7 +104,7 @@ class TestCheckpointsApi:
                 }
             ],
             "params": {
-                "message": "placeholder for chkpts upload test",
+                "message": config.ckpt_message,
                 "creator": "bad_username"
             }
         }
