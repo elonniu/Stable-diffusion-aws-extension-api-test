@@ -30,7 +30,7 @@ class TestCheckpointsApi:
         id_list = []
         for ckpt in ckpts:
 
-            logger.info(ckpt)
+            logger.error(ckpt)
 
             if 'params' not in ckpt:
                 continue
