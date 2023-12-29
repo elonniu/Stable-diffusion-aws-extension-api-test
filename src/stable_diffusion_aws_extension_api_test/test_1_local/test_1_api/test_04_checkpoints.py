@@ -31,6 +31,7 @@ class TestCheckpointsApi:
         for ckpt in ckpts:
             if 'params' not in ckpt:
                 continue
+
             if ckpt['params'] and 'message' not in ckpt['params']:
                 continue
 
