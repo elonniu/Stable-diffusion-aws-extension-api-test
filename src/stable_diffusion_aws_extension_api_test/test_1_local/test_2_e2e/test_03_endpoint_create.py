@@ -98,7 +98,7 @@ class TestEndpointCreateE2E:
             "instance_type": config.instance_type,
             "initial_instance_count": int(config.initial_instance_count),
             "autoscaling_enabled": False,
-            "assign_to_roles": ["Designer"],
+            "assign_to_roles": ["IT Operator"],
             "creator": config.username
         }
 
