@@ -33,7 +33,7 @@ class TestCheckpointsApi:
             if 'params' not in ckpt:
                 continue
 
-            if not ckpt['params'] and 'message' not in ckpt['params']:
+            if not ckpt['params'] or 'message' not in ckpt['params']:
                 continue
 
             if ckpt['params']['message'] == config.ckpt_message:
