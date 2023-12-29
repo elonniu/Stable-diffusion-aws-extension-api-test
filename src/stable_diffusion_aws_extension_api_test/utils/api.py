@@ -9,7 +9,7 @@ logger.setLevel(logging.INFO)
 
 class Api:
 
-    def __init__(self, config, debug: bool = True):
+    def __init__(self, config, debug: bool = False):
         self.config = config
         self.debug = debug
 
