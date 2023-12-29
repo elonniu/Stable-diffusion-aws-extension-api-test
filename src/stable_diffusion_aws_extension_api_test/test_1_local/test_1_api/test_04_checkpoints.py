@@ -30,12 +30,6 @@ class TestCheckpointsApi:
         id_list = []
         for ckpt in ckpts:
 
-            if 'params' not in ckpt:
-                continue
-
-            if not ckpt['params'] or 'message' not in ckpt['params']:
-                continue
-
             id_list.append(ckpt['id'])
 
         if len(id_list) == 0:
