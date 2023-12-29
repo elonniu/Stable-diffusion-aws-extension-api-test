@@ -36,6 +36,10 @@ class TestCleanCheckpoints:
             if ckpt['params']['message'] == config.ckpt_message:
                 id_list.append(ckpt['id'])
 
+        if len(id_list) == 0:
+            logger.info("No checkpoints to clean")
+            return
+
         data = {
             "checkpoint_id_list": id_list
         }
