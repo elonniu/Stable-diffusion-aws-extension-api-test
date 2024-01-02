@@ -34,6 +34,15 @@ class TestModelsApi:
         assert resp.status_code == 403, resp.dumps()
         assert resp.json()["message"] == "Forbidden"
 
+    def test_3_update_model_with_bad_body(self):
+        headers = {
+            "x-api-key": config.api_key,
+        }
+        resp = self.api.update_model_new(headers=headers, model_id="job_id")
+
+        assert resp.status_code == 400, resp.dumps()
+        assert 'Unknown error parsing request body' in resp.json()["message"]
+
     def test_4_list_models(self):
         headers = {
             "x-api-key": config.api_key,
