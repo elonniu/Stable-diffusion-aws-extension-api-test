@@ -55,7 +55,8 @@ class TestTurboE2E:
 
         resp = self.api.create_checkpoint_new(headers=headers, data=data)
 
-        assert resp.status_code == 201
+        assert resp.status_code == 201, resp.dumps()
+
         assert resp.json()["statusCode"] == 201
         assert resp.json()['data']["checkpoint"]['type'] == checkpoint_type
         assert len(resp.json()['data']["checkpoint"]['id']) == 36
@@ -88,7 +89,7 @@ class TestTurboE2E:
 
         resp = self.api.update_checkpoint_new(checkpoint_id=checkpoint_id, headers=headers, data=data)
 
-        assert resp.status_code == 200
+        assert resp.status_code == 200, resp.dumps()
         assert resp.json()["statusCode"] == 200
         assert resp.json()['data']["checkpoint"]['type'] == checkpoint_type
 
@@ -103,7 +104,7 @@ class TestTurboE2E:
         }
 
         resp = self.api.list_checkpoints(headers=headers, params=params)
-        assert resp.status_code == 200
+        assert resp.status_code == 200, resp.dumps()
         global checkpoint_id
         assert checkpoint_id in [checkpoint["id"] for checkpoint in resp.json()['data']["checkpoints"]]
 
@@ -127,7 +128,7 @@ class TestTurboE2E:
         }
 
         resp = self.api.create_inference_new(headers=headers, data=data)
-        assert resp.status_code == 201
+        assert resp.status_code == 201, resp.dumps()
         global inference_data
         inference_data = resp.json()['data']["inference"]
 
@@ -149,7 +150,7 @@ class TestTurboE2E:
         }
 
         resp = self.api.start_inference_job(job_id=inference_id, headers=headers)
-        assert resp.status_code == 202
+        assert resp.status_code == 202, resp.dumps()
         assert resp.json()['data']["inference"]["status"] == InferenceStatus.INPROGRESS.value
 
         timeout = datetime.now() + timedelta(minutes=4)

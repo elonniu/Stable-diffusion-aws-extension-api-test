@@ -52,7 +52,7 @@ class TestXyzVaeE2E:
         }
 
         resp = self.api.create_inference_new(headers=headers, data=data)
-        assert resp.status_code == 201
+        assert resp.status_code == 201, resp.dumps()
         global inference_data
         inference_data = resp.json()['data']["inference"]
 
@@ -76,7 +76,7 @@ class TestXyzVaeE2E:
         }
 
         resp = self.api.start_inference_job(job_id=inference_id, headers=headers)
-        assert resp.status_code == 202
+        assert resp.status_code == 202, resp.dumps()
         assert resp.json()['data']["inference"]["status"] == InferenceStatus.INPROGRESS.value
 
         timeout = datetime.now() + timedelta(minutes=2)

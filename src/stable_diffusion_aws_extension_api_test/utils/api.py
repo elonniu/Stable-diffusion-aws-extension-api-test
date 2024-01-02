@@ -7,30 +7,29 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 
+def get_json(data):
+    try:
+        # if data is string
+        if isinstance(data, str):
+            return json.dumps(json.loads(data), indent=4)
+        # if data is object
+        if isinstance(data, dict):
+            json.dumps(dict(data), indent=4)
+        return str(data)
+    except TypeError:
+        return str(data)
+
+
 class Api:
 
-    def __init__(self, config, debug: bool = True):
+    def __init__(self, config):
         self.config = config
-        self.debug = debug
 
     def req(self, method: str, path: str, headers=None, data=None, params=None):
-
         if data is not None:
             data = json.dumps(data)
 
         url = f"{self.config.host_url}/prod/{path}"
-
-        if self.debug:
-            logger.info(f"{method} {url}")
-
-            if headers:
-                logger.info(f"headers: {headers}")
-
-            if data:
-                logger.info(f"data: {data}")
-
-            if params:
-                logger.info(f"params: {params}")
 
         resp = requests.request(
             method=method,
@@ -41,9 +40,24 @@ class Api:
             timeout=(20, 30)
         )
 
-        if self.debug:
-            # logger.info(f"resp headers: {resp.headers}")
-            logger.info(f"{resp.status_code} {resp.text}")
+        dump_string = ""
+        if headers:
+            dump_string += f"\nRequest headers: {get_json(headers)}"
+        if data:
+            dump_string += f"\nRequest data: {get_json(data)}"
+        if params:
+            dump_string += f"\nRequest params: {get_json(params)}"
+        if resp.headers:
+            dump_string += f"\nResponse headers: {get_json(resp.headers)}"
+        if resp.text:
+            dump_string += f"\nResponse body: {get_json(resp.text)}"
+
+        resp.dumps = lambda: logger.info(
+            f"\n----------------------------"
+            f"\n{method} {url}"
+            f"{dump_string}"
+            f"\n----------------------------"
+        )
 
         return resp
 

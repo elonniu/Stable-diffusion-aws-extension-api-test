@@ -21,7 +21,7 @@ class TestPingApi:
     def test_1_ping_get_without_key(self):
         resp = self.api.ping()
 
-        assert resp.status_code == 403
+        assert resp.status_code == 403, resp.dumps()
         assert resp.json()["message"] == "Forbidden"
 
     def test_2_ping_with_bad_key(self):
@@ -29,12 +29,12 @@ class TestPingApi:
 
         resp = self.api.ping(headers=headers)
 
-        assert resp.status_code == 403
+        assert resp.status_code == 403, resp.dumps()
         assert resp.json()["message"] == "Forbidden"
 
     def test_3_ping_success(self):
         headers = {'x-api-key': config.api_key}
         resp = self.api.ping(headers=headers)
 
-        assert resp.status_code == 200
+        assert resp.status_code == 200, resp.dumps()
         assert resp.json()["message"] == "pong"

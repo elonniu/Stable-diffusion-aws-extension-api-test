@@ -33,7 +33,8 @@ class TestEndpointCheckE2E:
         }
 
         resp = self.api.list_endpoints(headers=headers, params=params)
-        assert resp.status_code == 200
+        assert resp.status_code == 200, resp.dumps()
+
         endpoints = resp.json()['data']["endpoints"]
         assert len(endpoints) >= 0
 
@@ -60,7 +61,8 @@ class TestEndpointCheckE2E:
         }
 
         resp = self.api.list_endpoints(headers=headers, params=params)
-        assert resp.status_code == 200
+        assert resp.status_code == 200, resp.dumps()
+
         for endpoint in resp.json()['data']["endpoints"]:
             if endpoint["endpoint_name"] == endpoint_name:
                 if endpoint["endpoint_status"] != "InService":
@@ -88,6 +90,7 @@ class TestEndpointCheckE2E:
         }
 
         resp = self.api.create_endpoint(headers=headers, data=data)
-        assert resp.status_code == 400
+        assert resp.status_code == 400, resp.dumps()
+
         assert resp.json()["statusCode"] == 400
         assert 'not allow to have another one' in resp.json()["message"]

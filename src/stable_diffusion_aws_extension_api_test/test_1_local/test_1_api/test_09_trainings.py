@@ -19,7 +19,7 @@ class TestTrainingsApi:
     def test_1_start_training_job_without_key(self):
         resp = self.api.start_training_job(training_id="id")
 
-        assert resp.status_code == 403
+        assert resp.status_code == 403, resp.dumps()
         assert resp.json()["message"] == "Forbidden"
 
     def test_2_start_training_job_with_bad_params(self):
@@ -35,7 +35,7 @@ class TestTrainingsApi:
 
         resp = self.api.start_training_job(training_id="id", headers=headers, data=data)
 
-        assert resp.status_code == 404
+        assert resp.status_code == 404, resp.dumps()
 
     def test_3_start_training_job_with_bad_id(self):
         headers = {
@@ -51,20 +51,20 @@ class TestTrainingsApi:
 
         resp = self.api.start_training_job(training_id=training_id, headers=headers, data=data)
 
-        assert resp.status_code == 404
+        assert resp.status_code == 404, resp.dumps()
         assert resp.json()["statusCode"] == 404
         assert resp.json()["message"] == f"no such train job with id({training_id})"
 
     def test_4_create_training_job_without_key(self):
         resp = self.api.create_training_job()
 
-        assert resp.status_code == 403
+        assert resp.status_code == 403, resp.dumps()
         assert resp.json()["message"] == "Forbidden"
 
     def test_5_list_trainings_without_key(self):
         resp = self.api.list_trainings()
 
-        assert resp.status_code == 401
+        assert resp.status_code == 401, resp.dumps()
         assert resp.json()["message"] == "Unauthorized"
 
     def test_6_list_trainings(self):
@@ -75,7 +75,7 @@ class TestTrainingsApi:
 
         resp = self.api.list_trainings(headers=headers)
 
-        assert resp.status_code == 200
+        assert resp.status_code == 200, resp.dumps()
         assert resp.json()["statusCode"] == 200
         assert len(resp.json()['data']["trainJobs"]) >= 0
 
@@ -89,7 +89,8 @@ class TestTrainingsApi:
         }
 
         resp = self.api.delete_trainings(headers=headers, data=data)
-        assert resp.status_code == 400
+        assert resp.status_code == 400, resp.dumps()
+
         assert 'object has missing required properties' in resp.json()["message"]
         assert 'training_job_list' in resp.json()["message"]
 
@@ -103,14 +104,14 @@ class TestTrainingsApi:
         }
 
         resp = self.api.delete_trainings(headers=headers, data=data)
-        assert resp.status_code == 204
+        assert resp.status_code == 204, resp.dumps()
 
     def test_9_get_training_job_without_key(self):
         headers = {
         }
 
         resp = self.api.get_training_job(job_id="no", headers=headers)
-        assert resp.status_code == 403
+        assert resp.status_code == 403, resp.dumps()
         assert resp.json()["message"] == "Forbidden"
 
     def test_10_get_training_job_not_found(self):
@@ -121,5 +122,5 @@ class TestTrainingsApi:
         job_id = "job_uuid"
 
         resp = self.api.get_training_job(job_id=job_id, headers=headers)
-        assert resp.status_code == 404
+        assert resp.status_code == 404, resp.dumps()
         assert resp.json()["message"] == f"Job with id {job_id} not found"

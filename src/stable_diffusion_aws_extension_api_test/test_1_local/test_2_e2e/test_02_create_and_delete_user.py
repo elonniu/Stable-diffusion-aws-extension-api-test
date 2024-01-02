@@ -32,7 +32,7 @@ class TestUserE2E:
 
         resp = self.api.create_user_new(headers=headers, data=data)
 
-        assert resp.status_code == 201
+        assert resp.status_code == 201, resp.dumps()
         assert resp.json()["statusCode"] == 201
 
     def test_2_list_users_exists_name(self):
@@ -43,7 +43,7 @@ class TestUserE2E:
 
         resp = self.api.list_users(headers=headers)
 
-        assert resp.status_code == 200
+        assert resp.status_code == 200, resp.dumps()
         users = resp.json()["data"]["users"]
         assert username in [user["username"] for user in users]
 
@@ -59,7 +59,7 @@ class TestUserE2E:
 
         resp = self.api.delete_users(headers=headers, data=data)
 
-        assert resp.status_code == 204
+        assert resp.status_code == 204, resp.dumps()
 
     def test_4_user_delete_check(self):
         headers = {
@@ -69,6 +69,6 @@ class TestUserE2E:
 
         resp = self.api.list_users(headers=headers)
 
-        assert resp.status_code == 200
+        assert resp.status_code == 200, resp.dumps()
         users = resp.json()["data"]["users"]
         assert username not in [user["username"] for user in users]
