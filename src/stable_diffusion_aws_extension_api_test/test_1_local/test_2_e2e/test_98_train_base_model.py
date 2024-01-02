@@ -30,6 +30,7 @@ class TestTrainE2E:
 
         assert 'Items' in models
         if len(models['Items']) == 0:
+            pass
             return
 
         for model in models["Items"]:
