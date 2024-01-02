@@ -18,12 +18,14 @@ pip install --upgrade pip
 
 cd ../
 
-git clone ssh://git.amazon.com/pkg/Solution-data-generator
+curl -sSO https://aws-gcr-solutions.s3.amazonaws.com/Solution-data-generator/Solution-data-generator.zip
+unzip -q Solution-data-generator.zip
 cd Solution-data-generator
 pip3 --default-timeout=6000 install -r requirements.txt
 cd ../
 
-git clone ssh://git.amazon.com/pkg/Solution-api-test-framework
+curl -sSO https://aws-gcr-solutions.s3.amazonaws.com/Solution-api-test-framework/Solution-api-test-framework.zip
+unzip -q Solution-api-test-framework.zip
 cd Solution-api-test-framework
 pip3 --default-timeout=6000 install -r requirements.txt
 pip3 install -e ../Solution-data-generator
