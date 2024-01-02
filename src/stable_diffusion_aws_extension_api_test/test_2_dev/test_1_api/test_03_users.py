@@ -19,7 +19,8 @@ class TestUsersApi:
     def test_1_list_users_without_key(self):
         resp = self.api.list_users()
 
-        assert resp.status_code == 401
+        assert resp.status_code == 401, resp.dumps()
+
         assert resp.json()["message"] == "Unauthorized"
 
     def test_2_list_users_without_auth(self):
@@ -27,7 +28,8 @@ class TestUsersApi:
 
         resp = self.api.list_users(headers=headers)
 
-        assert resp.status_code == 401
+        assert resp.status_code == 401, resp.dumps()
+
         assert resp.json()["message"] == "Unauthorized"
 
     def test_3_list_users(self):
@@ -38,7 +40,8 @@ class TestUsersApi:
 
         resp = self.api.list_users(headers=headers)
 
-        assert resp.status_code == 200
+        assert resp.status_code == 200, resp.dumps()
+
         users = resp.json()["data"]["users"]
         assert len(users) >= 0
         assert users[0]["username"] == config.username
@@ -50,7 +53,8 @@ class TestUsersApi:
 
         resp = self.api.delete_users(headers={}, data=data)
 
-        assert resp.status_code == 401
+        assert resp.status_code == 401, resp.dumps()
+
         assert resp.json()["message"] == "Unauthorized"
 
     def test_5_delete_users_not_found(self):
@@ -65,7 +69,7 @@ class TestUsersApi:
 
         resp = self.api.delete_users(headers=headers, data=data)
 
-        assert resp.status_code == 204
+        assert resp.status_code == 204, resp.dumps()
 
     def test_6_create_user_bad_creator(self):
         headers = {
@@ -82,7 +86,8 @@ class TestUsersApi:
 
         resp = self.api.create_user_new(headers=headers, data=data)
 
-        assert resp.status_code == 400
+        assert resp.status_code == 400, resp.dumps()
+
         assert resp.json()["message"] == "creator bad_creator not exist"
 
     def test_7_create_user_with_bad_role(self):
@@ -100,7 +105,8 @@ class TestUsersApi:
 
         resp = self.api.create_user_new(headers=headers, data=data)
 
-        assert resp.status_code == 400
+        assert resp.status_code == 400, resp.dumps()
+
         assert resp.json()["message"] == 'user roles "admin" not exist'
 
     def test_8_delete_users_with_bad_params(self):
@@ -114,7 +120,8 @@ class TestUsersApi:
 
         resp = self.api.delete_users(headers=headers, data=data)
 
-        assert resp.status_code == 400
+        assert resp.status_code == 400, resp.dumps()
+
         assert 'object has missing required properties' in resp.json()["message"]
 
     def test_9_delete_users_with_username_empty(self):
@@ -129,5 +136,6 @@ class TestUsersApi:
 
         resp = self.api.delete_users(headers=headers, data=data)
 
-        assert resp.status_code == 400
+        assert resp.status_code == 400, resp.dumps()
+
         assert 'required minimum: 1' in resp.json()["message"]

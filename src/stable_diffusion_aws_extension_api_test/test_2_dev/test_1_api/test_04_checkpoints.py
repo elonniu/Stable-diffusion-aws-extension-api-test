@@ -41,12 +41,12 @@ class TestCheckpointsApi:
         }
 
         resp = self.api.delete_checkpoints(headers=headers, data=data)
-        assert resp.status_code == 204
+        assert resp.status_code == 204, resp.dumps()
 
     def test_1_list_checkpoints_without_key(self):
         resp = self.api.list_checkpoints()
 
-        assert resp.status_code == 401
+        assert resp.status_code == 401, resp.dumps()
         assert resp.json()["message"] == "Unauthorized"
 
     def test_2_list_checkpoints_without_auth(self):
@@ -54,7 +54,7 @@ class TestCheckpointsApi:
 
         resp = self.api.list_checkpoints(headers=headers)
 
-        assert resp.status_code == 401
+        assert resp.status_code == 401, resp.dumps()
         assert resp.json()["message"] == "Unauthorized"
 
     def test_3_list_checkpoints_without_username(self):
@@ -65,7 +65,8 @@ class TestCheckpointsApi:
 
         resp = self.api.list_checkpoints(headers=headers)
 
-        assert resp.status_code == 200
+        assert resp.status_code == 200, resp.dumps()
+
         assert resp.json()["statusCode"] == 200
         assert len(resp.json()['data']["checkpoints"]) >= 0
 
@@ -82,7 +83,8 @@ class TestCheckpointsApi:
             params=params
         )
 
-        assert resp.status_code == 200
+        assert resp.status_code == 200, resp.dumps()
+
         assert resp.json()["statusCode"] == 200
         assert len(resp.json()['data']["checkpoints"]) >= 0
 
@@ -110,7 +112,8 @@ class TestCheckpointsApi:
 
         resp = self.api.create_checkpoint_new(headers=headers, data=data)
 
-        assert resp.status_code == 400
+        assert resp.status_code == 400, resp.dumps()
+
         assert resp.json()["statusCode"] == 400
         assert "user: \"bad_username\" not exist" in resp.json()["message"]
 
@@ -124,7 +127,8 @@ class TestCheckpointsApi:
         }
 
         resp = self.api.delete_checkpoints(headers=headers, data=data)
-        assert resp.status_code == 400
+        assert resp.status_code == 400, resp.dumps()
+
         assert 'object has missing required properties' in resp.json()["message"]
         assert 'checkpoint_id_list' in resp.json()["message"]
 
@@ -136,11 +140,12 @@ class TestCheckpointsApi:
         }
 
         resp = self.api.delete_roles(headers=headers, data=data)
-        assert resp.status_code == 403
+        assert resp.status_code == 403, resp.dumps()
+
         assert resp.json()["message"] == 'Forbidden'
 
     def test_9_update_checkpoint_without_key(self):
         resp = self.api.update_checkpoint_new(checkpoint_id="1111-2222-3333-4444")
 
-        assert resp.status_code == 403
+        assert resp.status_code == 403, resp.dumps()
         assert resp.json()["message"] == "Forbidden"

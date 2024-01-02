@@ -21,7 +21,7 @@ inference_data = {}
 class TestSLaTxt2Img:
 
     def setup_class(self):
-        self.api = Api(config=config, debug=False)
+        self.api = Api(config=config)
 
     @classmethod
     def teardown_class(cls):
@@ -124,7 +124,7 @@ class TestSLaTxt2Img:
         resp = self.api.create_inference_new(headers=headers, data=data)
 
         if 'inference' not in resp.json()['data']:
-            logger.error(resp.json())
+            logger.error(resp.dumps())
             return False
 
         inference = resp.json()['data']['inference']
@@ -156,7 +156,7 @@ class TestSLaTxt2Img:
             return False
 
         if resp.json()['statusCode'] != 202:
-            logger.error(resp.json())
+            logger.error(resp.dumps())
             return False
 
         timeout = datetime.now() + timedelta(minutes=2)
