@@ -2,16 +2,16 @@ import base64
 import logging
 import os
 
-import shortuuid
-
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
-
-uuid = shortuuid.ShortUUID().random(length=8).lower()
 
 host_url = os.environ.get("API_GATEWAY_URL")
 if not host_url:
     raise Exception("API_GATEWAY_URL is empty")
+
+region_name = host_url.split('.')[2]
+if not region_name:
+    raise Exception("API_GATEWAY_URL is invalid")
 
 # Remove "/prod" or "/prod/" from the end of the host_url
 host_url = host_url.replace("/prod/", "")
@@ -25,9 +25,7 @@ if not api_key:
     raise Exception("API_GATEWAY_URL_TOKEN is empty")
 logger.info(f"config.api_key: {api_key}")
 
-username = os.environ.get("API_USERNAME")
-if not username:
-    raise Exception("API_USERNAME is empty")
+username = "admin"
 logger.info(f"config.username: {username}")
 
 bearer_token = f'Bearer {base64.b16encode(username.encode("utf-8")).decode("utf-8")}'
@@ -36,11 +34,6 @@ bucket = os.environ.get("API_BUCKET")
 if not bucket:
     raise Exception("API_BUCKET is empty")
 logger.info(f"config.bucket: {bucket}")
-
-region_name = os.environ.get("API_REGION")
-if not region_name:
-    raise Exception("API_REGION is empty")
-logger.info(f"config.region_name: {region_name}")
 
 fast_test = os.environ.get("FAST_TEST") == "true"
 logger.info(f"config.fast_test: {fast_test}")
