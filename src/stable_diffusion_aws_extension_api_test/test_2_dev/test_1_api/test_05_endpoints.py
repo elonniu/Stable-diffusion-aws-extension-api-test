@@ -23,14 +23,14 @@ class TestEndpointsApi:
     def test_1_list_endpoints_without_key(self):
         resp = self.api.list_endpoints()
 
-        assert resp.status_code == 401
+        assert resp.status_code == 401, resp.dumps()
         assert resp.json()["message"] == "Unauthorized"
 
     def test_2_list_endpoints_without_auth(self):
         headers = {"x-api-key": config.api_key}
         resp = self.api.list_endpoints(headers=headers)
 
-        assert resp.status_code == 401
+        assert resp.status_code == 401, resp.dumps()
         assert resp.json()["message"] == "Unauthorized"
 
     def test_3_list_endpoints(self):
@@ -40,7 +40,8 @@ class TestEndpointsApi:
         }
         resp = self.api.list_endpoints(headers=headers)
 
-        assert resp.status_code == 200
+        assert resp.status_code == 200, resp.dumps()
+
         assert resp.json()["statusCode"] == 200
         assert len(resp.json()['data']["endpoints"]) >= 0
 
@@ -56,7 +57,8 @@ class TestEndpointsApi:
 
         resp = self.api.list_endpoints(headers=headers, params=params)
 
-        assert resp.status_code == 200
+        assert resp.status_code == 200, resp.dumps()
+
         assert resp.json()["statusCode"] == 200
         assert len(resp.json()['data']["endpoints"]) >= 0
 
@@ -72,7 +74,8 @@ class TestEndpointsApi:
 
         resp = self.api.list_endpoints(headers=headers, params=params)
 
-        assert resp.status_code == 400
+        assert resp.status_code == 400, resp.dumps()
+
         assert "user: \"admin_error\" not exist" in resp.json()["message"]
 
     def test_6_create_endpoint_without_params(self):
@@ -86,7 +89,8 @@ class TestEndpointsApi:
         }
 
         resp = self.api.create_endpoint(headers=headers, data=data)
-        assert resp.status_code == 400
+        assert resp.status_code == 400, resp.dumps()
+
         assert 'object has missing required properties' in resp.json()["message"]
 
     def test_7_create_endpoint_with_bad_instance_count(self):
@@ -104,6 +108,7 @@ class TestEndpointsApi:
         }
 
         resp = self.api.create_endpoint(headers=headers, data=data)
+        assert resp.status_code == 400, resp.dumps()
         assert 'ResourceLimitExceeded' in resp.text
 
     def test_8_create_endpoint_with_larger(self):
@@ -125,19 +130,19 @@ class TestEndpointsApi:
 
         resp = self.api.create_endpoint(headers=headers, data=data)
 
-        assert resp.status_code == 400
+        assert resp.status_code == 400, resp.dumps()
         assert f"{instance_type} for endpoint usage' is 0 Instances" in resp.json()["message"]
 
     def test_9_delete_endpoints_without_key(self):
         resp = self.api.delete_endpoints()
 
-        assert resp.status_code == 401
+        assert resp.status_code == 401, resp.dumps()
         assert resp.json()["message"] == "Unauthorized"
 
     def test_10_create_endpoint_without_key(self):
         resp = self.api.create_endpoint()
 
-        assert resp.status_code == 401
+        assert resp.status_code == 401, resp.dumps()
         assert resp.json()["message"] == "Unauthorized"
 
     # if endpoint is old, it still will be deleted
@@ -156,7 +161,7 @@ class TestEndpointsApi:
 
         resp = self.api.delete_endpoints(headers=headers, data=data)
 
-        assert resp.status_code == 204
+        assert resp.status_code == 204, resp.dumps()
 
     def test_12_delete_endpoints_bad_username(self):
         headers = {
@@ -173,6 +178,7 @@ class TestEndpointsApi:
 
         resp = self.api.delete_endpoints(headers=headers, data=data)
 
-        assert resp.status_code == 400
+        assert resp.status_code == 400, resp.dumps()
+
         assert resp.json()["statusCode"] == 400
         assert "user: \"bad_user\" not exist" in resp.json()["message"]

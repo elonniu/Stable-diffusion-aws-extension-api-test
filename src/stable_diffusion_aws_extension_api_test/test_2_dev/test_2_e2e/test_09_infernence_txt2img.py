@@ -49,7 +49,8 @@ class TestTxt2ImgInferenceE2E:
         }
 
         resp = self.api.create_inference_new(headers=headers, data=data)
-        assert resp.status_code == 201
+        assert resp.status_code == 201, resp.dumps()
+
         global inference_data
         inference_data = resp.json()['data']["inference"]
 
@@ -73,7 +74,8 @@ class TestTxt2ImgInferenceE2E:
         }
 
         resp = self.api.list_inferences(headers=headers, params=params)
-        assert resp.status_code == 200
+        assert resp.status_code == 200, resp.dumps()
+
         assert resp.json()["statusCode"] == 200
         inferences = resp.json()['data']["inferences"]
         assert inference_data["id"] in [inference["InferenceJobId"] for inference in inferences]
@@ -90,7 +92,8 @@ class TestTxt2ImgInferenceE2E:
         }
 
         resp = self.api.start_inference_job(job_id=inference_id, headers=headers)
-        assert resp.status_code == 202
+        assert resp.status_code == 202, resp.dumps()
+
         assert resp.json()['data']["inference"]["status"] == InferenceStatus.INPROGRESS.value
 
         timeout = datetime.now() + timedelta(minutes=5)
@@ -120,4 +123,4 @@ class TestTxt2ImgInferenceE2E:
         }
 
         resp = self.api.delete_inferences(headers=headers, data=data)
-        assert resp.status_code == 204
+        assert resp.status_code == 204, resp.dumps()

@@ -31,26 +31,26 @@ class TestRolesApi:
 
         resp = self.api.create_user_new(headers=headers, data=data)
 
-        assert resp.status_code == 201
+        assert resp.status_code == 201, resp.dumps()
         assert resp.json()["message"] == "Created"
 
     def test_2_list_roles_without_api_key(self):
         resp = self.api.list_roles()
 
-        assert resp.status_code == 401
+        assert resp.status_code == 401, resp.dumps()
         assert resp.json()["message"] == "Unauthorized"
 
     def test_3_list_roles_without_auth(self):
         headers = {"x-api-key": config.api_key}
         resp = self.api.list_roles(headers=headers)
 
-        assert resp.status_code == 401
+        assert resp.status_code == 401, resp.dumps()
         assert resp.json()["message"] == "Unauthorized"
 
     def test_4_create_role_without_key(self):
         resp = self.api.create_role_new()
 
-        assert resp.status_code == 403
+        assert resp.status_code == 403, resp.dumps()
         assert resp.json()["message"] == "Forbidden"
 
     def test_5_create_role_with_bad_creator(self):
@@ -67,7 +67,7 @@ class TestRolesApi:
 
         resp = self.api.create_role_new(headers=headers, data=data)
 
-        assert resp.status_code == 400
+        assert resp.status_code == 400, resp.dumps()
         assert resp.json()["statusCode"] == 400
         assert resp.json()["message"] == 'creator bad_creator not exist'
 
@@ -83,7 +83,7 @@ class TestRolesApi:
 
         resp = self.api.list_roles(headers=headers, params=params)
 
-        assert resp.status_code == 200
+        assert resp.status_code == 200, resp.dumps()
         roles = resp.json()['data']["roles"]
         assert len(roles) >= 1
 
@@ -98,7 +98,7 @@ class TestRolesApi:
 
         resp = self.api.list_roles(headers=headers, params=params)
 
-        assert resp.status_code == 200
+        assert resp.status_code == 200, resp.dumps()
         roles = resp.json()['data']["roles"]
         assert len(roles) >= 1
 
@@ -110,7 +110,8 @@ class TestRolesApi:
         }
 
         resp = self.api.delete_roles(headers=headers, data=data)
-        assert resp.status_code == 403
+
+        assert resp.status_code == 403, resp.dumps()
         assert 'Forbidden' == resp.json()["message"]
 
     def test_9_delete_roles_with_bad_request_body(self):
@@ -123,7 +124,8 @@ class TestRolesApi:
         }
 
         resp = self.api.delete_roles(headers=headers, data=data)
-        assert resp.status_code == 400
+        assert resp.status_code == 400, resp.dumps()
+
         assert 'object has missing required properties' in resp.json()["message"]
         assert 'role_name_list' in resp.json()["message"]
 
@@ -138,4 +140,4 @@ class TestRolesApi:
         }
 
         resp = self.api.delete_roles(headers=headers, data=data)
-        assert resp.status_code == 400
+        assert resp.status_code == 400, resp.dumps()
