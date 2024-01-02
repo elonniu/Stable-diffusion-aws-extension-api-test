@@ -86,5 +86,4 @@ class TestModelsApi:
         }
 
         resp = self.api.delete_models(headers=headers, data=data)
-        assert resp.status_code == 200
-        assert 'models deleted' == resp.json()["message"]
+        assert resp.status_code == 204

@@ -48,11 +48,11 @@ class TestDatasetE2E:
         }
 
         resp = self.api.create_dataset_new(headers=headers, data=data)
-        assert resp.status_code == 200
+        assert resp.status_code == 201
         global dataset
         dataset = resp.json()
 
-        assert resp.json()["statusCode"] == 200
+        assert resp.json()["statusCode"] == 201
         assert resp.json()['data']["datasetName"] == config.dataset_name
 
     def test_2_dataset_img_upload(self):

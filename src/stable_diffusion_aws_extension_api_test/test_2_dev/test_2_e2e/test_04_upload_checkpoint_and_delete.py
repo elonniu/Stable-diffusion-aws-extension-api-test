@@ -10,7 +10,6 @@ logger = logging.getLogger(__name__)
 checkpoint_id = None
 signed_urls = None
 
-message = "api-test-message"
 filename = "cartoony.safetensors"
 checkpoint_type = "Lora"
 local_path = f"data/models/{checkpoint_type}/{filename}"
@@ -44,15 +43,15 @@ class TestCheckPointDeleteE2E:
                 }
             ],
             "params": {
-                "message": message,
+                "message": config.ckpt_message,
                 "creator": config.username
             }
         }
 
         resp = self.api.create_checkpoint_new(headers=headers, data=data)
 
-        assert resp.status_code == 200
-        assert resp.json()["statusCode"] == 200
+        assert resp.status_code == 201
+        assert resp.json()["statusCode"] == 201
         assert resp.json()['data']["checkpoint"]['type'] == checkpoint_type
         assert len(resp.json()['data']["checkpoint"]['id']) == 36
 
@@ -96,4 +95,4 @@ class TestCheckPointDeleteE2E:
         }
 
         resp = self.api.delete_checkpoints(headers=headers, data=data)
-        assert 'checkpoints deleted' == resp.json()["message"]
+        assert resp.status_code == 204

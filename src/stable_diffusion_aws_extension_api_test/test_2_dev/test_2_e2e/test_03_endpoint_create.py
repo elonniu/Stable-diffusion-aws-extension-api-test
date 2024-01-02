@@ -84,7 +84,7 @@ class TestEndpointCreateE2E:
         }
 
         resp = self.api.create_endpoint(headers=headers, data=data)
-        assert resp.status_code == 200
+        assert resp.status_code == 202
         assert resp.json()["data"]["endpoint_status"] == "Creating"
 
     def test_4_create_endpoint_exists(self):

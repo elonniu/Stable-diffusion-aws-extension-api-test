@@ -18,6 +18,31 @@ class TestCheckpointsApi:
     def teardown_class(cls):
         pass
 
+    def test_0_clean_checkpoints(self):
+        headers = {
+            "x-api-key": config.api_key,
+            "Authorization": config.bearer_token
+        }
+
+        resp = self.api.list_checkpoints(headers=headers)
+        ckpts = resp.json()['data']['checkpoints']
+
+        id_list = []
+        for ckpt in ckpts:
+
+            id_list.append(ckpt['id'])
+
+        if len(id_list) == 0:
+            logger.info("No checkpoints to clean")
+            return
+
+        data = {
+            "checkpoint_id_list": id_list
+        }
+
+        resp = self.api.delete_checkpoints(headers=headers, data=data)
+        assert resp.status_code == 204
+
     def test_1_list_checkpoints_without_key(self):
         resp = self.api.list_checkpoints()
 
@@ -78,15 +103,15 @@ class TestCheckpointsApi:
                 }
             ],
             "params": {
-                "message": "placeholder for chkpts upload test",
+                "message": config.ckpt_message,
                 "creator": "bad_username"
             }
         }
 
         resp = self.api.create_checkpoint_new(headers=headers, data=data)
 
-        assert resp.status_code == 500
-        assert resp.json()["statusCode"] == 500
+        assert resp.status_code == 400
+        assert resp.json()["statusCode"] == 400
         assert "user: \"bad_username\" not exist" in resp.json()["message"]
 
     def test_7_delete_checkpoints_with_bad_request_body(self):

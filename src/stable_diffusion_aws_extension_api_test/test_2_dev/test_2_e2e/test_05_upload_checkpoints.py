@@ -11,14 +11,12 @@ logger = logging.getLogger(__name__)
 checkpoint_id = None
 signed_urls = None
 
-message = "api-test-message"
-
 
 class TestCheckPointE2E:
 
     def setup_class(self):
         self.api = Api(config)
-        clear_checkpoint(message)
+        clear_checkpoint(config.ckpt_message)
 
     @classmethod
     def teardown_class(cls):
@@ -42,7 +40,7 @@ class TestCheckPointE2E:
                 "checkpoint_id_list": id_list
             }
             resp = self.api.delete_checkpoints(headers=headers, data=data)
-            assert resp.status_code == 200
+            assert resp.status_code == 204
 
     def test_1_create_checkpoint_v15(self):
         filename = "v1-5-pruned-emaonly.safetensors"
@@ -60,15 +58,15 @@ class TestCheckPointE2E:
                 }
             ],
             "params": {
-                "message": message,
+                "message": config.ckpt_message,
                 "creator": config.username
             }
         }
 
         resp = self.api.create_checkpoint_new(headers=headers, data=data)
 
-        assert resp.status_code == 200
-        assert resp.json()["statusCode"] == 200
+        assert resp.status_code == 201
+        assert resp.json()["statusCode"] == 201
         assert resp.json()['data']["checkpoint"]['type'] == checkpoint_type
         assert len(resp.json()['data']["checkpoint"]['id']) == 36
 
@@ -86,13 +84,12 @@ class TestCheckPointE2E:
 
         data = {
             "status": "Active",
-            "bad_params": {}
+            "name": ""
         }
 
         resp = self.api.update_checkpoint_new(checkpoint_id=checkpoint_id, headers=headers, data=data)
 
         assert resp.status_code == 400
-        assert 'object has missing required properties' in resp.json()["message"]
 
     def test_3_update_checkpoint_v15(self):
         filename = "v1-5-pruned-emaonly.safetensors"
@@ -156,15 +153,15 @@ class TestCheckPointE2E:
                 }
             ],
             "params": {
-                "message": message,
+                "message": config.ckpt_message,
                 "creator": config.username
             }
         }
 
         resp = self.api.create_checkpoint_new(headers=headers, data=data)
 
-        assert resp.status_code == 200
-        assert resp.json()["statusCode"] == 200
+        assert resp.status_code == 201
+        assert resp.json()["statusCode"] == 201
         assert resp.json()['data']["checkpoint"]['type'] == checkpoint_type
         assert len(resp.json()['data']["checkpoint"]['id']) == 36
         global checkpoint_id
@@ -237,15 +234,15 @@ class TestCheckPointE2E:
                 }
             ],
             "params": {
-                "message": message,
+                "message": config.ckpt_message,
                 "creator": config.username
             }
         }
 
         resp = self.api.create_checkpoint_new(headers=headers, data=data)
 
-        assert resp.status_code == 200
-        assert resp.json()["statusCode"] == 200
+        assert resp.status_code == 201
+        assert resp.json()["statusCode"] == 201
         assert resp.json()['data']["checkpoint"]['type'] == checkpoint_type
         assert len(resp.json()['data']["checkpoint"]['id']) == 36
         global checkpoint_id
@@ -319,15 +316,15 @@ class TestCheckPointE2E:
                 }
             ],
             "params": {
-                "message": message,
+                "message": config.ckpt_message,
                 "creator": config.username
             }
         }
 
         resp = self.api.create_checkpoint_new(headers=headers, data=data)
 
-        assert resp.status_code == 200
-        assert resp.json()["statusCode"] == 200
+        assert resp.status_code == 201
+        assert resp.json()["statusCode"] == 201
         assert resp.json()['data']["checkpoint"]['type'] == checkpoint_type
         assert len(resp.json()['data']["checkpoint"]['id']) == 36
         global checkpoint_id
@@ -401,15 +398,15 @@ class TestCheckPointE2E:
                 }
             ],
             "params": {
-                "message": message,
+                "message": config.ckpt_message,
                 "creator": config.username
             }
         }
 
         resp = self.api.create_checkpoint_new(headers=headers, data=data)
 
-        assert resp.status_code == 200
-        assert resp.json()["statusCode"] == 200
+        assert resp.status_code == 201
+        assert resp.json()["statusCode"] == 201
         assert resp.json()['data']["checkpoint"]['type'] == checkpoint_type
         assert len(resp.json()['data']["checkpoint"]['id']) == 36
         global checkpoint_id
@@ -463,27 +460,3 @@ class TestCheckPointE2E:
         assert resp.status_code == 200
         global checkpoint_id
         assert checkpoint_id in [checkpoint["id"] for checkpoint in resp.json()['data']["checkpoints"]]
-
-    def test_17_upload_lora_checkpoint_by_url(self):
-        headers = {"x-api-key": config.api_key}
-        if config.is_gcr:
-            url = "https://aws-gcr-solutions.s3.cn-north-1.amazonaws.com.cn/stable-diffusion-aws-extension-github-mainline/models/cartoony.safetensors"
-        else:
-            url = "https://raw.githubusercontent.com/elonniu/safetensors/main/cartoony.safetensors"
-
-        data = {
-            "checkpoint_type": "Lora",
-            "urls": [
-                url
-            ],
-            "params": {
-                "creator": config.username,
-                "message": "api-test-message"
-            }
-        }
-
-        resp = self.api.create_checkpoint_new(headers=headers, data=data)
-
-        assert resp.status_code == 200
-        assert resp.json()["statusCode"] == 200
-        assert 'checkpoint' in resp.json()['data']

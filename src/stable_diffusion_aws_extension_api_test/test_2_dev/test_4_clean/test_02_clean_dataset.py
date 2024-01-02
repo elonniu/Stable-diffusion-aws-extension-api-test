@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 
-class TestCleanEndpoint:
+class TestCleanDataset:
     def setup_class(self):
         self.api = Api(config)
 
@@ -17,18 +17,16 @@ class TestCleanEndpoint:
     def teardown_class(cls):
         pass
 
-    def test_1_delete_endpoints(self):
+    def test_1_clean_datasets(self):
         headers = {
-            "x-api-key": config.api_key,
-            "Authorization": config.bearer_token
+            "x-api-key": config.api_key
         }
 
         data = {
-            "endpoint_name_list": [
-                f"infer-endpoint-{config.endpoint_name}"
+            "dataset_name_list": [
+                config.dataset_name,
             ],
-            "username": config.username
         }
 
-        resp = self.api.delete_endpoints(headers=headers, data=data)
+        resp = self.api.delete_datasets(headers=headers, data=data)
         assert resp.status_code == 204

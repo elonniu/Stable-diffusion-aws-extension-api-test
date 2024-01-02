@@ -31,8 +31,8 @@ class TestRolesApi:
 
         resp = self.api.create_user_new(headers=headers, data=data)
 
-        assert resp.status_code == 200
-        assert resp.json()["message"] == "OK"
+        assert resp.status_code == 201
+        assert resp.json()["message"] == "Created"
 
     def test_2_list_roles_without_api_key(self):
         resp = self.api.list_roles()
@@ -126,3 +126,16 @@ class TestRolesApi:
         assert resp.status_code == 400
         assert 'object has missing required properties' in resp.json()["message"]
         assert 'role_name_list' in resp.json()["message"]
+
+    def test_10_delete_default_role(self):
+        headers = {
+            "x-api-key": config.api_key,
+            "Authorization": config.bearer_token
+        }
+
+        data = {
+            "role_name_list": ['IT Operator'],
+        }
+
+        resp = self.api.delete_roles(headers=headers, data=data)
+        assert resp.status_code == 400

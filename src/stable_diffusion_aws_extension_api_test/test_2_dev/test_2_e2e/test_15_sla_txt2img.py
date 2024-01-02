@@ -65,7 +65,7 @@ class TestSLaTxt2Img:
                 failed = 0
 
             if len(failed_list) > 0:
-                failed_list_string = "failed_list:" + "\\n".join(failed_list)
+                failed_list_string = "failed_list:" + "\\n" + str(failed_list)
             else:
                 failed_list_string = ""
 
@@ -155,7 +155,7 @@ class TestSLaTxt2Img:
             logger.error(resp.json())
             return False
 
-        if resp.json()['statusCode'] != 200:
+        if resp.json()['statusCode'] != 202:
             logger.error(resp.json())
             return False
 
