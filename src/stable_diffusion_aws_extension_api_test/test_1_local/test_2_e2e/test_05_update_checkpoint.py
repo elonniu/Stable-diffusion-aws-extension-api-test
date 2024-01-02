@@ -44,7 +44,7 @@ class TestUpdateCheckPointE2E:
                 "checkpoint_id_list": id_list
             }
             resp = self.api.delete_checkpoints(headers=headers, data=data)
-            assert resp.status_code == 204
+            assert resp.status_code == 204, resp.dumps()
 
     def test_1_upload_lora_checkpoint_by_url(self):
         headers = {"x-api-key": config.api_key}
@@ -62,7 +62,7 @@ class TestUpdateCheckPointE2E:
 
         resp = self.api.create_checkpoint_new(headers=headers, data=data)
 
-        assert resp.status_code == 202
+        assert resp.status_code == 202, resp.dumps()
         assert 'message' in resp.json()
 
     def test_2_checkpoint_unique_by_url(self):
@@ -82,7 +82,7 @@ class TestUpdateCheckPointE2E:
 
         resp = self.api.create_checkpoint_new(headers=headers, data=data)
 
-        assert resp.status_code == 400
+        assert resp.status_code == 400, resp.dumps()
         assert 'already exists' in resp.json()['message']
 
     def test_3_checkpoint_update_name(self):
@@ -100,7 +100,7 @@ class TestUpdateCheckPointE2E:
                     "name": "cartoony"
                 }
                 resp = self.api.update_checkpoint_new(headers=headers, checkpoint_id=checkpoint_id, data=data)
-                assert resp.status_code == 202
+                assert resp.status_code == 202, resp.dumps()
 
     def test_4_checkpoint_update_name_check(self):
         sleep(5)
@@ -110,8 +110,10 @@ class TestUpdateCheckPointE2E:
         }
 
         rename = False
-        ckpts = self.api.list_checkpoints(headers=headers).json()['data']['checkpoints']
-        for ckpt in ckpts:
+        resp = self.api.list_checkpoints(headers=headers)
+        assert resp.status_code == 200, resp.dumps()
+
+        for ckpt in resp.json()['data']['checkpoints']:
             if ckpt['name'][0] == 'cartoony':
                 rename = True
 

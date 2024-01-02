@@ -277,7 +277,7 @@ def delete_sagemaker_endpoint_new(api_instance):
     }
 
     resp = api_instance.delete_endpoints(headers=headers, data=data)
-    assert resp.status_code == 204
+    assert resp.status_code == 204, resp.dumps()
 
 
 def delete_train_item():

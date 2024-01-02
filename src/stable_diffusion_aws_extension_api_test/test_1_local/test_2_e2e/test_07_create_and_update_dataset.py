@@ -48,7 +48,8 @@ class TestDatasetE2E:
         }
 
         resp = self.api.create_dataset_new(headers=headers, data=data)
-        assert resp.status_code == 201
+        assert resp.status_code == 201, resp.dumps()
+
         global dataset
         dataset = resp.json()
 
@@ -77,7 +78,7 @@ class TestDatasetE2E:
         }
 
         resp = self.api.update_dataset_new(dataset_id=config.dataset_name, headers=headers, data=data)
-        assert resp.status_code == 200
+        assert resp.status_code == 200, resp.dumps()
 
         assert resp.json()["statusCode"] == 200
 
@@ -88,6 +89,8 @@ class TestDatasetE2E:
         }
 
         resp = self.api.list_datasets(headers=headers)
+        assert resp.status_code == 200, resp.dumps()
+
         datasets = resp.json()['data']["datasets"]
 
         assert config.dataset_name in [user["datasetName"] for user in datasets]
@@ -101,5 +104,6 @@ class TestDatasetE2E:
         }
 
         resp = self.api.get_dataset(name=dataset_name, headers=headers)
-        assert resp.status_code == 200
+        assert resp.status_code == 200, resp.dumps()
+
         assert resp.json()["statusCode"] == 200

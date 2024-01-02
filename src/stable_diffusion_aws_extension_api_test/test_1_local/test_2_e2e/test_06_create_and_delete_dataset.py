@@ -44,7 +44,8 @@ class TestCreateAndDeleteDatasetE2E:
         }
 
         resp = self.api.create_dataset_new(headers=headers, data=data)
-        assert resp.status_code == 201
+        assert resp.status_code == 201, resp.dumps()
+
         global dataset
         dataset = resp.json()
 
@@ -73,7 +74,7 @@ class TestCreateAndDeleteDatasetE2E:
         }
 
         resp = self.api.update_dataset_new(dataset_id=dataset_name, headers=headers, data=data)
-        assert resp.status_code == 200
+        assert resp.status_code == 200, resp.dumps()
         assert resp.json()["statusCode"] == 200
 
     def test_4_datasets_get(self):
@@ -83,6 +84,8 @@ class TestCreateAndDeleteDatasetE2E:
         }
 
         resp = self.api.list_datasets(headers=headers)
+        assert resp.status_code == 200, resp.dumps()
+
         datasets = resp.json()['data']["datasets"]
         assert dataset_name in [user["datasetName"] for user in datasets]
 
@@ -94,7 +97,7 @@ class TestCreateAndDeleteDatasetE2E:
         }
 
         resp = self.api.get_dataset(name=dataset_name, headers=headers)
-        assert resp.status_code == 200
+        assert resp.status_code == 200, resp.dumps()
         assert resp.json()["statusCode"] == 200
 
     def test_6_datasets_delete_succeed(self):
@@ -109,4 +112,4 @@ class TestCreateAndDeleteDatasetE2E:
         }
 
         resp = self.api.delete_datasets(headers=headers, data=data)
-        assert resp.status_code == 204
+        assert resp.status_code == 204, resp.dumps()

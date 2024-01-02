@@ -29,7 +29,8 @@ class TestRoleE2E:
         }
 
         resp = self.api.create_role_new(headers=headers, data=data)
-        assert resp.status_code == 201
+        assert resp.status_code == 201, resp.dumps()
+
         assert resp.json()["statusCode"] == 201
         assert resp.json()["data"]['role_name'] == config.role_name
 
@@ -40,7 +41,8 @@ class TestRoleE2E:
         }
 
         resp = self.api.list_roles(headers=headers)
-        assert resp.status_code == 200
+        assert resp.status_code == 200, resp.dumps()
+
         assert resp.json()["statusCode"] == 200
         roles = resp.json()['data']["roles"]
         assert config.role_name in [user["role_name"] for user in roles]
@@ -55,6 +57,7 @@ class TestRoleE2E:
         }
 
         resp = self.api.delete_roles(headers=headers, data=data)
+        assert resp.status_code == 400, resp.dumps()
         assert 'cannot delete default role' in resp.json()["message"]
 
     def test_4_delete_roles_succeed(self):
@@ -67,4 +70,4 @@ class TestRoleE2E:
         }
 
         resp = self.api.delete_roles(headers=headers, data=data)
-        assert resp.status_code == 204
+        assert resp.status_code == 204, resp.dumps()

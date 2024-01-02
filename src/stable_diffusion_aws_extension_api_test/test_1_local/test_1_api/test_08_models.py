@@ -19,19 +19,19 @@ class TestModelsApi:
     def test_1_list_models_without_key(self):
         resp = self.api.list_models()
 
-        assert resp.status_code == 401
+        assert resp.status_code == 401, resp.dumps()
         assert resp.json()["message"] == "Unauthorized"
 
     def test_2_list_models_without_auth(self):
         resp = self.api.list_models()
 
-        assert resp.status_code == 401
+        assert resp.status_code == 401, resp.dumps()
         assert resp.json()["message"] == "Unauthorized"
 
     def test_3_update_model_without_key(self):
         resp = self.api.update_model_new(model_id="job_id")
 
-        assert resp.status_code == 403
+        assert resp.status_code == 403, resp.dumps()
         assert resp.json()["message"] == "Forbidden"
 
     def test_4_list_models(self):
@@ -42,13 +42,13 @@ class TestModelsApi:
 
         resp = self.api.list_models(headers=headers)
 
-        assert resp.status_code == 200
+        assert resp.status_code == 200, resp.dumps()
         assert len(resp.json()['data']["models"]) >= 0
 
     def test_5_create_model_without_key(self):
         resp = self.api.create_model_new()
 
-        assert resp.status_code == 403
+        assert resp.status_code == 403, resp.dumps()
         assert resp.json()["message"] == "Forbidden"
 
     def test_6_delete_models_without_key(self):
@@ -59,7 +59,7 @@ class TestModelsApi:
         }
 
         resp = self.api.delete_models(headers=headers, data=data)
-        assert resp.status_code == 403
+        assert resp.status_code == 403, resp.dumps()
         assert 'Forbidden' == resp.json()["message"]
 
     def test_7_delete_models_with_bad_request_body(self):
@@ -72,7 +72,8 @@ class TestModelsApi:
         }
 
         resp = self.api.delete_models(headers=headers, data=data)
-        assert resp.status_code == 400
+        assert resp.status_code == 400, resp.dumps()
+
         assert 'object has missing required properties' in resp.json()["message"]
         assert 'model_id_list' in resp.json()["message"]
 
@@ -86,4 +87,4 @@ class TestModelsApi:
         }
 
         resp = self.api.delete_models(headers=headers, data=data)
-        assert resp.status_code == 204
+        assert resp.status_code == 204, resp.dumps()

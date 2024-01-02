@@ -66,7 +66,7 @@ class TestModelE2E:
 
         resp = self.api.create_model_new(headers=headers, data=data)
 
-        assert resp.status_code == 201
+        assert resp.status_code == 201, resp.dumps()
         assert resp.json()["statusCode"] == 201
         job = resp.json()['data']["job"]
         assert job['model_type'] == model_type
@@ -104,7 +104,7 @@ class TestModelE2E:
         }
 
         resp = self.api.update_model_new(model_id=job_id, headers=headers, data=data)
-        assert resp.status_code == 200
+        assert resp.status_code == 200, resp.dumps()
         assert resp.json()["statusCode"] == 200
         assert resp.json()['data']["job"]["endpointName"] == "aigc-utils-endpoint"
 
@@ -140,7 +140,7 @@ class TestModelE2E:
         }
 
         resp = self.api.list_models(headers=headers)
-        assert resp.status_code == 200
+        assert resp.status_code == 200, resp.dumps()
         models = resp.json()['data']["models"]
         for model in models:
             if model["id"] == job_id:
