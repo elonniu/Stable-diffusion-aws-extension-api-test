@@ -53,8 +53,8 @@ make build
 Create `.env` file with the following content:
 
 ```bash
-API_GATEWAY_URL="https://{apiId}.execute-api.{region}.amazonaws.com/prod/"
-API_GATEWAY_URL_TOKEN="{apiToken}"
+API_GATEWAY_URL=https://{apiId}.execute-api.{region}.amazonaws.com/prod/
+API_GATEWAY_URL_TOKEN={apiToken}
 API_USERNAME=admin
 API_BUCKET=elonniu
 API_REGION=us-east-1
