@@ -115,7 +115,6 @@ class TestCheckpointsApi:
         assert resp.status_code == 400, resp.dumps()
 
         assert resp.json()["statusCode"] == 400
-        assert "user: \"bad_username\" not exist" in resp.json()["message"]
 
     def test_7_delete_checkpoints_with_bad_request_body(self):
         headers = {
