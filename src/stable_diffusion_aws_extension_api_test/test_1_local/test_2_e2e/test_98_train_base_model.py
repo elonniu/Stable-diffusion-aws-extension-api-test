@@ -156,6 +156,8 @@ class TestTrainE2E:
                 if train["status"] == "Complete":
                     return True
                 if train["status"] == "Fail":
+                    logger.error("Train job failed.")
+                    logger.error(resp.dumps())
                     raise Exception("Train job failed.")
                 logger.info(f"Model {train_job_id} is {train['status']}...")
                 return False

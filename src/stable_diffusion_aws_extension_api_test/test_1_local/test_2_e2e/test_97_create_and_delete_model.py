@@ -150,6 +150,8 @@ class TestModelE2E:
                 if model["status"] == "Complete":
                     return True
                 if model["status"] == "Fail":
+                    logger.error("Model creation failed.")
+                    logger.error(resp.dumps())
                     raise Exception("Model creation failed.")
                 return False
 
