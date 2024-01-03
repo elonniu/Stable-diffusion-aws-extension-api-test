@@ -392,34 +392,6 @@
         true
       ]
     },
-    "segment anything": {
-      "args": [
-        false,
-        false,
-        0,
-        null,
-        [],
-        0,
-        false,
-        [],
-        [],
-        false,
-        0,
-        1,
-        false,
-        false,
-        0,
-        null,
-        [],
-        -2,
-        false,
-        [],
-        false,
-        0,
-        null,
-        null
-      ]
-    },
     "extra options": {
       "args": []
     }
