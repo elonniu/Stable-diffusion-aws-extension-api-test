@@ -16,6 +16,7 @@ ddb_client = boto3.client('dynamodb')
 s3_client = boto3.client('s3')
 s3 = boto3.resource('s3')
 
+
 def get_parts_number(local_path: str):
     file_size = os.stat(local_path).st_size
     part_size = 1000 * 1024 * 1024
@@ -214,6 +215,24 @@ def get_inference_job_status(api_instance, job_id):
     )
 
     return resp.json()['status']
+
+
+def list_endpoints(api_instance):
+    headers = {
+        "x-api-key": config.api_key,
+        "Authorization": config.bearer_token
+    }
+    resp = api_instance.list_endpoints(headers=headers)
+    endpoints = resp.json()['data']["endpoints"]
+    return endpoints
+
+
+def get_endpoint_status(api_instance, endpoint_name: str):
+    endpoints = list_endpoints(api_instance)
+    for endpoint in endpoints:
+        if endpoint['endpoint_name'] == endpoint_name:
+            return endpoint['endpoint_status']
+    return None
 
 
 def get_inference_job_status_new(api_instance, job_id):
