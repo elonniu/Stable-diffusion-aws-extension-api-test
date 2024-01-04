@@ -1,10 +1,11 @@
 from __future__ import print_function
 
 import logging
+from time import sleep
 
 import stable_diffusion_aws_extension_api_test.config as config
 from stable_diffusion_aws_extension_api_test.utils.api import Api
-from stable_diffusion_aws_extension_api_test.utils.helper import delete_sagemaker_endpoint_new
+from stable_diffusion_aws_extension_api_test.utils.helper import get_endpoint_status, delete_sagemaker_endpoint_new
 
 logger = logging.getLogger(__name__)
 
@@ -17,8 +18,20 @@ class TestEndpointsApi:
     def teardown_class(cls):
         pass
 
-    def test_0_endpoints_delete(self):
-        delete_sagemaker_endpoint_new(self.api)
+    def test_0_endpoints_delete_before(self):
+        endpoint_name = f"infer-endpoint-{config.endpoint_name}"
+        while True:
+            status = get_endpoint_status(self.api, endpoint_name)
+            if status is None:
+                break
+
+            if status in ['Creating', 'Updating']:
+                logger.error(f"Endpoint {endpoint_name} is {status}, waiting to delete...")
+                sleep(10)
+            else:
+                delete_sagemaker_endpoint_new(self.api)
+                break
+        pass
 
     def test_1_list_endpoints_without_key(self):
         resp = self.api.list_endpoints()
