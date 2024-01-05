@@ -24,10 +24,10 @@ class TestImg2ImgInferenceE2E:
     @classmethod
     def teardown_class(cls):
         pass
-
-        global inference_data
-        if 'id' in inference_data:
-            delete_inference_jobs([inference_data['id']])
+        #
+        # global inference_data
+        # if 'id' in inference_data:
+        #     delete_inference_jobs([inference_data['id']])
 
     def test_1_img2img_inference_job_create(self):
         headers = {
@@ -104,6 +104,8 @@ class TestImg2ImgInferenceE2E:
             if status == InferenceStatus.SUCCEED.value:
                 break
             if status == InferenceStatus.FAILED.value:
+                logger.error("Inference job failed.")
+                logger.error(resp.dumps())
                 raise Exception("Inference job failed.")
             time.sleep(5)
         else:
