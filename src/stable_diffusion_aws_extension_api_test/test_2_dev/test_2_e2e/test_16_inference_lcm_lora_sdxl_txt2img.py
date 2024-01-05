@@ -17,7 +17,7 @@ checkpoint_id = None
 signed_urls = None
 
 filename = "lcm_lora_sdxl.safetensors"
-checkpoint_type = "Stable-diffusion"
+checkpoint_type = "Lora"
 inference_data = {}
 
 
@@ -67,10 +67,10 @@ class TestLCMLoraSD15E2E:
         signed_urls = resp.json()['data']["s3PresignUrl"][filename]
 
     def test_2_update_turbo_checkpoint(self):
-        local_path = f"data/models/Stable-diffusion/{filename}"
+        local_path = f"data/models/Lora/{filename}"
         wget_file(
             local_path,
-            'https://huggingface.co/latent-consistency/lcm-lora-sdv1-5/blob/main/pytorch_lora_weights.safetensors',
+            'https://huggingface.co/latent-consistency/lcm-lora-sdxl/blob/main/pytorch_lora_weights.safetensors',
             'https://aws-gcr-solutions.s3.cn-north-1.amazonaws.com.cn/stable-diffusion-aws-extension-github-mainline/models/lcm_lora_sdxl.safetensors'
         )
         global signed_urls

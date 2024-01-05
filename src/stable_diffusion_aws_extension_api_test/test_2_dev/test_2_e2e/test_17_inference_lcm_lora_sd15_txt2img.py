@@ -16,12 +16,12 @@ logger = logging.getLogger(__name__)
 checkpoint_id = None
 signed_urls = None
 
-filename = "sd_xl_turbo_1.0_fp16.safetensors"
-checkpoint_type = "Stable-diffusion"
+filename = "lcm_lora_v15.safetensors"
+checkpoint_type = "Lora"
 inference_data = {}
 
 
-class TestTurboE2E:
+class TestLCMSDXLE2E:
 
     def setup_class(self):
         self.api = Api(config)
@@ -67,11 +67,11 @@ class TestTurboE2E:
         signed_urls = resp.json()['data']["s3PresignUrl"][filename]
 
     def test_2_update_turbo_checkpoint(self):
-        local_path = f"data/models/Stable-diffusion/{filename}"
+        local_path = f"data/models/Lora/{filename}"
         wget_file(
             local_path,
-            'https://huggingface.co/stabilityai/sdxl-turbo/resolve/main/sd_xl_turbo_1.0_fp16.safetensors',
-            'https://aws-gcr-solutions.s3.cn-north-1.amazonaws.com.cn/stable-diffusion-aws-extension-github-mainline/models/sd_xl_turbo_1.0_fp16.safetensors'
+            'https://huggingface.co/latent-consistency/lcm-lora-sdv1-5/blob/main/pytorch_lora_weights.safetensors',
+            'https://aws-gcr-solutions.s3.cn-north-1.amazonaws.com.cn/stable-diffusion-aws-extension-github-mainline/models/lcm_lora_v15.safetensors'
         )
         global signed_urls
         multiparts_tags = upload_multipart_file(signed_urls, local_path)
@@ -118,8 +118,9 @@ class TestTurboE2E:
             "user_id": config.username,
             "task_type": InferenceType.TXT2IMG.value,
             "models": {
-                "Stable-diffusion": [filename],
-                "embeddings": []
+                "Stable-diffusion": [config.default_model_id],
+                "embeddings": [],
+                "Lora":[filename]
             },
             "filters": {
                 "createAt": datetime.now().timestamp(),
