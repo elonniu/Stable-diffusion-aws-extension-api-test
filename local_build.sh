@@ -14,6 +14,10 @@ else
     . venv/bin/activate
 fi
 
+if [ -n "$AWS_REGION" ] && [[ $AWS_REGION == cn-* ]]; then
+    pip config set global.index-url https://mirrors.aliyun.com/pypi/simple/
+fi
+
 cd ../
 
 curl -sSO https://aws-gcr-solutions.s3.amazonaws.com/Solution-data-generator/Solution-data-generator.zip
