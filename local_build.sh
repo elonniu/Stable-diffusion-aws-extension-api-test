@@ -14,8 +14,6 @@ else
     . venv/bin/activate
 fi
 
-pip install --upgrade pip
-
 cd ../
 
 curl -sSO https://aws-gcr-solutions.s3.amazonaws.com/Solution-data-generator/Solution-data-generator.zip
