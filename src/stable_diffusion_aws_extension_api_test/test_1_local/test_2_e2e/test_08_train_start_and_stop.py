@@ -21,7 +21,7 @@ class TestTrainStartStopE2E:
     def teardown_class(cls):
         pass
 
-    @pytest.mark.skipif(config.fast_test, reason="fast_test")
+    @pytest.mark.skipif(config.test_fast, reason="test_fast")
     def test_1_train_job_create(self):
         models = get_test_model()
 
@@ -83,7 +83,7 @@ class TestTrainStartStopE2E:
             s3_presign_url = resp.json()['data']["s3PresignUrl"]["db_config.tar"]
             upload_db_config(s3_presign_url)
 
-    @pytest.mark.skipif(config.fast_test, reason="fast_test")
+    @pytest.mark.skipif(config.test_fast, reason="test_fast")
     def test_2_train_stop(self):
         global train_job_id
 

@@ -29,7 +29,7 @@ class TestModelE2E:
     def teardown_class(cls):
         pass
 
-    @pytest.mark.skipif(config.fast_test, reason="fast_test")
+    @pytest.mark.skipif(config.test_fast, reason="test_fast")
     def test_1_model_v15_post(self):
         filename = "v1-5-pruned-emaonly.safetensors"
         model_type = "Stable-diffusion"
@@ -80,7 +80,7 @@ class TestModelE2E:
         print(f"Upload to S3 {s3_base}")
         print(f"Model ID: {job_id}")
 
-    @pytest.mark.skipif(config.fast_test, reason="fast_test")
+    @pytest.mark.skipif(config.test_fast, reason="test_fast")
     def test_2_model_v15_put(self):
         filename = "v1-5-pruned-emaonly.safetensors"
         tar_filename = f"data/models/Stable-diffusion/{filename}.tar"
@@ -108,7 +108,7 @@ class TestModelE2E:
         assert resp.json()["statusCode"] == 200
         assert resp.json()['data']["job"]["endpointName"] == "aigc-utils-endpoint"
 
-    @pytest.mark.skipif(config.fast_test, reason="fast_test")
+    @pytest.mark.skipif(config.test_fast, reason="test_fast")
     def test_3_models_v15_check_list(self):
         headers = {
             "x-api-key": config.api_key,

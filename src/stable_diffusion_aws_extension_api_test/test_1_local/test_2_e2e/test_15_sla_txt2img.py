@@ -27,7 +27,7 @@ class TestSLaTxt2Img:
     def teardown_class(cls):
         pass
 
-    @pytest.mark.skipif(config.fast_test, reason="fast_test")
+    @pytest.mark.skipif(config.test_fast, reason="test_fast")
     def test_1_sla_txt2img(self):
 
         with open("./data/sla/prompts.txt", "r") as f:

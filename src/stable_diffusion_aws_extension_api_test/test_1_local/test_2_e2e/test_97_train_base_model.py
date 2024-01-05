@@ -24,7 +24,7 @@ class TestTrainE2E:
     def teardown_class(cls):
         pass
 
-    @pytest.mark.skipif(config.fast_test, reason="fast_test")
+    @pytest.mark.skipif(config.test_fast, reason="test_fast")
     def test_1_train_job_create(self):
         models = get_test_model()
 
@@ -86,7 +86,7 @@ class TestTrainE2E:
             s3_presign_url = resp.json()['data']["s3PresignUrl"]["db_config.tar"]
             upload_db_config(s3_presign_url)
 
-    @pytest.mark.skipif(config.fast_test, reason="fast_test")
+    @pytest.mark.skipif(config.test_fast, reason="test_fast")
     def test_2_train_put(self):
         global train_job_id
         headers = {
@@ -102,7 +102,7 @@ class TestTrainE2E:
         assert resp.status_code == 202, resp.dumps()
         assert resp.json()["statusCode"] == 202
 
-    @pytest.mark.skipif(config.fast_test, reason="fast_test")
+    @pytest.mark.skipif(config.test_fast, reason="test_fast")
     def test_3_trains_get(self):
         headers = {
             "x-api-key": config.api_key,
@@ -116,7 +116,7 @@ class TestTrainE2E:
         jobs = resp.json()['data']["trainJobs"]
         assert train_job_id in [train["id"] for train in jobs]
 
-    @pytest.mark.skipif(config.fast_test, reason="fast_test")
+    @pytest.mark.skipif(config.test_fast, reason="test_fast")
     def test_4_train_post_wait_for_complete(self):
 
         headers = {

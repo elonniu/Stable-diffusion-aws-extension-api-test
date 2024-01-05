@@ -135,7 +135,7 @@ class TestCheckPointE2E:
         global checkpoint_id
         assert checkpoint_id in [checkpoint["id"] for checkpoint in resp.json()['data']["checkpoints"]]
 
-    @pytest.mark.skipif(config.fast_test, reason="fast_test")
+    @pytest.mark.skipif(config.test_fast, reason="test_fast")
     def test_5_create_checkpoint_cute(self):
         checkpoint_type = "Stable-diffusion"
         filename = "LahCuteCartoonSDXL_alpha.safetensors"
@@ -169,7 +169,7 @@ class TestCheckPointE2E:
         global signed_urls
         signed_urls = resp.json()['data']["s3PresignUrl"][filename]
 
-    @pytest.mark.skipif(config.fast_test, reason="fast_test")
+    @pytest.mark.skipif(config.test_fast, reason="test_fast")
     def test_6_update_checkpoint_cute(self):
         filename = "LahCuteCartoonSDXL_alpha.safetensors"
         local_path = f"data/models/Stable-diffusion/{filename}"
@@ -198,7 +198,7 @@ class TestCheckPointE2E:
         assert resp.json()["statusCode"] == 200
         assert resp.json()['data']["checkpoint"]['type'] == checkpoint_type
 
-    @pytest.mark.skipif(config.fast_test, reason="fast_test")
+    @pytest.mark.skipif(config.test_fast, reason="test_fast")
     def test_7_list_checkpoints_cute_check(self):
         headers = {
             "x-api-key": config.api_key,
@@ -215,7 +215,7 @@ class TestCheckPointE2E:
         global checkpoint_id
         assert checkpoint_id in [checkpoint["id"] for checkpoint in resp.json()['data']["checkpoints"]]
 
-    @pytest.mark.skipif(config.fast_test, reason="fast_test")
+    @pytest.mark.skipif(config.test_fast, reason="test_fast")
     def test_8_create_checkpoint_lora(self):
         checkpoint_type = "Lora"
         filename = "nendoroid_xl_v7.safetensors"
@@ -250,7 +250,7 @@ class TestCheckPointE2E:
         global signed_urls
         signed_urls = resp.json()['data']["s3PresignUrl"][filename]
 
-    @pytest.mark.skipif(config.fast_test, reason="fast_test")
+    @pytest.mark.skipif(config.test_fast, reason="test_fast")
     def test_9_update_checkpoint_lora(self):
         filename = "nendoroid_xl_v7.safetensors"
         local_path = f"data/models/Lora/{filename}"
@@ -280,7 +280,7 @@ class TestCheckPointE2E:
         assert resp.json()["statusCode"] == 200
         assert resp.json()['data']["checkpoint"]['type'] == checkpoint_type
 
-    @pytest.mark.skipif(config.fast_test, reason="fast_test")
+    @pytest.mark.skipif(config.test_fast, reason="test_fast")
     def test_10_list_checkpoints_lora_check(self):
         headers = {
             "x-api-key": config.api_key,
@@ -297,7 +297,7 @@ class TestCheckPointE2E:
         global checkpoint_id
         assert checkpoint_id in [checkpoint["id"] for checkpoint in resp.json()['data']["checkpoints"]]
 
-    @pytest.mark.skipif(config.fast_test, reason="fast_test")
+    @pytest.mark.skipif(config.test_fast, reason="test_fast")
     def test_11_create_checkpoint_canny(self):
         checkpoint_type = "ControlNet"
         filename = "control_v11p_sd15_canny.pth"
@@ -332,7 +332,7 @@ class TestCheckPointE2E:
         global signed_urls
         signed_urls = resp.json()['data']["s3PresignUrl"][filename]
 
-    @pytest.mark.skipif(config.fast_test, reason="fast_test")
+    @pytest.mark.skipif(config.test_fast, reason="test_fast")
     def test_12_update_checkpoint_canny(self):
         filename = "control_v11p_sd15_canny.pth"
         local_path = f"data/models/ControlNet/{filename}"
@@ -362,7 +362,7 @@ class TestCheckPointE2E:
         assert resp.json()["statusCode"] == 200
         assert resp.json()['data']["checkpoint"]['type'] == checkpoint_type
 
-    @pytest.mark.skipif(config.fast_test, reason="fast_test")
+    @pytest.mark.skipif(config.test_fast, reason="test_fast")
     def test_13_list_checkpoints_canny_check(self):
         headers = {
             "x-api-key": config.api_key,
@@ -379,7 +379,7 @@ class TestCheckPointE2E:
         global checkpoint_id
         assert checkpoint_id in [checkpoint["id"] for checkpoint in resp.json()['data']["checkpoints"]]
 
-    @pytest.mark.skipif(config.fast_test, reason="fast_test")
+    @pytest.mark.skipif(config.test_fast, reason="test_fast")
     def test_14_create_checkpoint_openpose(self):
         checkpoint_type = "ControlNet"
         filename = "control_v11p_sd15_openpose.pth"
@@ -414,7 +414,7 @@ class TestCheckPointE2E:
         global signed_urls
         signed_urls = resp.json()['data']["s3PresignUrl"][filename]
 
-    @pytest.mark.skipif(config.fast_test, reason="fast_test")
+    @pytest.mark.skipif(config.test_fast, reason="test_fast")
     def test_15_update_checkpoint_openpose(self):
         filename = "control_v11p_sd15_openpose.pth"
         local_path = f"data/models/ControlNet/{filename}"
@@ -444,7 +444,7 @@ class TestCheckPointE2E:
         assert resp.json()["statusCode"] == 200
         assert resp.json()['data']["checkpoint"]['type'] == checkpoint_type
 
-    @pytest.mark.skipif(config.fast_test, reason="fast_test")
+    @pytest.mark.skipif(config.test_fast, reason="test_fast")
     def test_16_list_checkpoints_openpose_check(self):
         headers = {
             "x-api-key": config.api_key,
