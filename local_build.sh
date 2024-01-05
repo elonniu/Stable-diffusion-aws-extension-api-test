@@ -34,4 +34,7 @@ pip3 --default-timeout=6000 install -r src/stable_diffusion_aws_extension_api_te
 pip3 install pytest
 pip3 install -e ../Solution-api-test-framework
 
+rm -rf ../Solution-data-generator.zip
+rm -rf ../Solution-api-test-framework.zip
+
 echo "Done"
