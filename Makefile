@@ -19,4 +19,6 @@ testk: env-API_GATEWAY_URL env-API_GATEWAY_URL_TOKEN
 
 rebuild:
 	rm -rf venv
+	rm -rf ../Solution-data-generator
+	rm -rf ../Solution-api-test-framework
 	./local_build.sh

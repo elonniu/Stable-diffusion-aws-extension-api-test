@@ -53,7 +53,9 @@ logger.info(f"config.dataset_name: {dataset_name}")
 model_name = "test-model"
 logger.info(f"config.model_name: {model_name}")
 
-instance_type = "ml.g4dn.2xlarge"
+instance_type = "ml.g5.2xlarge"
+if region_name.startswith("cn-"):
+    instance_type = "ml.g4dn.xlarge"
 logger.info(f"config.instance_type: {instance_type}")
 
 initial_instance_count = "2"
