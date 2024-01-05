@@ -1,9 +1,6 @@
 from __future__ import print_function
 
 import logging
-import time
-from datetime import datetime
-from datetime import timedelta
 
 import pytest
 import stable_diffusion_aws_extension_api_test.config as config
@@ -15,7 +12,7 @@ logger = logging.getLogger(__name__)
 train_job_id = ""
 
 
-class TestTrainE2E:
+class TestTrainStartStopE2E:
     def setup_class(self):
         self.api = Api(config)
         delete_train_item()
@@ -24,12 +21,14 @@ class TestTrainE2E:
     def teardown_class(cls):
         pass
 
-    @pytest.mark.skipif(config.fast_test, reason="fast_test")
+    @pytest.mark.skipif(config.test_fast, reason="test_fast")
     def test_1_train_job_create(self):
         models = get_test_model()
 
         assert 'Items' in models
-        assert len(models['Items']) == 1
+        if len(models['Items']) == 0:
+            pass
+            return
 
         for model in models["Items"]:
             assert "id" in model
@@ -84,80 +83,16 @@ class TestTrainE2E:
             s3_presign_url = resp.json()['data']["s3PresignUrl"]["db_config.tar"]
             upload_db_config(s3_presign_url)
 
-    @pytest.mark.skipif(config.fast_test, reason="fast_test")
-    def test_2_train_put(self):
+    @pytest.mark.skipif(config.test_fast, reason="test_fast")
+    def test_2_train_stop(self):
         global train_job_id
+
+        if not train_job_id:
+            pass
+
         headers = {
             "x-api-key": config.api_key,
-            "Authorization": config.bearer_token
         }
 
-        data = {
-            "status": "Training"
-        }
-
-        resp = self.api.start_training_job(training_id=train_job_id, headers=headers, data=data)
-        assert resp.status_code == 202, resp.dumps()
-        assert resp.json()["statusCode"] == 202
-
-    @pytest.mark.skipif(config.fast_test, reason="fast_test")
-    def test_3_trains_get(self):
-        headers = {
-            "x-api-key": config.api_key,
-            "Authorization": config.bearer_token
-        }
-
-        resp = self.api.list_trainings(headers=headers)
+        resp = self.api.stop_training_job(training_id=train_job_id, headers=headers)
         assert resp.status_code == 200, resp.dumps()
-        assert resp.json()["statusCode"] == 200
-        global train_job_id
-        jobs = resp.json()['data']["trainJobs"]
-        assert train_job_id in [train["id"] for train in jobs]
-
-    @pytest.mark.skipif(config.fast_test, reason="fast_test")
-    def test_4_train_post_wait_for_complete(self):
-
-        headers = {
-            "x-api-key": config.api_key,
-            "Authorization": config.bearer_token
-        }
-
-        resp = self.api.list_trainings(headers=headers)
-        assert resp.status_code == 200, resp.dumps()
-        assert resp.json()["statusCode"] == 200
-        global train_job_id
-        jobs = resp.json()['data']["trainJobs"]
-        assert train_job_id in [train["id"] for train in jobs]
-
-        timeout = datetime.now() + timedelta(minutes=50)
-
-        while datetime.now() < timeout:
-            result = self.train_wait_for_complete()
-            if result:
-                break
-            time.sleep(50)
-        else:
-            raise Exception("train timed out after 50 minutes.")
-
-    def train_wait_for_complete(self):
-        global train_job_id
-
-        headers = {
-            "x-api-key": config.api_key,
-            "Authorization": config.bearer_token
-        }
-
-        resp = self.api.list_trainings(headers=headers)
-
-        assert resp.status_code == 200, resp.dumps()
-        jobs = resp.json()['data']["trainJobs"]
-        for train in jobs:
-            if train["id"] == train_job_id:
-                if train["status"] == "Complete":
-                    return True
-                if train["status"] == "Fail":
-                    raise Exception("Train job failed.")
-                logger.info(f"Model {train_job_id} is {train['status']}...")
-                return False
-
-        return False

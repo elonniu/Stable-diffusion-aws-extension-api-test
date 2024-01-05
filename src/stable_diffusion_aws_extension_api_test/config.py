@@ -35,8 +35,8 @@ if not bucket:
     raise Exception("API_BUCKET is empty")
 logger.info(f"config.bucket: {bucket}")
 
-fast_test = os.environ.get("FAST_TEST") == "true"
-logger.info(f"config.fast_test: {fast_test}")
+test_fast = os.environ.get("TEST_FAST") == "true"
+logger.info(f"config.test_fast: {test_fast}")
 
 is_gcr = region_name.startswith("cn-")
 logger.info(f"config.is_gcr: {is_gcr}")
