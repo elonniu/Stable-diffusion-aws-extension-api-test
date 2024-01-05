@@ -38,13 +38,24 @@ class TestSLaTxt2Img:
             duration_list = []
             result_list = []
             failed_list = []
+            create_infer_duration_list = []
+            upload_duration_list = []
+            wait_duration_list = []
+
             for prompt in prompts:
-                result, duration, inference_id = self.sla_job(prompt)
+                result, duration, inference_id, create_infer_duration, upload_duration, wait_duration = self.sla_job(
+                    prompt)
                 result_list.append(result)
                 if result:
                     duration_list.append(duration)
                 else:
                     failed_list.append(inference_id)
+                if create_infer_duration:
+                    create_infer_duration_list.append(create_infer_duration)
+                if upload_duration:
+                    upload_duration_list.append(upload_duration)
+                if wait_duration:
+                    wait_duration_list.append(wait_duration)
 
             if len(duration_list) > 0:
                 max_duration_seconds = max(duration_list)
@@ -54,6 +65,21 @@ class TestSLaTxt2Img:
                 max_duration_seconds = 0
                 min_duration_seconds = 0
                 avg_duration_seconds = 0
+
+            if len(create_infer_duration_list) > 0:
+                create_infer_duration_avg = sum(create_infer_duration_list) / len(create_infer_duration_list)
+            else:
+                create_infer_duration_avg = 0
+
+            if len(upload_duration_list) > 0:
+                upload_duration_avg = sum(upload_duration_list) / len(upload_duration_list)
+            else:
+                upload_duration_avg = 0
+
+            if len(wait_duration_list) > 0:
+                wait_duration_avg = sum(wait_duration_list) / len(wait_duration_list)
+            else:
+                wait_duration_avg = 0
 
             if len(result_list) > 0:
                 success_rate = result_list.count(True) / len(result_list)
@@ -80,21 +106,27 @@ class TestSLaTxt2Img:
                 "max_duration": max_duration_seconds,
                 "min_duration": min_duration_seconds,
                 "avg_duration": avg_duration_seconds,
-                "failed_list": failed_list_string
+                "failed_list": failed_list_string,
+                "create_infer_duration_avg": create_infer_duration_avg,
+                "upload_duration_avg": upload_duration_avg,
+                "wait_duration_avg": wait_duration_avg,
             }
 
             with open("/tmp/txt2img_sla_report.json", "w") as sla_report:
                 sla_report.write(json.dumps(json_result))
 
-            logger.info(json_result)
+            logger.error(json_result)
 
     def sla_job(self, prompt: str):
         # get start time
         start_time = datetime.now()
         result = False
         inference_id = None
+        create_infer_duration = None
+        upload_duration = None
+        wait_duration = None
         try:
-            result, inference_id = self.start_job(prompt)
+            result, inference_id, create_infer_duration, upload_duration, wait_duration = self.start_job(prompt)
         except Exception as e:
             logger.info(f"Error: {e}")
 
@@ -102,7 +134,7 @@ class TestSLaTxt2Img:
 
         duration = (end_time - start_time).seconds
         logger.info(f"inference_id {inference_id} result:{result} duration:{duration} prompt:{prompt}")
-        return result, duration, inference_id
+        return result, duration, inference_id, create_infer_duration, upload_duration, wait_duration
 
     def start_job(self, prompt: str):
         headers = {
@@ -121,7 +153,10 @@ class TestSLaTxt2Img:
             }
         }
 
+        create_infer_start_time = datetime.now()
         resp = self.api.create_inference_new(headers=headers, data=data)
+        create_infer_end_time = datetime.now()
+        create_infer_duration = (create_infer_end_time - create_infer_start_time).seconds
 
         if 'inference' not in resp.json()['data']:
             logger.error(resp.dumps())
@@ -131,17 +166,23 @@ class TestSLaTxt2Img:
 
         inference_id = inference["id"]
 
+        upload_start_time = datetime.now()
         with open("./data/api_params/txt2img_api_param.json", 'rb') as data:
             data = json.load(data)
             data["prompt"] = prompt
             response = requests.put(inference["api_params_s3_upload_url"], data=json.dumps(data))
             response.raise_for_status()
+        upload_end_time = datetime.now()
+        upload_duration = (upload_end_time - upload_start_time).seconds
 
+        wait_start_time = datetime.now()
         result = self.sla_txt2img_inference_job_run_and_succeed(inference_id)
+        wait_end_time = datetime.now()
+        wait_duration = (wait_end_time - wait_start_time).seconds
 
         delete_inference_jobs([inference_id])
 
-        return result, inference_id
+        return result, inference_id, create_infer_duration, upload_duration, wait_duration
 
     def sla_txt2img_inference_job_run_and_succeed(self, inference_id: str):
 
@@ -170,7 +211,7 @@ class TestSLaTxt2Img:
                 return self.sla_txt2img_inference_job_image(inference_id)
             if status == InferenceStatus.FAILED.value:
                 return False
-            time.sleep(1)
+            time.sleep(0.5)
 
         return False
 
