@@ -28,6 +28,7 @@ class TestCreateAndDeleteDatasetE2E:
         data = {
             "dataset_name_list": [
                 dataset_name,
+                config.dataset_name
             ],
         }
 

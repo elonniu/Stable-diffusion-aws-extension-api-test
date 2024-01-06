@@ -18,16 +18,31 @@ job_id = None
 signed_urls = None
 
 
-class TestModelE2E:
+class TestModelCreateE2E:
 
     def setup_class(self):
         self.api = Api(config)
-        clear_model_item()
         pass
 
     @classmethod
     def teardown_class(cls):
         pass
+
+    def test_0_model_delete(self):
+        headers = {
+            "x-api-key": config.api_key,
+            "Authorization": config.bearer_token
+        }
+        resp = self.api.list_models(headers=headers)
+        assert resp.status_code == 200, resp.dumps()
+        items = resp.json()['data']["items"]
+        for item in items:
+            if item["name"] == config.model_name:
+                payload = {
+                    "model_id_list": [item["id"]]
+                }
+                resp = self.api.delete_models(data=payload, headers=headers)
+                assert resp.status_code == 204, resp.dumps()
 
     @pytest.mark.skipif(config.test_fast, reason="test_fast")
     def test_1_model_v15_post(self):
@@ -68,20 +83,22 @@ class TestModelE2E:
 
         assert resp.status_code == 201, resp.dumps()
         assert resp.json()["statusCode"] == 201
-        job = resp.json()['data']["job"]
-        assert job['model_type'] == model_type
+
+        logger.info(resp.dumps())
+
+        job = resp.json()['data']["model"]
+        assert 'links' in job
+        assert job['type'] == model_type
         assert job['status'] == "Initial"
         assert len(job['id']) == 36
         global job_id
         job_id = job['id']
         global signed_urls
         signed_urls = resp.json()['data']["s3PresignUrl"][filename]
-        s3_base = job["s3_base"]
-        print(f"Upload to S3 {s3_base}")
         print(f"Model ID: {job_id}")
 
     @pytest.mark.skipif(config.test_fast, reason="test_fast")
-    def test_2_model_v15_put(self):
+    def test_2_model_v15_put_file_and_update(self):
         filename = "v1-5-pruned-emaonly.safetensors"
         tar_filename = f"data/models/Stable-diffusion/{filename}.tar"
         print(f"Adding data/models/Stable-diffusion/{filename} to {tar_filename}")
@@ -104,9 +121,8 @@ class TestModelE2E:
         }
 
         resp = self.api.update_model_new(model_id=job_id, headers=headers, data=data)
-        assert resp.status_code == 200, resp.dumps()
-        assert resp.json()["statusCode"] == 200
-        assert resp.json()['data']["job"]["endpointName"] == "aigc-utils-endpoint"
+        assert resp.status_code == 202, resp.dumps()
+        assert resp.json()["statusCode"] == 202, resp.dumps()
 
     @pytest.mark.skipif(config.test_fast, reason="test_fast")
     def test_3_models_v15_check_list(self):
@@ -118,7 +134,7 @@ class TestModelE2E:
         resp = self.api.list_models(headers=headers)
 
         global job_id
-        models = resp.json()['data']["models"]
+        models = resp.json()['data']["items"]
         assert job_id in [model["id"] for model in models]
 
         timeout = datetime.now() + timedelta(minutes=15)
@@ -141,7 +157,7 @@ class TestModelE2E:
 
         resp = self.api.list_models(headers=headers)
         assert resp.status_code == 200, resp.dumps()
-        models = resp.json()['data']["models"]
+        models = resp.json()['data']["items"]
         for model in models:
             if model["id"] == job_id:
                 print(f"Model {job_id} is {model['status']}...")

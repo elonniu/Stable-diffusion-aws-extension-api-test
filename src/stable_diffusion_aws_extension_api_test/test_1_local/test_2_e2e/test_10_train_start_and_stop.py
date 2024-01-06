@@ -6,7 +6,7 @@ import pytest
 import stable_diffusion_aws_extension_api_test.config as config
 from stable_diffusion_aws_extension_api_test.utils.api import Api
 from stable_diffusion_aws_extension_api_test.utils.helper import get_test_model, \
-    delete_train_item, upload_db_config
+    upload_db_config
 
 logger = logging.getLogger(__name__)
 train_job_id = ""
@@ -15,14 +15,18 @@ train_job_id = ""
 class TestTrainStartStopE2E:
     def setup_class(self):
         self.api = Api(config)
-        delete_train_item()
 
     @classmethod
     def teardown_class(cls):
         pass
 
+    def test_0_train_job_clean(self):
+        # todo get model
+        pass
+
     @pytest.mark.skipif(config.test_fast, reason="test_fast")
     def test_1_train_job_create(self):
+        # todo get model
         models = get_test_model()
 
         assert 'Items' in models

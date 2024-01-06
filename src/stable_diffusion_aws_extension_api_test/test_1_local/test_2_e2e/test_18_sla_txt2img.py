@@ -11,7 +11,7 @@ import requests
 import stable_diffusion_aws_extension_api_test.config as config
 from stable_diffusion_aws_extension_api_test.utils.api import Api
 from stable_diffusion_aws_extension_api_test.utils.enums import InferenceStatus, InferenceType
-from stable_diffusion_aws_extension_api_test.utils.helper import get_inference_job_status_new, delete_inference_jobs
+from stable_diffusion_aws_extension_api_test.utils.helper import get_inference_job_status_new
 
 logger = logging.getLogger(__name__)
 
@@ -179,8 +179,6 @@ class TestSLaTxt2Img:
         result = self.sla_txt2img_inference_job_run_and_succeed(inference_id)
         wait_end_time = datetime.now()
         wait_duration = (wait_end_time - wait_start_time).seconds
-
-        delete_inference_jobs([inference_id])
 
         return result, inference_id, create_infer_duration, upload_duration, wait_duration
 
