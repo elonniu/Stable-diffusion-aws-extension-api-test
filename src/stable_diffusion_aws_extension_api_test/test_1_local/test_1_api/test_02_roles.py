@@ -85,7 +85,7 @@ class TestRolesApi:
 
         assert resp.status_code == 200, resp.dumps()
         roles = resp.json()['data']["roles"]
-        assert len(roles) >= 1
+        assert len(roles) >= 1, resp.dumps()
 
     def test_7_list_roles_without_params(self):
         headers = {
@@ -93,14 +93,13 @@ class TestRolesApi:
             "Authorization": config.bearer_token,
         }
 
-        params = {
-        }
+        params = {}
 
         resp = self.api.list_roles(headers=headers, params=params)
 
         assert resp.status_code == 200, resp.dumps()
         roles = resp.json()['data']["roles"]
-        assert len(roles) >= 1
+        assert len(roles) >= 1, resp.dumps()
 
     def test_8_delete_roles_without_key(self):
         headers = {}

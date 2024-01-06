@@ -37,8 +37,13 @@ class TestDatasetsApi:
 
         resp = self.api.list_datasets(headers=headers)
         assert resp.status_code == 200, resp.dumps()
+        assert 'links' in resp.json()['data'], resp.dumps()
+        assert len(resp.json()['data']["items"]) >= 0
 
-        assert len(resp.json()['data']["datasets"]) >= 0
+        datasets = resp.json()['data']["items"]
+        for dataset in datasets:
+            resp = self.api.get_dataset(name=dataset['name'], headers=headers)
+            assert resp.status_code == 200, resp.dumps()
 
     def test_4_get_dataset_missing_name(self):
         headers = {

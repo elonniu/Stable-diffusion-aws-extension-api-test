@@ -25,11 +25,12 @@ class TestCheckpointsApi:
         }
 
         resp = self.api.list_checkpoints(headers=headers)
-        ckpts = resp.json()['data']['checkpoints']
+        assert resp.status_code == 200, resp.dumps()
+
+        ckpts = resp.json()['data']['items']
 
         id_list = []
         for ckpt in ckpts:
-
             id_list.append(ckpt['id'])
 
         if len(id_list) == 0:
@@ -68,7 +69,7 @@ class TestCheckpointsApi:
         assert resp.status_code == 200, resp.dumps()
 
         assert resp.json()["statusCode"] == 200
-        assert len(resp.json()['data']["checkpoints"]) >= 0
+        assert len(resp.json()['data']["items"]) >= 0
 
     def test_4_list_checkpoints_with_user_name(self):
         headers = {
@@ -86,7 +87,7 @@ class TestCheckpointsApi:
         assert resp.status_code == 200, resp.dumps()
 
         assert resp.json()["statusCode"] == 200
-        assert len(resp.json()['data']["checkpoints"]) >= 0
+        assert len(resp.json()['data']["items"]) >= 0
 
     def test_5_create_checkpoint_with_bad_username(self):
         filename = "v1-5-pruned-emaonly.safetensors"
