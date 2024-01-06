@@ -44,7 +44,7 @@ class TestUsersApi:
 
         users = resp.json()["data"]["items"]
         assert len(users) >= 0, resp.dumps()
-        logger.error(resp.json())
+
         assert users[0]["name"] == config.username, resp.dumps()
 
     def test_4_delete_users_without_key(self):
