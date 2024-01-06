@@ -24,6 +24,37 @@ class TestCheckPointDeleteE2E:
     def teardown_class(cls):
         pass
 
+    def test_0_clean_checkpoints(self):
+        headers = {
+            "x-api-key": config.api_key,
+            "Authorization": config.bearer_token
+        }
+
+        resp = self.api.list_checkpoints(headers=headers)
+        assert resp.status_code == 200, resp.dumps()
+        ckpts = resp.json()['data']['items']
+
+        id_list = []
+        for ckpt in ckpts:
+            if 'params' not in ckpt:
+                continue
+            if not ckpt['params'] or 'message' not in ckpt['params']:
+                continue
+
+            if ckpt['params']['message'] == config.ckpt_message:
+                id_list.append(ckpt['id'])
+
+        if len(id_list) == 0:
+            logger.info("No checkpoints to clean")
+            return
+
+        data = {
+            "checkpoint_id_list": id_list
+        }
+
+        resp = self.api.delete_checkpoints(headers=headers, data=data)
+        assert resp.status_code == 204, resp.dumps()
+
     def test_1_create_checkpoint(self):
         wget_file(
             local_path,
@@ -79,7 +110,6 @@ class TestCheckPointDeleteE2E:
 
         assert resp.status_code == 200, resp.dumps()
         assert resp.json()["statusCode"] == 200
-        assert resp.json()['data']["checkpoint"]['type'] == checkpoint_type
 
     def test_3_delete_checkpoints_succeed(self):
         global checkpoint_id

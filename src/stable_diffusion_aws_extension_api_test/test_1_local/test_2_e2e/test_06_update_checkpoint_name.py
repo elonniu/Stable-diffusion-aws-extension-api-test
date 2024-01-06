@@ -17,7 +17,7 @@ def ckpt_url():
     return "https://raw.githubusercontent.com/elonniu/safetensors/main/cartoony.safetensors"
 
 
-class TestUpdateCheckPointE2E:
+class TestUpdateCheckPointNameE2E:
 
     def setup_class(self):
         self.api = Api(config)
@@ -33,7 +33,7 @@ class TestUpdateCheckPointE2E:
         }
 
         resp = self.api.list_checkpoints(headers=headers).json()
-        checkpoints = resp['data']["checkpoints"]
+        checkpoints = resp['data']["items"]
 
         id_list = []
         for checkpoint in checkpoints:
@@ -91,7 +91,7 @@ class TestUpdateCheckPointE2E:
             "Authorization": config.bearer_token,
         }
 
-        ckpts = self.api.list_checkpoints(headers=headers).json()['data']['checkpoints']
+        ckpts = self.api.list_checkpoints(headers=headers).json()['data']['items']
         for ckpt in ckpts:
             if ckpt['name'][0] == 'cartoony.safetensors':
                 checkpoint_id = ckpt['id']
@@ -113,7 +113,7 @@ class TestUpdateCheckPointE2E:
         resp = self.api.list_checkpoints(headers=headers)
         assert resp.status_code == 200, resp.dumps()
 
-        for ckpt in resp.json()['data']['checkpoints']:
+        for ckpt in resp.json()['data']['items']:
             if ckpt['name'][0] == 'cartoony':
                 rename = True
 

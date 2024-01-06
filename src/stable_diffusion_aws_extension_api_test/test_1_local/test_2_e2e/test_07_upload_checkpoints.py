@@ -12,7 +12,7 @@ checkpoint_id = None
 signed_urls = None
 
 
-class TestCheckPointE2E:
+class TestUploadCheckPointsE2E:
 
     def setup_class(self):
         self.api = Api(config)
