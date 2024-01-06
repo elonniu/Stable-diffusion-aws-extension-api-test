@@ -52,7 +52,7 @@ class TestModelsApi:
         resp = self.api.list_models(headers=headers)
 
         assert resp.status_code == 200, resp.dumps()
-        assert len(resp.json()['data']["models"]) >= 0
+        assert len(resp.json()['data']["items"]) >= 0
 
     def test_5_create_model_without_key(self):
         resp = self.api.create_model_new()

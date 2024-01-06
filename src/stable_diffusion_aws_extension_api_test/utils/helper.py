@@ -223,15 +223,15 @@ def list_endpoints(api_instance):
         "Authorization": config.bearer_token
     }
     resp = api_instance.list_endpoints(headers=headers)
-    endpoints = resp.json()['data']["endpoints"]
+    endpoints = resp.json()['data']["items"]
     return endpoints
 
 
 def get_endpoint_status(api_instance, endpoint_name: str):
     endpoints = list_endpoints(api_instance)
     for endpoint in endpoints:
-        if endpoint['endpoint_name'] == endpoint_name:
-            return endpoint['endpoint_status']
+        if endpoint['name'] == endpoint_name:
+            return endpoint['status']
     return None
 
 

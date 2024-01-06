@@ -31,8 +31,7 @@ class TestRoleE2E:
         resp = self.api.create_role_new(headers=headers, data=data)
         assert resp.status_code == 201, resp.dumps()
 
-        assert resp.json()["statusCode"] == 201
-        assert resp.json()["data"]['role_name'] == config.role_name
+        assert resp.json()["statusCode"] == 201, resp.dumps()
 
     def test_2_list_roles_exists(self):
         headers = {
@@ -44,8 +43,8 @@ class TestRoleE2E:
         assert resp.status_code == 200, resp.dumps()
 
         assert resp.json()["statusCode"] == 200
-        roles = resp.json()['data']["roles"]
-        assert config.role_name in [user["role_name"] for user in roles]
+        roles = resp.json()['data']["items"]
+        assert config.role_name in [role["name"] for role in roles]
 
     def test_3_delete_roles_default(self):
         headers = {

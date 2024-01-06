@@ -77,7 +77,7 @@ class TestTrainingsApi:
 
         assert resp.status_code == 200, resp.dumps()
         assert resp.json()["statusCode"] == 200
-        assert len(resp.json()['data']["trainJobs"]) >= 0
+        assert len(resp.json()['data']["items"]) >= 0
 
     def test_7_delete_trainings_with_bad_request_body(self):
         headers = {

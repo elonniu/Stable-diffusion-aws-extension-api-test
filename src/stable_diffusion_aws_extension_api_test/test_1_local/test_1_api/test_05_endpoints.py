@@ -56,7 +56,7 @@ class TestEndpointsApi:
         assert resp.status_code == 200, resp.dumps()
 
         assert resp.json()["statusCode"] == 200
-        assert len(resp.json()['data']["endpoints"]) >= 0
+        assert len(resp.json()['data']["items"]) >= 0
 
     def test_4_list_endpoints_with_username(self):
         headers = {
@@ -73,7 +73,7 @@ class TestEndpointsApi:
         assert resp.status_code == 200, resp.dumps()
 
         assert resp.json()["statusCode"] == 200
-        assert len(resp.json()['data']["endpoints"]) >= 0
+        assert len(resp.json()['data']["items"]) >= 0
 
     def test_5_list_endpoints_with_bad_username(self):
         headers = {
