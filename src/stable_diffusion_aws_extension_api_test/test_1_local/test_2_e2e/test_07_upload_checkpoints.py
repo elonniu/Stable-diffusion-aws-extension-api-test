@@ -29,7 +29,7 @@ class TestUploadCheckPointsE2E:
         }
 
         resp = self.api.list_checkpoints(headers=headers).json()
-        checkpoints = resp['data']["checkpoints"]
+        checkpoints = resp['data']["items"]
 
         id_list = []
         for checkpoint in checkpoints:
@@ -66,9 +66,9 @@ class TestUploadCheckPointsE2E:
         resp = self.api.create_checkpoint_new(headers=headers, data=data)
 
         assert resp.status_code == 201, resp.dumps()
-        assert resp.json()["statusCode"] == 201
-        assert resp.json()['data']["checkpoint"]['type'] == checkpoint_type
-        assert len(resp.json()['data']["checkpoint"]['id']) == 36
+        assert resp.json()["statusCode"] == 201, resp.dumps()
+        assert resp.json()['data']["checkpoint"]['type'] == checkpoint_type, resp.dumps()
+        assert len(resp.json()['data']["checkpoint"]['id']) == 36, resp.dumps()
 
         global checkpoint_id
         checkpoint_id = resp.json()['data']["checkpoint"]['id']
@@ -101,7 +101,6 @@ class TestUploadCheckPointsE2E:
         )
         global signed_urls
         multiparts_tags = upload_multipart_file(signed_urls, local_path)
-        checkpoint_type = "Stable-diffusion"
 
         global checkpoint_id
 
@@ -117,8 +116,8 @@ class TestUploadCheckPointsE2E:
         resp = self.api.update_checkpoint_new(checkpoint_id=checkpoint_id, headers=headers, data=data)
 
         assert resp.status_code == 200, resp.dumps()
-        assert resp.json()["statusCode"] == 200
-        assert resp.json()['data']["checkpoint"]['type'] == checkpoint_type
+        assert resp.json()["statusCode"] == 200, resp.dumps()
+        assert resp.json()["message"] == "OK", resp.dumps()
 
     def test_4_list_checkpoints_v15_check(self):
         headers = {
@@ -133,7 +132,7 @@ class TestUploadCheckPointsE2E:
         resp = self.api.list_checkpoints(headers=headers, params=params)
         assert resp.status_code == 200, resp.dumps()
         global checkpoint_id
-        assert checkpoint_id in [checkpoint["id"] for checkpoint in resp.json()['data']["checkpoints"]]
+        assert checkpoint_id in [checkpoint["id"] for checkpoint in resp.json()['data']["items"]], resp.dumps()
 
     @pytest.mark.skipif(config.test_fast, reason="test_fast")
     def test_5_create_checkpoint_cute(self):
@@ -161,9 +160,9 @@ class TestUploadCheckPointsE2E:
         resp = self.api.create_checkpoint_new(headers=headers, data=data)
 
         assert resp.status_code == 201, resp.dumps()
-        assert resp.json()["statusCode"] == 201
-        assert resp.json()['data']["checkpoint"]['type'] == checkpoint_type
-        assert len(resp.json()['data']["checkpoint"]['id']) == 36
+        assert resp.json()["statusCode"] == 201, resp.dumps()
+        assert resp.json()['data']["checkpoint"]['type'] == checkpoint_type, resp.dumps()
+        assert len(resp.json()['data']["checkpoint"]['id']) == 36, resp.dumps()
         global checkpoint_id
         checkpoint_id = resp.json()['data']["checkpoint"]['id']
         global signed_urls
@@ -178,7 +177,7 @@ class TestUploadCheckPointsE2E:
             'https://aws-gcr-solutions.s3.amazonaws.com/stable-diffusion-aws-extension-github-mainline/models/LahCuteCartoonSDXL_alpha.safetensors',
             'https://aws-gcr-solutions.s3.cn-north-1.amazonaws.com.cn/stable-diffusion-aws-extension-github-mainline/models/LahCuteCartoonSDXL_alpha.safetensors'
         )
-        checkpoint_type = "Stable-diffusion"
+
         global signed_urls
         multiparts_tags = upload_multipart_file(signed_urls, local_path)
         global checkpoint_id
@@ -195,8 +194,8 @@ class TestUploadCheckPointsE2E:
         resp = self.api.update_checkpoint_new(checkpoint_id=checkpoint_id, headers=headers, data=data)
 
         assert resp.status_code == 200, resp.dumps()
-        assert resp.json()["statusCode"] == 200
-        assert resp.json()['data']["checkpoint"]['type'] == checkpoint_type
+        assert resp.json()["statusCode"] == 200, resp.dumps()
+        assert resp.json()["message"] == "OK", resp.dumps()
 
     @pytest.mark.skipif(config.test_fast, reason="test_fast")
     def test_7_list_checkpoints_cute_check(self):
@@ -213,7 +212,7 @@ class TestUploadCheckPointsE2E:
 
         assert resp.status_code == 200, resp.dumps()
         global checkpoint_id
-        assert checkpoint_id in [checkpoint["id"] for checkpoint in resp.json()['data']["checkpoints"]]
+        assert checkpoint_id in [checkpoint["id"] for checkpoint in resp.json()['data']["items"]], resp.dumps()
 
     @pytest.mark.skipif(config.test_fast, reason="test_fast")
     def test_8_create_checkpoint_lora(self):
@@ -242,9 +241,10 @@ class TestUploadCheckPointsE2E:
         resp = self.api.create_checkpoint_new(headers=headers, data=data)
 
         assert resp.status_code == 201, resp.dumps()
-        assert resp.json()["statusCode"] == 201
-        assert resp.json()['data']["checkpoint"]['type'] == checkpoint_type
-        assert len(resp.json()['data']["checkpoint"]['id']) == 36
+        assert resp.json()["statusCode"] == 201, resp.dumps()
+        assert resp.json()['data']["checkpoint"]['type'] == checkpoint_type, resp.dumps()
+        assert len(resp.json()['data']["checkpoint"]['id']) == 36, resp.dumps()
+
         global checkpoint_id
         checkpoint_id = resp.json()['data']["checkpoint"]['id']
         global signed_urls
@@ -259,7 +259,7 @@ class TestUploadCheckPointsE2E:
             'https://aws-gcr-solutions.s3.amazonaws.com/stable-diffusion-aws-extension-github-mainline/models/nendoroid_xl_v7.safetensors',
             'https://aws-gcr-solutions.s3.cn-north-1.amazonaws.com.cn/stable-diffusion-aws-extension-github-mainline/models/nendoroid_xl_v7.safetensors'
         )
-        checkpoint_type = "Lora"
+
         global signed_urls
         multiparts_tags = upload_multipart_file(signed_urls, local_path)
         global checkpoint_id
@@ -277,8 +277,8 @@ class TestUploadCheckPointsE2E:
         resp = self.api.update_checkpoint_new(checkpoint_id=checkpoint_id, headers=headers, data=data)
 
         assert resp.status_code == 200, resp.dumps()
-        assert resp.json()["statusCode"] == 200
-        assert resp.json()['data']["checkpoint"]['type'] == checkpoint_type
+        assert resp.json()["statusCode"] == 200, resp.dumps()
+        assert resp.json()["message"] == "OK", resp.dumps()
 
     @pytest.mark.skipif(config.test_fast, reason="test_fast")
     def test_10_list_checkpoints_lora_check(self):
@@ -294,8 +294,9 @@ class TestUploadCheckPointsE2E:
         resp = self.api.list_checkpoints(headers=headers, params=params)
 
         assert resp.status_code == 200, resp.dumps()
+
         global checkpoint_id
-        assert checkpoint_id in [checkpoint["id"] for checkpoint in resp.json()['data']["checkpoints"]]
+        assert checkpoint_id in [checkpoint["id"] for checkpoint in resp.json()['data']["items"]], resp.dumps()
 
     @pytest.mark.skipif(config.test_fast, reason="test_fast")
     def test_11_create_checkpoint_canny(self):
@@ -324,9 +325,10 @@ class TestUploadCheckPointsE2E:
         resp = self.api.create_checkpoint_new(headers=headers, data=data)
 
         assert resp.status_code == 201, resp.dumps()
-        assert resp.json()["statusCode"] == 201
-        assert resp.json()['data']["checkpoint"]['type'] == checkpoint_type
-        assert len(resp.json()['data']["checkpoint"]['id']) == 36
+        assert resp.json()["statusCode"] == 201, resp.dumps()
+        assert resp.json()['data']["checkpoint"]['type'] == checkpoint_type, resp.dumps()
+        assert len(resp.json()['data']["checkpoint"]['id']) == 36, resp.dumps()
+
         global checkpoint_id
         checkpoint_id = resp.json()['data']["checkpoint"]['id']
         global signed_urls
@@ -341,7 +343,7 @@ class TestUploadCheckPointsE2E:
             'https://huggingface.co/lllyasviel/ControlNet-v1-1/resolve/main/control_v11p_sd15_canny.pth',
             'https://aws-gcr-solutions.s3.cn-north-1.amazonaws.com.cn/stable-diffusion-aws-extension-github-mainline/models/control_v11p_sd15_canny.pth'
         )
-        checkpoint_type = "ControlNet"
+
         global signed_urls
         multiparts_tags = upload_multipart_file(signed_urls, local_path)
         global checkpoint_id
@@ -359,8 +361,8 @@ class TestUploadCheckPointsE2E:
         resp = self.api.update_checkpoint_new(checkpoint_id=checkpoint_id, headers=headers, data=data)
 
         assert resp.status_code == 200, resp.dumps()
-        assert resp.json()["statusCode"] == 200
-        assert resp.json()['data']["checkpoint"]['type'] == checkpoint_type
+        assert resp.json()["statusCode"] == 200, resp.dumps()
+        assert resp.json()["message"] == "OK", resp.dumps()
 
     @pytest.mark.skipif(config.test_fast, reason="test_fast")
     def test_13_list_checkpoints_canny_check(self):
@@ -377,7 +379,7 @@ class TestUploadCheckPointsE2E:
 
         assert resp.status_code == 200, resp.dumps()
         global checkpoint_id
-        assert checkpoint_id in [checkpoint["id"] for checkpoint in resp.json()['data']["checkpoints"]]
+        assert checkpoint_id in [checkpoint["id"] for checkpoint in resp.json()['data']["items"]], resp.dumps()
 
     @pytest.mark.skipif(config.test_fast, reason="test_fast")
     def test_14_create_checkpoint_openpose(self):
@@ -406,9 +408,10 @@ class TestUploadCheckPointsE2E:
         resp = self.api.create_checkpoint_new(headers=headers, data=data)
 
         assert resp.status_code == 201, resp.dumps()
-        assert resp.json()["statusCode"] == 201
-        assert resp.json()['data']["checkpoint"]['type'] == checkpoint_type
-        assert len(resp.json()['data']["checkpoint"]['id']) == 36
+        assert resp.json()["statusCode"] == 201, resp.dumps()
+        assert resp.json()['data']["checkpoint"]['type'] == checkpoint_type, resp.dumps()
+        assert len(resp.json()['data']["checkpoint"]['id']) == 36, resp.dumps()
+
         global checkpoint_id
         checkpoint_id = resp.json()['data']["checkpoint"]['id']
         global signed_urls
@@ -423,7 +426,7 @@ class TestUploadCheckPointsE2E:
             'https://huggingface.co/lllyasviel/ControlNet-v1-1/resolve/main/control_v11p_sd15_openpose.pth',
             'https://aws-gcr-solutions.s3.cn-north-1.amazonaws.com.cn/stable-diffusion-aws-extension-github-mainline/models/control_v11p_sd15_openpose.pth'
         )
-        checkpoint_type = "ControlNet"
+
         global signed_urls
         multiparts_tags = upload_multipart_file(signed_urls, local_path)
         global checkpoint_id
@@ -441,8 +444,8 @@ class TestUploadCheckPointsE2E:
         resp = self.api.update_checkpoint_new(checkpoint_id=checkpoint_id, headers=headers, data=data)
 
         assert resp.status_code == 200, resp.dumps()
-        assert resp.json()["statusCode"] == 200
-        assert resp.json()['data']["checkpoint"]['type'] == checkpoint_type
+        assert resp.json()["statusCode"] == 200, resp.dumps()
+        assert resp.json()["message"] == "OK", resp.dumps()
 
     @pytest.mark.skipif(config.test_fast, reason="test_fast")
     def test_16_list_checkpoints_openpose_check(self):
@@ -459,4 +462,4 @@ class TestUploadCheckPointsE2E:
 
         assert resp.status_code == 200, resp.dumps()
         global checkpoint_id
-        assert checkpoint_id in [checkpoint["id"] for checkpoint in resp.json()['data']["checkpoints"]]
+        assert checkpoint_id in [checkpoint["id"] for checkpoint in resp.json()['data']["items"]], resp.dumps()

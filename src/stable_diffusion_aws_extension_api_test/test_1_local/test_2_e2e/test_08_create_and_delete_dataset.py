@@ -20,6 +20,20 @@ class TestCreateAndDeleteDatasetE2E:
     def teardown_class(cls):
         pass
 
+    def test_0_delete_dataset(self):
+        headers = {
+            "x-api-key": config.api_key
+        }
+
+        data = {
+            "dataset_name_list": [
+                dataset_name,
+            ],
+        }
+
+        resp = self.api.delete_datasets(headers=headers, data=data)
+        assert resp.status_code == 204, resp.dumps()
+
     def test_1_dataset_post(self):
         dataset_content = []
 
@@ -49,8 +63,8 @@ class TestCreateAndDeleteDatasetE2E:
         global dataset
         dataset = resp.json()
 
-        assert dataset["statusCode"] == 201
-        assert dataset['data']["datasetName"] == dataset_name
+        assert dataset["statusCode"] == 201, resp.dumps()
+        assert dataset['data']["dataset_name"] == dataset_name, resp.dumps()
 
     def test_2_dataset_img_upload(self):
         global dataset
@@ -75,7 +89,7 @@ class TestCreateAndDeleteDatasetE2E:
 
         resp = self.api.update_dataset_new(dataset_id=dataset_name, headers=headers, data=data)
         assert resp.status_code == 200, resp.dumps()
-        assert resp.json()["statusCode"] == 200
+        assert resp.json()["statusCode"] == 200, resp.dumps()
 
     def test_4_datasets_get(self):
         headers = {
@@ -86,8 +100,8 @@ class TestCreateAndDeleteDatasetE2E:
         resp = self.api.list_datasets(headers=headers)
         assert resp.status_code == 200, resp.dumps()
 
-        datasets = resp.json()['data']["datasets"]
-        assert dataset_name in [user["datasetName"] for user in datasets]
+        datasets = resp.json()['data']["items"]
+        assert dataset_name in [item["name"] for item in datasets], resp.dumps()
 
     def test_5_dataset_get(self):
 
@@ -98,7 +112,7 @@ class TestCreateAndDeleteDatasetE2E:
 
         resp = self.api.get_dataset(name=dataset_name, headers=headers)
         assert resp.status_code == 200, resp.dumps()
-        assert resp.json()["statusCode"] == 200
+        assert resp.json()["statusCode"] == 200, resp.dumps()
 
     def test_6_datasets_delete_succeed(self):
         headers = {

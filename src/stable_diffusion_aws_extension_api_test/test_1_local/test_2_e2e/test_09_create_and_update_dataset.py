@@ -6,23 +6,33 @@ import os
 import requests
 import stable_diffusion_aws_extension_api_test.config as config
 from stable_diffusion_aws_extension_api_test.utils.api import Api
-from stable_diffusion_aws_extension_api_test.utils.helper import delete_prefix_in_s3, delete_dataset_item, \
-    clear_dataset_info
 
 logger = logging.getLogger(__name__)
 dataset = {}
+dataset_name = "test_dataset_name"
 
 
-class TestDatasetE2E:
+class TestCreateAndUpdateDatasetE2E:
     def setup_class(self):
         self.api = Api(config)
-        clear_dataset_info("DatasetInfoTable", config.dataset_name)
-        delete_dataset_item("DatasetItemTable", config.dataset_name)
-        delete_prefix_in_s3(f"dataset/{config.dataset_name}")
 
     @classmethod
     def teardown_class(cls):
         pass
+
+    def test_0_delete_dataset(self):
+        headers = {
+            "x-api-key": config.api_key
+        }
+
+        data = {
+            "dataset_name_list": [
+                dataset_name,
+            ],
+        }
+
+        resp = self.api.delete_datasets(headers=headers, data=data)
+        assert resp.status_code == 204, resp.dumps()
 
     def test_1_dataset_post(self):
         dataset_content = []
@@ -54,7 +64,7 @@ class TestDatasetE2E:
         dataset = resp.json()
 
         assert resp.json()["statusCode"] == 201
-        assert resp.json()['data']["datasetName"] == config.dataset_name
+        assert resp.json()['data']["dataset_name"] == config.dataset_name
 
     def test_2_dataset_img_upload(self):
         global dataset
@@ -91,9 +101,9 @@ class TestDatasetE2E:
         resp = self.api.list_datasets(headers=headers)
         assert resp.status_code == 200, resp.dumps()
 
-        datasets = resp.json()['data']["datasets"]
+        datasets = resp.json()['data']["items"]
 
-        assert config.dataset_name in [user["datasetName"] for user in datasets]
+        assert config.dataset_name in [user["name"] for user in datasets], resp.dumps()
 
     def test_5_dataset_get(self):
         dataset_name = config.dataset_name
