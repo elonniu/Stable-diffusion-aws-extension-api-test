@@ -25,7 +25,7 @@ class TestCleanCheckpoints:
 
         resp = self.api.list_checkpoints(headers=headers)
         assert resp.status_code == 200, resp.dumps()
-        ckpts = resp.json()['data']['checkpoints']
+        ckpts = resp.json()['data']['items']
 
         id_list = []
         for ckpt in ckpts:

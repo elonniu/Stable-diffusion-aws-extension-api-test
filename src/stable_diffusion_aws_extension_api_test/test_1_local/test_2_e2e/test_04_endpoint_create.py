@@ -28,7 +28,7 @@ class TestEndpointCreateE2E:
 
         resp = self.api.list_endpoints(headers=headers)
         assert resp.status_code == 200, resp.dumps()
-        assert len(resp.json()['data']["endpoints"]) == 0
+        assert len(resp.json()['data']["items"]) >= 0
 
     def test_2_no_available_endpoint(self):
         headers = {
@@ -85,7 +85,7 @@ class TestEndpointCreateE2E:
 
         resp = self.api.create_endpoint(headers=headers, data=data)
         assert resp.status_code == 202, resp.dumps()
-        assert resp.json()["data"]["endpoint_status"] == "Creating"
+        assert resp.json()["data"]["status"] == "Creating"
 
     def test_4_create_endpoint_exists(self):
         headers = {

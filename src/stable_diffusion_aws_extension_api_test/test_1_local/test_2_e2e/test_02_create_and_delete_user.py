@@ -70,5 +70,5 @@ class TestUserE2E:
         resp = self.api.list_users(headers=headers)
 
         assert resp.status_code == 200, resp.dumps()
-        users = resp.json()["data"]["users"]
-        assert username not in [user["username"] for user in users]
+        users = resp.json()["data"]["items"]
+        assert username not in [user["name"] for user in users]
