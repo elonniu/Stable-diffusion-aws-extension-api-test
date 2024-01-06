@@ -9,8 +9,7 @@ from datetime import timedelta
 import pytest
 import stable_diffusion_aws_extension_api_test.config as config
 from stable_diffusion_aws_extension_api_test.utils.api import Api
-from stable_diffusion_aws_extension_api_test.utils.helper import clear_model_item, \
-    upload_multipart_file
+from stable_diffusion_aws_extension_api_test.utils.helper import upload_multipart_file
 
 logger = logging.getLogger(__name__)
 
@@ -160,13 +159,12 @@ class TestModelCreateE2E:
         models = resp.json()['data']["items"]
         for model in models:
             if model["id"] == job_id:
-                print(f"Model {job_id} is {model['status']}...")
+                logger.info(f"Model {job_id} is {model['status']}...")
                 if model["status"] == "Deleting":
                     return False
                 if model["status"] == "Complete":
                     return True
                 if model["status"] == "Fail":
-                    logger.error("Model creation failed.")
                     logger.error(resp.dumps())
                     raise Exception("Model creation failed.")
                 return False
