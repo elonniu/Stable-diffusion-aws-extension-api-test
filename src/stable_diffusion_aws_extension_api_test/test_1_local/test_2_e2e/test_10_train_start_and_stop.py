@@ -76,7 +76,7 @@ class TestTrainStartStopE2E:
             resp = self.api.create_training_job(headers=headers, data=data)
             assert resp.status_code == 201, resp.dumps()
             assert resp.json()["statusCode"] == 201
-            job = resp.json()['data']["job"]
+            job = resp.json()['data']["training"]
             assert job["status"] == "Initial"
             global train_job_id
             train_job_id = job["id"]

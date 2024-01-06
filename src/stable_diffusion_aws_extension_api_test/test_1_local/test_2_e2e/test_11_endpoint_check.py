@@ -9,6 +9,7 @@ import stable_diffusion_aws_extension_api_test.config as config
 from stable_diffusion_aws_extension_api_test.utils.api import Api
 
 logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 endpoint_name = f"infer-endpoint-{config.endpoint_name}"
 
@@ -22,7 +23,7 @@ class TestEndpointCheckE2E:
     def teardown_class(cls):
         pass
 
-    def test_5_list_endpoints_status(self):
+    def test_1_list_endpoints_status(self):
         headers = {
             "x-api-key": config.api_key,
             "Authorization": config.bearer_token
@@ -35,20 +36,20 @@ class TestEndpointCheckE2E:
         resp = self.api.list_endpoints(headers=headers, params=params)
         assert resp.status_code == 200, resp.dumps()
 
-        endpoints = resp.json()['data']["endpoints"]
+        endpoints = resp.json()['data']["items"]
         assert len(endpoints) >= 0
 
-        assert endpoint_name in [endpoint["endpoint_name"] for endpoint in endpoints]
+        assert endpoint_name in [endpoint["name"] for endpoint in endpoints]
 
-        timeout = datetime.now() + timedelta(minutes=30)
+        timeout = datetime.now() + timedelta(minutes=15)
 
         while datetime.now() < timeout:
             result = self.endpoints_wait_for_in_service()
             if result:
                 break
-            time.sleep(50)
+            time.sleep(20)
         else:
-            raise Exception("Function execution timed out after 30 minutes.")
+            raise Exception("Function execution timed out after 15 minutes.")
 
     def endpoints_wait_for_in_service(self):
         headers = {
@@ -62,11 +63,16 @@ class TestEndpointCheckE2E:
 
         resp = self.api.list_endpoints(headers=headers, params=params)
         assert resp.status_code == 200, resp.dumps()
+        items = resp.json()['data']["items"]
 
-        for endpoint in resp.json()['data']["endpoints"]:
-            if endpoint["endpoint_name"] == endpoint_name:
-                if endpoint["endpoint_status"] != "InService":
-                    logger.info(f"{endpoint_name} is {endpoint['endpoint_status']}")
+        assert endpoint_name in [item["name"] for item in items], resp.dumps()
+
+        for endpoint in items:
+            if endpoint["name"] == endpoint_name:
+                if endpoint["status"] == "Failed":
+                    raise Exception(f"{endpoint_name} is {endpoint['status']}")
+                if endpoint["status"] != "InService":
+                    logger.info(f"{endpoint_name} is {endpoint['status']}")
                     return False
                 else:
                     return True
