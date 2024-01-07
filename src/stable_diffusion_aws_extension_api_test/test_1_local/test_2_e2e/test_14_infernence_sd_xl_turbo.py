@@ -40,7 +40,7 @@ class TestTurboE2E:
         checkpoints = resp['data']["items"]
 
         for checkpoint in checkpoints:
-            if filename in checkpoint['name']:
+            if checkpoint['name'] and filename in checkpoint['name']:
                 data = {
                     "checkpoint_id_list": [checkpoint['id']]
                 }
