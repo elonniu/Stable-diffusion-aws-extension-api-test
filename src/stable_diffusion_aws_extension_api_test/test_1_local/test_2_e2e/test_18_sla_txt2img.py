@@ -16,6 +16,8 @@ from stable_diffusion_aws_extension_api_test.utils.helper import get_inference_j
 logger = logging.getLogger(__name__)
 
 inference_data = {}
+total_inference_count = 0
+inference_index = 1
 
 
 class TestSLaTxt2Img:
@@ -34,8 +36,11 @@ class TestSLaTxt2Img:
             prompts = f.readlines()
             prompts = [prompt.strip() for prompt in prompts]
             prompts = [prompt for prompt in prompts if prompt != ""]
+            prompts = prompts[:5]
             prompts_count = len(prompts)
-            duration_list = []
+            global total_inference_count, inference_index
+            total_inference_count = prompts_count
+            total_duration_list = []
             result_list = []
             failed_list = []
             create_infer_duration_list = []
@@ -43,11 +48,14 @@ class TestSLaTxt2Img:
             wait_duration_list = []
 
             for prompt in prompts:
-                result, duration, inference_id, create_infer_duration, upload_duration, wait_duration = self.sla_job(
+                result, total_duration, inference_id, create_infer_duration, upload_duration, wait_duration = self.sla_job(
                     prompt)
+                logger.info(f"SLA progress: {inference_index}/{total_inference_count}")
+                inference_index += 1
+
                 result_list.append(result)
                 if result:
-                    duration_list.append(duration)
+                    total_duration_list.append(total_duration)
                 else:
                     failed_list.append(inference_id)
                 if create_infer_duration:
@@ -57,10 +65,10 @@ class TestSLaTxt2Img:
                 if wait_duration:
                     wait_duration_list.append(wait_duration)
 
-            if len(duration_list) > 0:
-                max_duration_seconds = max(duration_list)
-                min_duration_seconds = min(duration_list)
-                avg_duration_seconds = sum(duration_list) / len(duration_list)
+            if len(total_duration_list) > 0:
+                max_duration_seconds = max(total_duration_list)
+                min_duration_seconds = min(total_duration_list)
+                avg_duration_seconds = sum(total_duration_list) / len(total_duration_list)
             else:
                 max_duration_seconds = 0
                 min_duration_seconds = 0
@@ -103,36 +111,30 @@ class TestSLaTxt2Img:
                 "succeed": succeed,
                 "failed": failed,
                 "success_rate": success_rate,
-                "max_duration": max_duration_seconds,
-                "min_duration": min_duration_seconds,
-                "avg_duration": avg_duration_seconds,
+                "infer_max_duration": max_duration_seconds,
+                "infer_min_duration": min_duration_seconds,
+                "infer_avg_duration": avg_duration_seconds,
                 "failed_list": failed_list_string,
-                "create_infer_duration_avg": create_infer_duration_avg,
-                "upload_duration_avg": upload_duration_avg,
-                "wait_duration_avg": wait_duration_avg,
+                "infer_create_duration_avg": create_infer_duration_avg,
+                "infer_upload_duration_avg": upload_duration_avg,
+                "infer_wait_duration_avg": wait_duration_avg,
             }
 
             with open("/tmp/txt2img_sla_report.json", "w") as sla_report:
                 sla_report.write(json.dumps(json_result))
 
-            logger.error(json_result)
+            logger.warning(json.dumps(json_result, indent=4, sort_keys=True))
 
     def sla_job(self, prompt: str):
-        # get start time
         start_time = datetime.now()
-        result = False
-        inference_id = None
-        create_infer_duration = None
-        upload_duration = None
-        wait_duration = None
 
         result, inference_id, create_infer_duration, upload_duration, wait_duration = self.start_job(prompt)
 
         end_time = datetime.now()
 
-        duration = (end_time - start_time).seconds
-        logger.info(f"inference_id {inference_id} result:{result} duration:{duration} prompt:{prompt}")
-        return result, duration, inference_id, create_infer_duration, upload_duration, wait_duration
+        total_duration = (end_time - start_time).seconds
+
+        return result, total_duration, inference_id, create_infer_duration, upload_duration, wait_duration
 
     def start_job(self, prompt: str):
         headers = {
