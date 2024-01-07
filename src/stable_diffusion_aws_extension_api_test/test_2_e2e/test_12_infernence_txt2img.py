@@ -8,7 +8,7 @@ from datetime import timedelta
 import stable_diffusion_aws_extension_api_test.config as config
 from stable_diffusion_aws_extension_api_test.utils.api import Api
 from stable_diffusion_aws_extension_api_test.utils.enums import InferenceStatus, InferenceType
-from stable_diffusion_aws_extension_api_test.utils.helper import upload_with_put, get_inference_job_status_new, \
+from stable_diffusion_aws_extension_api_test.utils.helper import upload_with_put, get_inference_job_status, \
     delete_inference_jobs
 
 logger = logging.getLogger(__name__)
@@ -96,7 +96,7 @@ class TestTxt2ImgInferenceE2E:
         timeout = datetime.now() + timedelta(minutes=5)
 
         while datetime.now() < timeout:
-            status = get_inference_job_status_new(
+            status = get_inference_job_status(
                 api_instance=self.api,
                 job_id=inference_id
             )

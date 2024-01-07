@@ -5,7 +5,7 @@ from datetime import datetime
 
 import stable_diffusion_aws_extension_api_test.config as config
 from stable_diffusion_aws_extension_api_test.utils.api import Api
-from stable_diffusion_aws_extension_api_test.utils.helper import delete_sagemaker_endpoint_new
+from stable_diffusion_aws_extension_api_test.utils.helper import delete_sagemaker_endpoint
 
 logger = logging.getLogger(__name__)
 
@@ -20,7 +20,7 @@ class TestEndpointCreateE2E:
         pass
 
     def test_1_endpoints_delete(self):
-        delete_sagemaker_endpoint_new(self.api)
+        delete_sagemaker_endpoint(self.api)
         headers = {
             "x-api-key": config.api_key,
             "Authorization": config.bearer_token

@@ -5,7 +5,7 @@ import logging
 import pytest
 import stable_diffusion_aws_extension_api_test.config as config
 from stable_diffusion_aws_extension_api_test.utils.api import Api
-from stable_diffusion_aws_extension_api_test.utils.helper import clear_checkpoint, upload_multipart_file, wget_file
+from stable_diffusion_aws_extension_api_test.utils.helper import upload_multipart_file, wget_file
 
 logger = logging.getLogger(__name__)
 checkpoint_id = None

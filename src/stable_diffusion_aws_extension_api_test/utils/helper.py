@@ -23,57 +23,6 @@ def get_parts_number(local_path: str):
     return math.ceil(file_size / part_size)
 
 
-def init_user_role():
-    table = "MultiUserTable"
-
-    ddb_client.put_item(
-        TableName=table,
-        Item={
-            'kind': {"S": "user"},
-            'sort_key': {"S": config.username},
-            'creator': {"S": config.username},
-            'password': {
-                "S": 'AQICAHgwXQBJsY+Vevwb0JKh2sCwtH402nVgKPYiLTSAqt/NdQEAMzbDeO/1wWVFj2DLuY8PAAAAajBoBgkqhkiG9w0BBwagWzBZAgEAMFQGCSqGSIb3DQEHATAeBglghkgBZQMEAS4wEQQM/WkGTx6uM2dLSNsKAgEQgCd/BDR8HJeT8D8KbYAKx8/SLg0o+nytpXxuYcJjyvToT+obz+7y8SA='},
-            'roles': {"L": [
-                {"S": 'IT Operator'}
-            ]},
-        }
-    )
-
-    ddb_client.put_item(
-        TableName=table,
-        Item={
-            'kind': {"S": "role"},
-            'sort_key': {"S": "Designer"},
-            'creator': {"S": config.username},
-            'permissions': {"L": [
-                {"S": "train:all"},
-                {"S": "checkpoint:all"},
-                {"S": "inference:all"},
-                {"S": "sagemaker_endpoint:all"},
-                {"S": "user:all"}
-            ]},
-        }
-    )
-
-    ddb_client.put_item(
-        TableName=table,
-        Item={
-            'kind': {"S": "role"},
-            'sort_key': {"S": "IT Operator"},
-            'creator': {"S": config.username},
-            'permissions': {"L": [
-                {"S": "train:all"},
-                {"S": "checkpoint:all"},
-                {"S": "inference:all"},
-                {"S": "sagemaker_endpoint:all"},
-                {"S": "user:all"},
-                {"S": "role:all"}
-            ]},
-        }
-    )
-
-
 def wget_file(local_file: str, url: str, gcr_url: str = None):
     if gcr_url is not None and config.is_gcr:
         url = gcr_url
@@ -90,48 +39,6 @@ def get_test_model():
         TableName="ModelTable",
     )
     return models
-
-
-def clear_checkpoint(message: str):
-    table = "CheckpointTable"
-    checkpoints = ddb_client.scan(
-        TableName=table
-    )
-    for checkpoint in checkpoints['Items']:
-        if 'params' not in checkpoint:
-            logger.info(f"checkpoint no params: {checkpoint}")
-            continue
-        if 'message' not in checkpoint["params"]['M']:
-            logger.info(f"checkpoint no message: {checkpoint}")
-            continue
-        if checkpoint["params"]['M']['message']['S'] != message:
-            continue
-        logger.info(f"Deleting {checkpoint}")
-        delete_s3_location_object(checkpoint["s3_location"]["S"])
-        ddb_client.delete_item(
-            TableName=table,
-            Key={
-                'id': checkpoint["id"],
-            }
-        )
-
-
-def clear_dataset_info(table: str, dataset_name: str):
-    response = ddb_client.scan(
-        TableName=table,
-        FilterExpression="dataset_name = :dataset_name",
-        ExpressionAttributeValues={
-            ":dataset_name": {"S": dataset_name}
-        }
-    )
-    for item in response["Items"]:
-        logger.info(f"Deleting {item}")
-        ddb_client.delete_item(
-            TableName=table,
-            Key={
-                'dataset_name': item["dataset_name"],
-            }
-        )
 
 
 def upload_db_config(s3_presign_url: str):
@@ -168,55 +75,6 @@ def create_tar(json_string: str, path: str):
             return tar_buffer.getvalue()
 
 
-def clear_model_item():
-    models = ddb_client.scan(
-        TableName="ModelTable",
-    )
-    for model in models["Items"]:
-        if model["name"]['S'] != config.model_name:
-            continue
-        logger.info(f"Deleting {model}")
-        delete_s3_location_object(model["output_s3_location"]['S'])
-        ddb_client.delete_item(
-            TableName="ModelTable",
-            Key={
-                'id': model["id"],
-            }
-        )
-
-
-def delete_dataset_item(table: str, dataset_name: str):
-    response = ddb_client.scan(
-        TableName=table,
-        FilterExpression="dataset_name = :dataset_name",
-        ExpressionAttributeValues={
-            ":dataset_name": {"S": dataset_name}
-        }
-    )
-    for item in response["Items"]:
-        logger.info(f"Deleting {item}")
-        ddb_client.delete_item(
-            TableName=table,
-            Key={
-                'dataset_name': item["dataset_name"],
-                'sort_key': item["sort_key"]
-            }
-        )
-
-
-# todo will remove
-def get_inference_job_status(api_instance, job_id):
-    resp = api_instance.get_inference_job(
-        job_id=job_id,
-        headers={
-            "x-api-key": config.api_key,
-            "Authorization": config.bearer_token
-        },
-    )
-
-    return resp.json()['status']
-
-
 def list_endpoints(api_instance):
     headers = {
         "x-api-key": config.api_key,
@@ -235,7 +93,7 @@ def get_endpoint_status(api_instance, endpoint_name: str):
     return None
 
 
-def get_inference_job_status_new(api_instance, job_id):
+def get_inference_job_status(api_instance, job_id):
     resp = api_instance.get_inference_job(
         job_id=job_id,
         headers={
@@ -248,42 +106,7 @@ def get_inference_job_status_new(api_instance, job_id):
     return resp.json()['data']['status']
 
 
-# todo will remove
 def delete_sagemaker_endpoint(api_instance):
-    table_name = "SDEndpointDeploymentJobTable"
-    client = boto3.client('dynamodb')
-    response = client.scan(
-        TableName=table_name
-    )
-    endpoint_name = f"infer-endpoint-{config.endpoint_name}"
-    if "Items" not in response:
-        pass
-    for item in response['Items']:
-
-        if item["endpoint_name"]['S'] != endpoint_name:
-            continue
-
-        headers = {
-            "x-api-key": config.api_key,
-            "Authorization": config.bearer_token
-        }
-
-        data = {
-            "delete_endpoint_list": [endpoint_name],
-            "username": config.username
-        }
-
-        api_instance.delete_endpoints(headers=headers, data=data)
-
-        client.delete_item(
-            TableName=table_name,
-            Key={
-                'EndpointDeploymentJobId': item["EndpointDeploymentJobId"],
-            }
-        )
-
-
-def delete_sagemaker_endpoint_new(api_instance):
     headers = {
         "x-api-key": config.api_key,
         "Authorization": config.bearer_token
@@ -298,20 +121,6 @@ def delete_sagemaker_endpoint_new(api_instance):
 
     resp = api_instance.delete_endpoints(headers=headers, data=data)
     assert resp.status_code == 204, resp.dumps()
-
-
-def delete_train_item():
-    trains = ddb_client.scan(
-        TableName="TrainingTable",
-    )
-    for train in trains["Items"]:
-        model_name = train["params"]['M']['training_params']['M']['model_name']['S']
-        if model_name != config.model_name:
-            continue
-
-        delete_s3_location_object(train["input_s3_location"]['S'])
-        ddb_client.delete_item(TableName="CheckpointTable", Key={'id': train["checkpoint_id"]})
-        ddb_client.delete_item(TableName="TrainingTable", Key={'id': train["id"]})
 
 
 def delete_prefix_in_s3(prefix: str):
@@ -333,34 +142,6 @@ def delete_inference_jobs(inference_id_list: [str]):
         headers={
             "x-api-key": config.api_key,
         },
-    )
-
-
-def delete_inference_job(job_id: str):
-    api = Api(config)
-    response = api.get_inference_job(
-        job_id=job_id,
-        headers={
-            "x-api-key": config.api_key,
-            "Authorization": config.bearer_token
-        },
-    )
-    job = response.json()
-
-    if 'params' in job:
-        if 'input_body_s3' in job['params']:
-            delete_s3_location_object(job['params']['input_body_s3'])
-
-        if 'output_path' in job['params']:
-            delete_s3_location_object(job['params']['output_path'])
-
-    ddb_client.delete_item(
-        TableName='SDInferenceJobTable',
-        Key={
-            'InferenceJobId': {
-                'S': job['InferenceJobId']
-            },
-        }
     )
 
 
