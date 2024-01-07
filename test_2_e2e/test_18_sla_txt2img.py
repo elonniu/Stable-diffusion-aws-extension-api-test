@@ -21,7 +21,7 @@ inference_data = {}
 total_inference_count = 0
 inference_index = 1
 
-sla_batch_size = os.getenv("SLA_BATCH_SIZE", 5)
+sla_batch_size = int(os.getenv("SLA_BATCH_SIZE", 5))
 
 
 class TestSLaTxt2Img:
