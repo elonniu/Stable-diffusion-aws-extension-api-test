@@ -90,6 +90,15 @@ class TestCreateAndDeleteDatasetE2E:
 
         resp = self.api.update_dataset(dataset_id=dataset_name, headers=headers, data=data)
         assert resp.status_code == 200, resp.dumps()
+        assert 'items' in resp.json()['data'], resp.dumps()
+        assert 'links' in resp.json()['data'], resp.dumps()
+        items = resp.json()['data']['items']
+        for item in items:
+            assert 'name' in item, item
+            assert 'status' in item, item
+            assert 's3_location' in item, item
+            assert 'timestamp' in item, item
+            assert 'description' in item, item
         assert resp.json()["statusCode"] == 200, resp.dumps()
 
     def test_4_datasets_get(self):
