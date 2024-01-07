@@ -24,12 +24,11 @@ class TestCleanRoles:
         }
 
         role_name_list = []
-        roles = self.api.list_roles(headers=headers).json()['data']['roles']
+        roles = self.api.list_roles(headers=headers).json()['data']['items']
         for role in roles:
-            if role['role_name'] == 'IT Operator':
+            if role['name'] == 'IT Operator':
                 continue
-            role_name_list.append(role['role_name'])
-            logger.info(role['role_name'])
+            role_name_list.append(role['name'])
 
         if len(role_name_list) == 0:
             logger.info("No roles to delete")

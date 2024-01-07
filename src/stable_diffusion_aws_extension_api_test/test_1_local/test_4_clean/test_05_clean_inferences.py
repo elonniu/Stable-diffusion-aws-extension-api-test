@@ -23,12 +23,14 @@ class TestCleanInferences:
             "Authorization": config.bearer_token
         }
 
-        items = self.api.list_inferences(headers=headers).json()['data']['items']
-        for item in items:
+        resp = self.api.list_inferences(headers=headers)
+        assert 'items' in resp.json()['data']
+        items = resp.json()['data']['items']
 
+        for item in items:
             data = {
                 "inference_id_list": [item['id']],
             }
 
             resp = self.api.delete_inferences(headers=headers, data=data)
-            assert resp.status_code == 204
+            assert resp.status_code == 204, resp.dumps()

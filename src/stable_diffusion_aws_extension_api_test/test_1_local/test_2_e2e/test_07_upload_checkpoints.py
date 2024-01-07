@@ -16,7 +16,6 @@ class TestUploadCheckPointsE2E:
 
     def setup_class(self):
         self.api = Api(config)
-        clear_checkpoint(config.ckpt_message)
 
     @classmethod
     def teardown_class(cls):

@@ -9,7 +9,7 @@ import pytest
 import stable_diffusion_aws_extension_api_test.config as config
 from stable_diffusion_aws_extension_api_test.utils.api import Api
 from stable_diffusion_aws_extension_api_test.utils.helper import get_test_model, \
-    delete_train_item, upload_db_config
+    upload_db_config
 
 logger = logging.getLogger(__name__)
 train_job_id = ""
@@ -18,7 +18,6 @@ train_job_id = ""
 class TestTrainModelE2E:
     def setup_class(self):
         self.api = Api(config)
-        delete_train_item()
 
     @classmethod
     def teardown_class(cls):
@@ -44,7 +43,6 @@ class TestTrainModelE2E:
 
             resp = self.api.delete_trainings(headers=headers, data=data)
             assert resp.status_code == 204
-
 
     @pytest.mark.skipif(config.test_fast, reason="test_fast")
     def test_1_train_job_create(self):

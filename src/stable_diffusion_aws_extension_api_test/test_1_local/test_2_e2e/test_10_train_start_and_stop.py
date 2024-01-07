@@ -20,9 +20,26 @@ class TestTrainStartStopE2E:
     def teardown_class(cls):
         pass
 
-    def test_0_train_job_clean(self):
-        # todo get model
-        pass
+    def test_0_delete_test_trainings(self):
+        headers = {
+            "x-api-key": config.api_key,
+            "Authorization": config.bearer_token
+        }
+
+        resp = self.api.list_trainings(headers=headers)
+        assert resp.json()['statusCode'] == 200, resp.dumps()
+
+        assert 'items' in resp.json()['data'], resp.dumps()
+
+        items = resp.json()['data']['items']
+
+        for item in items:
+            data = {
+                "training_id_list": [item['id']],
+            }
+
+            resp = self.api.delete_trainings(headers=headers, data=data)
+            assert resp.status_code == 204
 
     @pytest.mark.skipif(config.test_fast, reason="test_fast")
     def test_1_train_job_create(self):
