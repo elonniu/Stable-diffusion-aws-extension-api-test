@@ -3,6 +3,7 @@ from __future__ import print_function
 import logging
 
 import pytest
+
 import config as config
 from utils.api import Api
 from utils.helper import get_test_model, \
@@ -96,9 +97,14 @@ class TestTrainStartStopE2E:
 
             resp = self.api.create_training_job(headers=headers, data=data)
             assert resp.status_code == 201, resp.dumps()
-            assert resp.json()["statusCode"] == 201
+
+            assert resp.json()["statusCode"] == 201, resp.dumps()
+
+            assert 'training' in resp.json()['data'], resp.dumps()
+            assert 'id' in resp.json()['data']['training'], resp.dumps()
+
             job = resp.json()['data']["training"]
-            assert job["status"] == "Initial"
+            assert job["status"] == "Initial", resp.dumps()
             global train_job_id
             train_job_id = job["id"]
             s3_presign_url = resp.json()['data']["s3PresignUrl"]["db_config.tar"]
