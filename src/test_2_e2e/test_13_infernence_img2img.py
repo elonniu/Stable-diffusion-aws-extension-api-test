@@ -8,8 +8,7 @@ from datetime import timedelta
 import config as config
 from utils.api import Api
 from utils.enums import InferenceStatus, InferenceType
-from utils.helper import upload_with_put, get_inference_job_status, \
-    delete_inference_jobs
+from utils.helper import upload_with_put, get_inference_job_status
 
 logger = logging.getLogger(__name__)
 
@@ -45,10 +44,10 @@ class TestImg2ImgInferenceE2E:
         assert resp.status_code == 201, resp.dumps()
 
         global inference_data
-        assert 'inference' in resp.json()['data'],resp.dumps()
+        assert 'inference' in resp.json()['data'], resp.dumps()
         inference_data = resp.json()['data']["inference"]
 
-        assert resp.json()["statusCode"] == 201,resp.dumps()
+        assert resp.json()["statusCode"] == 201, resp.dumps()
         assert inference_data["type"] == InferenceType.IMG2IMG.value
         assert len(inference_data["api_params_s3_upload_url"]) > 0
 
@@ -71,7 +70,7 @@ class TestImg2ImgInferenceE2E:
         assert resp.status_code == 200, resp.dumps()
 
         assert resp.json()["statusCode"] == 200
-        assert 'items' in resp.json()['data'],resp.dumps()
+        assert 'items' in resp.json()['data'], resp.dumps()
         inferences = resp.json()['data']["items"]
         assert inference_data["id"] in [inference["id"] for inference in inferences]
 
@@ -89,7 +88,7 @@ class TestImg2ImgInferenceE2E:
         resp = self.api.start_inference_job(job_id=inference_id, headers=headers)
         assert resp.status_code == 202, resp.dumps()
 
-        assert 'inference' in resp.json()['data'],resp.dumps()
+        assert 'inference' in resp.json()['data'], resp.dumps()
 
         assert resp.json()['data']["inference"]["status"] == InferenceStatus.INPROGRESS.value
 

@@ -8,17 +8,24 @@ fi
 
 python3 -m venv venv
 
-if [ "$(uname)" == "Darwin" ]; then
-    source venv/bin/activate
-else
-    . venv/bin/activate
-fi
+source venv/bin/activate
+
+#if [ "$(uname)" == "Darwin" ]; then
+#    source venv/bin/activate
+#else
+#    . venv/bin/activate
+#fi
 
 if [ -n "$AWS_REGION" ] && [[ $AWS_REGION == cn-* ]]; then
     pip config set global.index-url https://mirrors.aliyun.com/pypi/simple/
 fi
 
 cd ../
+
+rm -rf Solution-data-generator
+rm -rf Solution-data-generator.zip
+rm -rf Solution-api-test-framework
+rm -rf Solution-api-test-framework.zip
 
 curl -sSO https://aws-gcr-solutions.s3.amazonaws.com/Solution-data-generator/Solution-data-generator.zip
 unzip -q Solution-data-generator.zip
@@ -34,7 +41,7 @@ pip3 install -e ../Solution-data-generator
 cd ../
 
 cd Stable-diffusion-aws-extension-api-test
-pip3 --default-timeout=6000 install -r src/requirements.txt
+pip3 --default-timeout=6000 install -r requirements.txt
 pip3 install pytest
 pip3 install -e ../Solution-api-test-framework
 

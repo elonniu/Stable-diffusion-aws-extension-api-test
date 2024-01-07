@@ -9,6 +9,7 @@ from datetime import timedelta
 
 import pytest
 import requests
+
 import config as config
 from utils.api import Api
 from utils.enums import InferenceStatus, InferenceType
@@ -21,6 +22,7 @@ total_inference_count = 0
 inference_index = 1
 
 sla_batch_size = os.getenv("SLA_BATCH_SIZE", 5)
+
 
 class TestSLaTxt2Img:
 
