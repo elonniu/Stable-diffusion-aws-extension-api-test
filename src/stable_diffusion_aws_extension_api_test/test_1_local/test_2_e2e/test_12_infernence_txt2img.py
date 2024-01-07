@@ -76,9 +76,10 @@ class TestTxt2ImgInferenceE2E:
         resp = self.api.list_inferences(headers=headers, params=params)
         assert resp.status_code == 200, resp.dumps()
 
-        assert resp.json()["statusCode"] == 200
-        inferences = resp.json()['data']["inferences"]
-        assert inference_data["id"] in [inference["InferenceJobId"] for inference in inferences]
+        assert resp.json()["statusCode"] == 200, resp.dumps()
+        assert 'items' in resp.json()['data'], resp.dumps()
+        items = resp.json()['data']["items"]
+        assert inference_data["id"] in [item["id"] for item in items]
 
     def test_5_txt2img_inference_job_run_and_succeed(self):
         global inference_data

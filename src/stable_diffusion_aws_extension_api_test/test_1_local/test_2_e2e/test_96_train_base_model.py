@@ -101,7 +101,8 @@ class TestTrainModelE2E:
             resp = self.api.create_training_job(headers=headers, data=data)
             assert resp.status_code == 201, resp.dumps()
             assert resp.json()["statusCode"] == 201
-            job = resp.json()['data']["job"]
+            assert 'training' in resp.json()['data'], resp.dumps()
+            job = resp.json()['data']["training"]
             assert job["status"] == "Initial"
             global train_job_id
             train_job_id = job["id"]
@@ -135,7 +136,8 @@ class TestTrainModelE2E:
         assert resp.status_code == 200, resp.dumps()
         assert resp.json()["statusCode"] == 200
         global train_job_id
-        jobs = resp.json()['data']["trainJobs"]
+        assert 'items' in resp.json()['data'], resp.dumps()
+        jobs = resp.json()['data']["items"]
         assert train_job_id in [train["id"] for train in jobs]
 
     @pytest.mark.skipif(config.test_fast, reason="test_fast")
@@ -150,7 +152,8 @@ class TestTrainModelE2E:
         assert resp.status_code == 200, resp.dumps()
         assert resp.json()["statusCode"] == 200
         global train_job_id
-        jobs = resp.json()['data']["trainJobs"]
+        assert 'items' in resp.json()['data'], resp.dumps()
+        jobs = resp.json()['data']["items"]
         assert train_job_id in [train["id"] for train in jobs]
 
         timeout = datetime.now() + timedelta(minutes=50)
@@ -174,7 +177,7 @@ class TestTrainModelE2E:
         resp = self.api.list_trainings(headers=headers)
 
         assert resp.status_code == 200, resp.dumps()
-        jobs = resp.json()['data']["trainJobs"]
+        jobs = resp.json()['data']["items"]
         for train in jobs:
             if train["id"] == train_job_id:
                 if train["status"] == "Complete":

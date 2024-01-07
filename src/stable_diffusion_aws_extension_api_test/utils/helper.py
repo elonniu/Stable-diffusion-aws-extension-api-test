@@ -243,6 +243,7 @@ def get_inference_job_status_new(api_instance, job_id):
             "Authorization": config.bearer_token
         },
     )
+    assert 'data' in resp.json(), resp.dumps()
 
     return resp.json()['data']['status']
 
