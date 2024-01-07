@@ -35,11 +35,16 @@ def wget_file(local_file: str, url: str, gcr_url: str = None):
             raise subprocess.CalledProcessError(wget_process.returncode, 'wget failed')
 
 
-def get_test_model():
-    models = ddb_client.scan(
-        TableName="ModelTable",
-    )
-    return models
+def get_test_model(api):
+    headers = {
+        "x-api-key": config.api_key,
+        "Authorization": config.bearer_token
+    }
+    resp = api.list_models(headers=headers)
+    assert resp.status_code == 200, resp.dumps()
+    assert resp.json()["statusCode"] == 200, resp.dumps()
+    assert 'items' in resp.json()['data'], resp.dumps()
+    return resp.json()['data']['items']
 
 
 def upload_db_config(s3_presign_url: str):
@@ -50,8 +55,6 @@ def upload_db_config(s3_presign_url: str):
     config_json["model_dir"] = f"models/dreambooth/{config.model_name}"
     config_json["pretrained_model_name_or_path"] = f"models/dreambooth/{config.model_name}/working"
     config_json["model_name"] = config.model_name
-
-    logger.info(config_json)
 
     file = create_tar(
         json.dumps(config_json),

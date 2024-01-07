@@ -46,21 +46,19 @@ class TestTrainModelE2E:
 
     @pytest.mark.skipif(config.test_fast, reason="test_fast")
     def test_1_train_job_create(self):
-        models = get_test_model()
+        models = get_test_model(self.api)
 
-        assert 'Items' in models
-        if len(models['Items']) == 0:
+        if len(models) == 0:
             pass
             return
 
-        for model in models["Items"]:
-            assert "id" in model
-            model_name = model["name"]['S']
+        for model in models:
+            model_name = model['name']
             if model_name != config.model_name:
                 continue
-            model_id = model["id"]['S']
-            model_type = model["model_type"]['S']
-            s3_model_path = f"s3://{config.bucket}/Stable-diffusion/model/{model_name}/{model_id}/output"
+            model_id = model["id"]
+            model_type = model["type"]
+            s3_model_path = model['s3_location']
 
             headers = {
                 "x-api-key": config.api_key,
