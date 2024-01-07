@@ -34,7 +34,6 @@ cd Stable-diffusion-aws-extension-api-test
 ```agsl
 .. data
 ..... src
-........ stable_diffusion_aws_extension_api_test
 ........... test_case
 .............. test_1_unit # Unit test
 .............. test_2_e2e # E2E/Functional tests

@@ -2,7 +2,7 @@
 line-length = 100
 
 [tool.isort]
-known_first_party = ["stable_diffusion_aws_extension_api_test"]
+known_first_party = [""]
 
 # required for compatibility with black:
 profile = "black"

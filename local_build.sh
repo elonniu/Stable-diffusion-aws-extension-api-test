@@ -34,7 +34,7 @@ pip3 install -e ../Solution-data-generator
 cd ../
 
 cd Stable-diffusion-aws-extension-api-test
-pip3 --default-timeout=6000 install -r src/stable_diffusion_aws_extension_api_test/requirements.txt
+pip3 --default-timeout=6000 install -r src/requirements.txt
 pip3 install pytest
 pip3 install -e ../Solution-api-test-framework
 
