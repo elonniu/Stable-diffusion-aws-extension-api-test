@@ -139,9 +139,6 @@ phases:
 
         if [ "$CLEAN_RESOURCES" = "yes" ]; then
         
-           cd Stable-diffusion-aws-extension-api-test
-           make testk test_0_endpoints_delete_before
-        
            aws s3 rb s3://"$API_BUCKET" --force | jq
 
            aws dynamodb delete-table --table-name "CheckpointTable" | jq
@@ -149,7 +146,7 @@ phases:
            aws dynamodb delete-table --table-name "DatasetItemTable" | jq
            aws dynamodb delete-table --table-name "ModelTable" | jq
            aws dynamodb delete-table --table-name "MultiUserTable" | jq
-           aws dynamodb delete-table --table-name "SDEndpointDeploymentJobTable" | jq
+           # aws dynamodb delete-table --table-name "SDEndpointDeploymentJobTable" | jq
            aws dynamodb delete-table --table-name "SDInferenceJobTable" | jq
            aws dynamodb delete-table --table-name "TrainingTable" | jq
 
