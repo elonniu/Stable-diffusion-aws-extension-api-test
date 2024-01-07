@@ -28,10 +28,6 @@ class TestXyzRefinerCheckpointE2E:
     def teardown_class(cls):
         pass
 
-        global inference_data
-        if 'id' in inference_data:
-            delete_inference_jobs([inference_data['id']])
-
     @pytest.mark.skip(reason="not ready")
     def test_1_xyz_refiner_checkpoint_txt2img_inference_job_create(self):
 

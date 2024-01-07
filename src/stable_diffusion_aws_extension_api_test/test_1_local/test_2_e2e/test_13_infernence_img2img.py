@@ -24,10 +24,6 @@ class TestImg2ImgInferenceE2E:
     @classmethod
     def teardown_class(cls):
         pass
-        #
-        # global inference_data
-        # if 'id' in inference_data:
-        #     delete_inference_jobs([inference_data['id']])
 
     def test_1_img2img_inference_job_create(self):
         headers = {
@@ -49,9 +45,10 @@ class TestImg2ImgInferenceE2E:
         assert resp.status_code == 201, resp.dumps()
 
         global inference_data
+        assert 'inference' in resp.json()['data'],resp.dumps()
         inference_data = resp.json()['data']["inference"]
 
-        assert resp.json()["statusCode"] == 201
+        assert resp.json()["statusCode"] == 201,resp.dumps()
         assert inference_data["type"] == InferenceType.IMG2IMG.value
         assert len(inference_data["api_params_s3_upload_url"]) > 0
 
@@ -74,8 +71,9 @@ class TestImg2ImgInferenceE2E:
         assert resp.status_code == 200, resp.dumps()
 
         assert resp.json()["statusCode"] == 200
-        inferences = resp.json()['data']["inferences"]
-        assert inference_data["id"] in [inference["InferenceJobId"] for inference in inferences]
+        assert 'items' in resp.json()['data'],resp.dumps()
+        inferences = resp.json()['data']["items"]
+        assert inference_data["id"] in [inference["id"] for inference in inferences]
 
     def test_5_img2img_inference_job_run_and_succeed(self):
         global inference_data
@@ -90,6 +88,8 @@ class TestImg2ImgInferenceE2E:
 
         resp = self.api.start_inference_job(job_id=inference_id, headers=headers)
         assert resp.status_code == 202, resp.dumps()
+
+        assert 'inference' in resp.json()['data'],resp.dumps()
 
         assert resp.json()['data']["inference"]["status"] == InferenceStatus.INPROGRESS.value
 

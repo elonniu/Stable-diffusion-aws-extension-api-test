@@ -125,10 +125,8 @@ class TestSLaTxt2Img:
         create_infer_duration = None
         upload_duration = None
         wait_duration = None
-        try:
-            result, inference_id, create_infer_duration, upload_duration, wait_duration = self.start_job(prompt)
-        except Exception as e:
-            logger.info(f"Error: {e}")
+
+        result, inference_id, create_infer_duration, upload_duration, wait_duration = self.start_job(prompt)
 
         end_time = datetime.now()
 
@@ -158,9 +156,8 @@ class TestSLaTxt2Img:
         create_infer_end_time = datetime.now()
         create_infer_duration = (create_infer_end_time - create_infer_start_time).seconds
 
-        if 'inference' not in resp.json()['data']:
-            logger.error(resp.dumps())
-            return False
+        assert 'data' in resp.json(), resp.dumps()
+        assert 'inference' in resp.json()['data'], resp.dumps()
 
         inference = resp.json()['data']['inference']
 
@@ -190,13 +187,8 @@ class TestSLaTxt2Img:
         }
 
         resp = self.api.start_inference_job(job_id=inference_id, headers=headers)
-        if 'statusCode' not in resp.json():
-            logger.error(resp.json())
-            return False
-
-        if resp.json()['statusCode'] != 202:
-            logger.error(resp.dumps())
-            return False
+        assert 'statusCode' in resp.json(), resp.dumps()
+        assert resp.json()['statusCode'] == 202, resp.dumps()
 
         timeout = datetime.now() + timedelta(minutes=2)
 

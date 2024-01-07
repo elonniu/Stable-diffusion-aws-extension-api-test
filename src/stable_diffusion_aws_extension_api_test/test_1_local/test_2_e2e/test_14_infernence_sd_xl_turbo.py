@@ -29,10 +29,23 @@ class TestTurboE2E:
     @classmethod
     def teardown_class(cls):
         pass
-        #
-        # global inference_data
-        # if 'id' in inference_data:
-        #     delete_inference_jobs([inference_data['id']])
+
+    def test_0_clean_checkpoints(self):
+        headers = {
+            "x-api-key": config.api_key,
+            "Authorization": config.bearer_token,
+        }
+
+        resp = self.api.list_checkpoints(headers=headers).json()
+        checkpoints = resp['data']["items"]
+
+        for checkpoint in checkpoints:
+            if filename in checkpoint['name']:
+                data = {
+                    "checkpoint_id_list": [checkpoint['id']]
+                }
+                resp = self.api.delete_checkpoints(headers=headers, data=data)
+                assert resp.status_code == 204, resp.dumps()
 
     def test_1_create_turbo_checkpoint(self):
         headers = {
@@ -58,6 +71,7 @@ class TestTurboE2E:
         assert resp.status_code == 201, resp.dumps()
 
         assert resp.json()["statusCode"] == 201
+        assert 'checkpoint' in resp.json()['data'], resp.dumps()
         assert resp.json()['data']["checkpoint"]['type'] == checkpoint_type
         assert len(resp.json()['data']["checkpoint"]['id']) == 36
 
@@ -91,7 +105,6 @@ class TestTurboE2E:
 
         assert resp.status_code == 200, resp.dumps()
         assert resp.json()["statusCode"] == 200
-        assert resp.json()['data']["checkpoint"]['type'] == checkpoint_type
 
     def test_3_list_turbo_checkpoint(self):
         headers = {
@@ -106,7 +119,7 @@ class TestTurboE2E:
         resp = self.api.list_checkpoints(headers=headers, params=params)
         assert resp.status_code == 200, resp.dumps()
         global checkpoint_id
-        assert checkpoint_id in [checkpoint["id"] for checkpoint in resp.json()['data']["checkpoints"]]
+        assert checkpoint_id in [checkpoint["id"] for checkpoint in resp.json()['data']["items"]]
 
     def test_4_turbo_txt2img_inference_job_create(self):
         headers = {
@@ -130,6 +143,7 @@ class TestTurboE2E:
         resp = self.api.create_inference_new(headers=headers, data=data)
         assert resp.status_code == 201, resp.dumps()
         global inference_data
+        assert 'inference' in resp.json()['data'], resp.dumps()
         inference_data = resp.json()['data']["inference"]
 
         assert resp.json()["statusCode"] == 201
@@ -151,6 +165,7 @@ class TestTurboE2E:
 
         resp = self.api.start_inference_job(job_id=inference_id, headers=headers)
         assert resp.status_code == 202, resp.dumps()
+        assert 'inference' in resp.json()['data'], resp.dumps()
         assert resp.json()['data']["inference"]["status"] == InferenceStatus.INPROGRESS.value
 
         timeout = datetime.now() + timedelta(minutes=4)
@@ -167,6 +182,6 @@ class TestTurboE2E:
                 logger.error("Inference job failed.")
                 logger.error(resp.dumps())
                 raise Exception("Inference job failed.")
-            time.sleep(5)
+            time.sleep(1)
         else:
             raise Exception("Inference execution timed out after 4 minutes.")
