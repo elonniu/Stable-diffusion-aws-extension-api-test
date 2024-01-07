@@ -111,13 +111,13 @@ class TestSLaTxt2Img:
                 "succeed": succeed,
                 "failed": failed,
                 "success_rate": success_rate,
-                "infer_max_duration": max_duration_seconds,
-                "infer_min_duration": min_duration_seconds,
-                "infer_avg_duration": avg_duration_seconds,
+                "duration_total_max": max_duration_seconds,
+                "duration_total_min": min_duration_seconds,
+                "duration_total_avg": avg_duration_seconds,
                 "failed_list": failed_list_string,
-                "infer_create_duration_avg": create_infer_duration_avg,
-                "infer_upload_duration_avg": upload_duration_avg,
-                "infer_wait_duration_avg": wait_duration_avg,
+                "duration_create_avg": create_infer_duration_avg,
+                "duration_upload_avg": upload_duration_avg,
+                "duration_wait_result_avg": wait_duration_avg,
             }
 
             with open("/tmp/txt2img_sla_report.json", "w") as sla_report:
