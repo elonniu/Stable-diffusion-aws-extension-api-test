@@ -2,6 +2,7 @@ from __future__ import print_function
 
 import json
 import logging
+import os
 import time
 from datetime import datetime
 from datetime import timedelta
@@ -19,6 +20,7 @@ inference_data = {}
 total_inference_count = 0
 inference_index = 1
 
+sla_batch_size = os.getenv("SLA_BATCH_SIZE", 5)
 
 class TestSLaTxt2Img:
 
@@ -36,7 +38,7 @@ class TestSLaTxt2Img:
             prompts = f.readlines()
             prompts = [prompt.strip() for prompt in prompts]
             prompts = [prompt for prompt in prompts if prompt != ""]
-            prompts = prompts[:5]
+            prompts = prompts[:sla_batch_size]
             prompts_count = len(prompts)
             global total_inference_count, inference_index
             total_inference_count = prompts_count
@@ -115,9 +117,9 @@ class TestSLaTxt2Img:
                 "duration_total_min": min_duration_seconds,
                 "duration_total_avg": avg_duration_seconds,
                 "failed_list": failed_list_string,
-                "duration_create_avg": create_infer_duration_avg,
-                "duration_upload_avg": upload_duration_avg,
-                "duration_wait_result_avg": wait_duration_avg,
+                "duration_avg_create": create_infer_duration_avg,
+                "duration_avg_upload": upload_duration_avg,
+                "duration_avg_wait_result": wait_duration_avg,
             }
 
             with open("/tmp/txt2img_sla_report.json", "w") as sla_report:
