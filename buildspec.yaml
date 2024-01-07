@@ -35,10 +35,7 @@ phases:
         if [ "$DEPLOY_STACK" = "cdk" ]; then
            echo "----------------------------------------------------------------"
            echo "cdk deploy start..."
-           echo "----------------------------------------------------------------"
-           aws cloudformation delete-stack --stack-name $STACK_NAME
-           aws cloudformation wait stack-delete-complete --stack-name $STACK_NAME
-        
+           echo "----------------------------------------------------------------"        
            curl -L -o esd.zip $CODE_REPO/archive/refs/heads/$CODE_BRANCH.zip
            unzip -q esd.zip
         
