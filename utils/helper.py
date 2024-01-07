@@ -35,7 +35,7 @@ def wget_file(local_file: str, url: str, gcr_url: str = None):
             raise subprocess.CalledProcessError(wget_process.returncode, 'wget failed')
 
 
-def get_test_model(api):
+def get_test_models(api):
     headers = {
         "x-api-key": config.api_key,
         "Authorization": config.bearer_token
