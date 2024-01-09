@@ -1,29 +1,29 @@
-[tool.black]
-line-length = 100
+[tool.poetry]
+name = "openapi_client"
+version = "1.0.0"
+description = "Stable Diffusion Train and Deploy API"
+authors = ["OpenAPI Generator Community <team@openapitools.org>"]
+license = "NoLicense"
+readme = "README.md"
+repository = "https://github.com/GIT_USER_ID/GIT_REPO_ID"
+keywords = ["OpenAPI", "OpenAPI-Generator", "Stable-Diffusion-Train-and-Deploy-API"]
 
-[tool.isort]
-known_first_party = ["stable_diffusion_aws_extension_api_test"]
+[tool.poetry.dependencies]
+python = "^3.7"
 
-# required for compatibility with black:
-profile = "black"
+urllib3 = ">= 1.25.3"
+python-dateutil = ">=2.8.2"
+pydantic = "^1.10.5, <2"
+aenum = ">=3.1.11"
 
-# To maintain consistency with other settings
-line_length = 100
+[tool.poetry.dev-dependencies]
+pytest = ">=7.2.1"
+tox = ">=3.9.0"
+flake8 = ">=4.0.0"
 
-[tool.mypy]
-# See https://mypy.readthedocs.io/en/latest/config_file.html for more mypy options.
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
 
-# Enables the type-checker on the interior of functions without type annotations.
-check_untyped_defs = true
-
-# Displaying specific error codes makes it easier to silence specific errors
-# See also https://mypy.readthedocs.io/en/latest/error_codes.html
-show_error_codes = true
-
-# Show source code snippets and location markers in error messages
-pretty = true
-
-# Suppresses errors about packages which do not implement type-hint sharing.
-# See also https://mypy.readthedocs.io/en/latest/running_mypy.html#missing-imports.
-ignore_missing_imports = true
-
+[tool.pylint.'MESSAGES CONTROL']
+extension-pkg-whitelist = "pydantic"
