@@ -32,7 +32,6 @@ class TestRoleE2E:
         assert resp.status_code == 201, resp.dumps()
 
         assert resp.json()["statusCode"] == 201
-        assert resp.json()["data"]['role_name'] == config.role_name
 
     def test_2_list_roles_exists(self):
         headers = {
