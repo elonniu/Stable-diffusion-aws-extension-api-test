@@ -180,8 +180,6 @@ class TestSLaTxt2Img:
         wait_end_time = datetime.now()
         wait_duration = (wait_end_time - wait_start_time).seconds
 
-        delete_inference_jobs([inference_id])
-
         return result, inference_id, create_infer_duration, upload_duration, wait_duration
 
     def sla_txt2img_inference_job_run_and_succeed(self, inference_id: str):
