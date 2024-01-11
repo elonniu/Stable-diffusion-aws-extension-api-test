@@ -113,6 +113,7 @@ class TestEndpointsApi:
         }
 
         data = {
+            "endpoint_name": "test",
             "instance_type": config.instance_type,
             "initial_instance_count": 1000,
             "autoscaling_enabled": True,
