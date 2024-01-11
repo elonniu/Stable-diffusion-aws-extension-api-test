@@ -6,6 +6,7 @@ from datetime import datetime
 from datetime import timedelta
 
 import pytest
+
 import config as config
 from utils.api import Api
 from utils.enums import InferenceStatus, InferenceType

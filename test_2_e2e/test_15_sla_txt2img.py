@@ -8,10 +8,11 @@ from datetime import timedelta
 
 import pytest
 import requests
+
 import config as config
 from utils.api import Api
 from utils.enums import InferenceStatus, InferenceType
-from utils.helper import get_inference_job_status_new, delete_inference_jobs
+from utils.helper import get_inference_job_status_new
 
 logger = logging.getLogger(__name__)
 

@@ -4,6 +4,7 @@ import logging
 import os
 
 import requests
+
 import config as config
 from utils.api import Api
 

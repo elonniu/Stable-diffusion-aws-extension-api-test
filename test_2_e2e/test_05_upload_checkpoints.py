@@ -3,6 +3,7 @@ from __future__ import print_function
 import logging
 
 import pytest
+
 import config as config
 from utils.api import Api
 from utils.helper import clear_checkpoint, upload_multipart_file, wget_file

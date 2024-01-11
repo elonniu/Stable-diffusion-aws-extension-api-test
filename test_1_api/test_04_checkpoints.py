@@ -29,7 +29,6 @@ class TestCheckpointsApi:
 
         id_list = []
         for ckpt in ckpts:
-
             id_list.append(ckpt['id'])
 
         if len(id_list) == 0:
