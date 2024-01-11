@@ -92,7 +92,7 @@ class TestTrainingsApi:
         assert resp.status_code == 400, resp.dumps()
 
         assert 'object has missing required properties' in resp.json()["message"]
-        assert 'training_job_list' in resp.json()["message"]
+        assert 'training_id_list' in resp.json()["message"]
 
     def test_8_delete_trainings_succeed(self):
         headers = {
@@ -100,7 +100,7 @@ class TestTrainingsApi:
         }
 
         data = {
-            "training_job_list": ['id'],
+            "training_id_list": ['id'],
         }
 
         resp = self.api.delete_trainings(headers=headers, data=data)
