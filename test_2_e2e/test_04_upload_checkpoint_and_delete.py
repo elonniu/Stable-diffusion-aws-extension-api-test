@@ -48,7 +48,7 @@ class TestCheckPointDeleteE2E:
             }
         }
 
-        resp = self.api.create_checkpoint_new(headers=headers, data=data)
+        resp = self.api.create_checkpoint(headers=headers, data=data)
 
         assert resp.status_code == 201, resp.dumps()
         assert resp.json()["statusCode"] == 201
@@ -75,7 +75,7 @@ class TestCheckPointDeleteE2E:
             "x-api-key": config.api_key,
         }
 
-        resp = self.api.update_checkpoint_new(checkpoint_id=checkpoint_id, headers=headers, data=data)
+        resp = self.api.update_checkpoint(checkpoint_id=checkpoint_id, headers=headers, data=data)
 
         assert resp.status_code == 200, resp.dumps()
         assert resp.json()["statusCode"] == 200

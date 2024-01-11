@@ -29,7 +29,7 @@ class TestModelsApi:
         assert resp.json()["message"] == "Unauthorized"
 
     def test_3_update_model_without_key(self):
-        resp = self.api.update_model_new(model_id="job_id")
+        resp = self.api.update_model(model_id="job_id")
 
         assert resp.status_code == 403, resp.dumps()
         assert resp.json()["message"] == "Forbidden"
@@ -38,7 +38,7 @@ class TestModelsApi:
         headers = {
             "x-api-key": config.api_key,
         }
-        resp = self.api.update_model_new(headers=headers, model_id="job_id")
+        resp = self.api.update_model(headers=headers, model_id="job_id")
 
         assert resp.status_code == 400, resp.dumps()
         assert 'Unknown error parsing request body' in resp.json()["message"]
@@ -55,7 +55,7 @@ class TestModelsApi:
         assert len(resp.json()['data']["models"]) >= 0
 
     def test_5_create_model_without_key(self):
-        resp = self.api.create_model_new()
+        resp = self.api.create_model()
 
         assert resp.status_code == 403, resp.dumps()
         assert resp.json()["message"] == "Forbidden"

@@ -43,7 +43,7 @@ class TestCreateAndDeleteDatasetE2E:
             'params': {'description': 'this is description'}
         }
 
-        resp = self.api.create_dataset_new(headers=headers, data=data)
+        resp = self.api.create_dataset(headers=headers, data=data)
         assert resp.status_code == 201, resp.dumps()
 
         global dataset
@@ -73,7 +73,7 @@ class TestCreateAndDeleteDatasetE2E:
             "status": "Enabled"
         }
 
-        resp = self.api.update_dataset_new(dataset_id=dataset_name, headers=headers, data=data)
+        resp = self.api.update_dataset(dataset_id=dataset_name, headers=headers, data=data)
         assert resp.status_code == 200, resp.dumps()
         assert resp.json()["statusCode"] == 200
 

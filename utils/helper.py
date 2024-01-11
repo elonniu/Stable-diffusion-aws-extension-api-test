@@ -204,17 +204,7 @@ def delete_dataset_item(table: str, dataset_name: str):
         )
 
 
-# todo will remove
-def get_inference_job_status(api_instance, job_id):
-    resp = api_instance.get_inference_job(
-        job_id=job_id,
-        headers={
-            "x-api-key": config.api_key,
-            "Authorization": config.bearer_token
-        },
-    )
 
-    return resp.json()['status']
 
 
 def list_endpoints(api_instance):

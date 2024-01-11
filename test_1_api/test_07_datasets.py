@@ -57,13 +57,13 @@ class TestDatasetsApi:
         assert f"dataset {name} is not found" in resp.json()['message']
 
     def test_5_create_dataset_without_key(self):
-        resp = self.api.create_dataset_new()
+        resp = self.api.create_dataset()
 
         assert resp.status_code == 403, resp.dumps()
         assert resp.json()["message"] == "Forbidden"
 
     def test_6_update_dataset_without_key(self):
-        resp = self.api.update_dataset_new(dataset_id="dataset_id")
+        resp = self.api.update_dataset(dataset_id="dataset_id")
 
         assert resp.status_code == 403, resp.dumps()
         assert resp.json()["message"] == "Forbidden"

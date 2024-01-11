@@ -29,7 +29,7 @@ class TestRolesApi:
             "initial": True,
         }
 
-        resp = self.api.create_user_new(headers=headers, data=data)
+        resp = self.api.create_user(headers=headers, data=data)
 
         assert resp.status_code == 201, resp.dumps()
         assert resp.json()["message"] == "Created"
@@ -48,7 +48,7 @@ class TestRolesApi:
         assert resp.json()["message"] == "Unauthorized"
 
     def test_4_create_role_without_key(self):
-        resp = self.api.create_role_new()
+        resp = self.api.create_role()
 
         assert resp.status_code == 403, resp.dumps()
         assert resp.json()["message"] == "Forbidden"
@@ -65,7 +65,7 @@ class TestRolesApi:
             "permissions": ['train:all', 'checkpoint:all'],
         }
 
-        resp = self.api.create_role_new(headers=headers, data=data)
+        resp = self.api.create_role(headers=headers, data=data)
 
         assert resp.status_code == 400, resp.dumps()
         assert resp.json()["statusCode"] == 400

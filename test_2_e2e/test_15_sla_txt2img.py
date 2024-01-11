@@ -154,7 +154,7 @@ class TestSLaTxt2Img:
         }
 
         create_infer_start_time = datetime.now()
-        resp = self.api.create_inference_new(headers=headers, data=data)
+        resp = self.api.create_inference(headers=headers, data=data)
         create_infer_end_time = datetime.now()
         create_infer_duration = (create_infer_end_time - create_infer_start_time).seconds
 

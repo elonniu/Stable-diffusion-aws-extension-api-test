@@ -28,7 +28,7 @@ class TestRoleE2E:
             "permissions": ['train:all', 'checkpoint:all'],
         }
 
-        resp = self.api.create_role_new(headers=headers, data=data)
+        resp = self.api.create_role(headers=headers, data=data)
         assert resp.status_code == 201, resp.dumps()
 
         assert resp.json()["statusCode"] == 201

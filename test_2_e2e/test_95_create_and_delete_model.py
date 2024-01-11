@@ -64,7 +64,7 @@ class TestModelE2E:
             }
         }
 
-        resp = self.api.create_model_new(headers=headers, data=data)
+        resp = self.api.create_model(headers=headers, data=data)
 
         assert resp.status_code == 201, resp.dumps()
         assert resp.json()["statusCode"] == 201
@@ -103,7 +103,7 @@ class TestModelE2E:
             "multi_parts_tags": {filename: multiparts_tags}
         }
 
-        resp = self.api.update_model_new(model_id=job_id, headers=headers, data=data)
+        resp = self.api.update_model(model_id=job_id, headers=headers, data=data)
         assert resp.status_code == 200, resp.dumps()
         assert resp.json()["statusCode"] == 200
         assert resp.json()['data']["job"]["endpointName"] == "aigc-utils-endpoint"

@@ -51,7 +51,7 @@ class TestXyzRefinerCheckpointE2E:
             }
         }
 
-        resp = self.api.create_inference_new(headers=headers, data=data)
+        resp = self.api.create_inference(headers=headers, data=data)
         assert resp.status_code == 201, resp.dumps()
         global inference_data
         inference_data = resp.json()["inference"]

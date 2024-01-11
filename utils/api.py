@@ -133,17 +133,7 @@ class Api:
             data=data
         )
 
-    # todo will remove
     def create_role(self, headers=None, data=None):
-        return self.req(
-            "POST",
-            "role",
-            headers=headers,
-            data=data
-        )
-
-    # todo will rename
-    def create_role_new(self, headers=None, data=None):
         return self.req(
             "POST",
             "roles",
@@ -159,14 +149,6 @@ class Api:
             params=params
         )
 
-    # todo will remove
-    def user_delete(self, username: str, headers=None):
-        return self.req(
-            "DELETE",
-            f"user/{username}",
-            headers=headers
-        )
-
     def delete_users(self, headers=None, data=None):
         return self.req(
             "DELETE",
@@ -175,16 +157,7 @@ class Api:
             data=data
         )
 
-    # todo will remove
     def create_user(self, headers=None, data=None):
-        return self.req(
-            "POST",
-            "user",
-            headers=headers,
-            data=data
-        )
-
-    def create_user_new(self, headers=None, data=None):
         return self.req(
             "POST",
             "users",
@@ -200,16 +173,7 @@ class Api:
             params=params
         )
 
-    # todo will remove
     def create_checkpoint(self, headers=None, data=None):
-        return self.req(
-            "POST",
-            "checkpoint",
-            headers=headers,
-            data=data
-        )
-
-    def create_checkpoint_new(self, headers=None, data=None):
         return self.req(
             "POST",
             "checkpoints",
@@ -225,16 +189,7 @@ class Api:
             data=data
         )
 
-    # todo will remove
-    def update_checkpoint(self, headers=None, data=None):
-        return self.req(
-            "PUT",
-            "checkpoint",
-            headers=headers,
-            data=data
-        )
-
-    def update_checkpoint_new(self, checkpoint_id: str, headers=None, data=None):
+    def update_checkpoint(self, checkpoint_id: str, headers=None, data=None):
         return self.req(
             "PUT",
             f"checkpoints/{checkpoint_id}",
@@ -266,29 +221,12 @@ class Api:
             data=data
         )
 
-    # todo will remove
     def create_inference(self, headers=None, data=None):
-        return self.req(
-            "POST",
-            "inference/v2",
-            headers=headers,
-            data=data
-        )
-
-    def create_inference_new(self, headers=None, data=None):
         return self.req(
             "POST",
             "inferences",
             headers=headers,
             data=data
-        )
-
-    # todo will remove
-    def inference_run(self, job_id: str, headers=None):
-        return self.req(
-            "PUT",
-            f"inference/v2/{job_id}/run",
-            headers=headers,
         )
 
     def start_inference_job(self, job_id: str, headers=None):
@@ -303,14 +241,6 @@ class Api:
             "GET",
             f"trainings/{job_id}",
             headers=headers,
-        )
-
-    def get_inference_job_param_output(self, headers=None, params=None):
-        return self.req(
-            "GET",
-            "inference/get-inference-job-param-output",
-            headers=headers,
-            params=params
         )
 
     def get_inference_job(self, job_id: str, headers=None):
@@ -328,24 +258,6 @@ class Api:
             "GET",
             f"inferences/{job_id}",
             headers=headers
-        )
-
-    def get_inference_image_output(self, job_id: str, headers=None):
-        return self.req(
-            "GET",
-            "inference/get-inference-job-image-output",
-            headers=headers,
-            params={
-                "jobID": job_id
-            }
-        )
-
-    def get_endpoint_deployment_job(self, headers=None, params=None):
-        return self.req(
-            "GET",
-            "inference/get-endpoint-deployment-job",
-            headers=headers,
-            params=params
         )
 
     def get_texual_inversion_list_get(self, headers=None, params=None):
@@ -388,14 +300,6 @@ class Api:
             params=params
         )
 
-    # todo will remove
-    def get_dataset_data(self, name: str, headers=None):
-        return self.req(
-            "GET",
-            f"dataset/{name}/data",
-            headers=headers
-        )
-
     def get_dataset(self, name: str, headers=None):
         return self.req(
             "GET",
@@ -403,16 +307,7 @@ class Api:
             headers=headers
         )
 
-    # todo will remove
     def create_dataset(self, headers=None, data=None):
-        return self.req(
-            "POST",
-            "dataset",
-            headers=headers,
-            data=data
-        )
-
-    def create_dataset_new(self, headers=None, data=None):
         return self.req(
             "POST",
             "datasets",
@@ -420,16 +315,7 @@ class Api:
             data=data
         )
 
-    # todo will remove
-    def update_dataset(self, headers=None, data=None):
-        return self.req(
-            "PUT",
-            "dataset",
-            headers=headers,
-            data=data
-        )
-
-    def update_dataset_new(self, dataset_id: str, headers=None, data=None):
+    def update_dataset(self, dataset_id: str, headers=None, data=None):
         return self.req(
             "PUT",
             f"datasets/{dataset_id}",
@@ -437,16 +323,7 @@ class Api:
             data=data
         )
 
-    # todo will remove
     def create_model(self, headers=None, data=None):
-        return self.req(
-            "POST",
-            "model",
-            headers=headers,
-            data=data
-        )
-
-    def create_model_new(self, headers=None, data=None):
         return self.req(
             "POST",
             "models",
@@ -454,16 +331,7 @@ class Api:
             data=data
         )
 
-    # todo will remove
-    def update_model(self, headers=None, data=None):
-        return self.req(
-            "PUT",
-            "model",
-            headers=headers,
-            data=data
-        )
-
-    def update_model_new(self, model_id: str, headers=None, data=None):
+    def update_model(self, model_id: str, headers=None, data=None):
         return self.req(
             "PUT",
             f"models/{model_id}",
@@ -477,15 +345,6 @@ class Api:
             "models",
             headers=headers,
             params=params
-        )
-
-    # todo will remove
-    def start_train(self, headers=None, data=None):
-        return self.req(
-            "PUT",
-            "train",
-            headers=headers,
-            data=data
         )
 
     def start_training_job(self, training_id: str, headers=None, data=None):
@@ -504,30 +363,12 @@ class Api:
             data=data
         )
 
-    # todo will remove
-    def create_train(self, headers=None, data=None):
-        return self.req(
-            "POST",
-            "train",
-            headers=headers,
-            data=data
-        )
-
     def create_training_job(self, headers=None, data=None):
         return self.req(
             "POST",
             "trainings",
             headers=headers,
             data=data
-        )
-
-    # todo will remove
-    def list_trains(self, headers=None, params=None):
-        return self.req(
-            "GET",
-            "trains",
-            headers=headers,
-            params=params
         )
 
     def list_trainings(self, headers=None, params=None):
@@ -544,13 +385,4 @@ class Api:
             "inferences",
             headers=headers,
             params=params
-        )
-
-    # todo will remove
-    def query_inferences(self, headers=None, data=None):
-        return self.req(
-            "POST",
-            "inference/query-inference-jobs",
-            headers=headers,
-            data=data
         )

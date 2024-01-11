@@ -19,7 +19,7 @@ class TestInferencesApi:
         pass
 
     def test_1_create_inference_without_key(self):
-        resp = self.api.create_inference_new()
+        resp = self.api.create_inference()
 
         assert resp.status_code == 403, resp.dumps()
         assert resp.json()["message"] == "Forbidden"
@@ -38,7 +38,7 @@ class TestInferencesApi:
             }
         }
 
-        resp = self.api.create_inference_new(data=data)
+        resp = self.api.create_inference(data=data)
 
         assert resp.status_code == 403, resp.dumps()
         assert resp.json()["message"] == "Forbidden"
@@ -53,7 +53,7 @@ class TestInferencesApi:
             "bad_param": "bad_param",
         }
 
-        resp = self.api.create_inference_new(headers=headers, data=data)
+        resp = self.api.create_inference(headers=headers, data=data)
 
         assert resp.status_code == 400, resp.dumps()
 

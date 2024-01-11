@@ -6,6 +6,7 @@ from datetime import datetime
 from datetime import timedelta
 
 import pytest
+
 import config as config
 from utils.api import Api
 from utils.enums import InferenceStatus, InferenceType
@@ -50,7 +51,7 @@ class TestXyzCheckpointE2E:
             "filters": {}
         }
 
-        resp = self.api.create_inference_new(headers=headers, data=data)
+        resp = self.api.create_inference(headers=headers, data=data)
         assert resp.status_code == 201, resp.dumps()
         global inference_data
         inference_data = resp.json()['data']["inference"]

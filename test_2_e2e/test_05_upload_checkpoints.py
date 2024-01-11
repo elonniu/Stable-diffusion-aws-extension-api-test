@@ -63,7 +63,7 @@ class TestCheckPointE2E:
             }
         }
 
-        resp = self.api.create_checkpoint_new(headers=headers, data=data)
+        resp = self.api.create_checkpoint(headers=headers, data=data)
 
         assert resp.status_code == 201, resp.dumps()
         assert resp.json()["statusCode"] == 201
@@ -87,7 +87,7 @@ class TestCheckPointE2E:
             "name": ""
         }
 
-        resp = self.api.update_checkpoint_new(checkpoint_id=checkpoint_id, headers=headers, data=data)
+        resp = self.api.update_checkpoint(checkpoint_id=checkpoint_id, headers=headers, data=data)
 
         assert resp.status_code == 400, resp.dumps()
 
@@ -114,7 +114,7 @@ class TestCheckPointE2E:
             "x-api-key": config.api_key,
         }
 
-        resp = self.api.update_checkpoint_new(checkpoint_id=checkpoint_id, headers=headers, data=data)
+        resp = self.api.update_checkpoint(checkpoint_id=checkpoint_id, headers=headers, data=data)
 
         assert resp.status_code == 200, resp.dumps()
         assert resp.json()["statusCode"] == 200
@@ -158,7 +158,7 @@ class TestCheckPointE2E:
             }
         }
 
-        resp = self.api.create_checkpoint_new(headers=headers, data=data)
+        resp = self.api.create_checkpoint(headers=headers, data=data)
 
         assert resp.status_code == 201, resp.dumps()
         assert resp.json()["statusCode"] == 201
@@ -192,7 +192,7 @@ class TestCheckPointE2E:
             "x-api-key": config.api_key,
         }
 
-        resp = self.api.update_checkpoint_new(checkpoint_id=checkpoint_id, headers=headers, data=data)
+        resp = self.api.update_checkpoint(checkpoint_id=checkpoint_id, headers=headers, data=data)
 
         assert resp.status_code == 200, resp.dumps()
         assert resp.json()["statusCode"] == 200
@@ -239,7 +239,7 @@ class TestCheckPointE2E:
             }
         }
 
-        resp = self.api.create_checkpoint_new(headers=headers, data=data)
+        resp = self.api.create_checkpoint(headers=headers, data=data)
 
         assert resp.status_code == 201, resp.dumps()
         assert resp.json()["statusCode"] == 201
@@ -274,7 +274,7 @@ class TestCheckPointE2E:
             "Authorization": config.bearer_token,
         }
 
-        resp = self.api.update_checkpoint_new(checkpoint_id=checkpoint_id, headers=headers, data=data)
+        resp = self.api.update_checkpoint(checkpoint_id=checkpoint_id, headers=headers, data=data)
 
         assert resp.status_code == 200, resp.dumps()
         assert resp.json()["statusCode"] == 200
@@ -321,7 +321,7 @@ class TestCheckPointE2E:
             }
         }
 
-        resp = self.api.create_checkpoint_new(headers=headers, data=data)
+        resp = self.api.create_checkpoint(headers=headers, data=data)
 
         assert resp.status_code == 201, resp.dumps()
         assert resp.json()["statusCode"] == 201
@@ -356,7 +356,7 @@ class TestCheckPointE2E:
             "multi_parts_tags": {filename: multiparts_tags}
         }
 
-        resp = self.api.update_checkpoint_new(checkpoint_id=checkpoint_id, headers=headers, data=data)
+        resp = self.api.update_checkpoint(checkpoint_id=checkpoint_id, headers=headers, data=data)
 
         assert resp.status_code == 200, resp.dumps()
         assert resp.json()["statusCode"] == 200
@@ -403,7 +403,7 @@ class TestCheckPointE2E:
             }
         }
 
-        resp = self.api.create_checkpoint_new(headers=headers, data=data)
+        resp = self.api.create_checkpoint(headers=headers, data=data)
 
         assert resp.status_code == 201, resp.dumps()
         assert resp.json()["statusCode"] == 201
@@ -438,7 +438,7 @@ class TestCheckPointE2E:
             "multi_parts_tags": {filename: multiparts_tags}
         }
 
-        resp = self.api.update_checkpoint_new(checkpoint_id=checkpoint_id, headers=headers, data=data)
+        resp = self.api.update_checkpoint(checkpoint_id=checkpoint_id, headers=headers, data=data)
 
         assert resp.status_code == 200, resp.dumps()
         assert resp.json()["statusCode"] == 200

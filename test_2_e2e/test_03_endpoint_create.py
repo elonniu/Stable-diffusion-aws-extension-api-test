@@ -63,7 +63,7 @@ class TestEndpointCreateE2E:
             }
         }
 
-        resp = self.api.create_inference_new(headers=headers, data=data)
+        resp = self.api.create_inference(headers=headers, data=data)
         assert resp.status_code == 400, resp.dumps()
         assert resp.json()["statusCode"] == 400
         assert resp.json()["message"] == 'no available Endpoints for user "admin"'

@@ -9,8 +9,7 @@ import config as config
 from utils.api import Api
 from utils.enums import InferenceStatus, InferenceType
 from utils.helper import upload_multipart_file, wget_file
-from utils.helper import upload_with_put, get_inference_job_status_new, \
-    delete_inference_jobs
+from utils.helper import upload_with_put, get_inference_job_status_new
 
 logger = logging.getLogger(__name__)
 checkpoint_id = None
@@ -53,7 +52,7 @@ class TestTurboE2E:
             }
         }
 
-        resp = self.api.create_checkpoint_new(headers=headers, data=data)
+        resp = self.api.create_checkpoint(headers=headers, data=data)
 
         assert resp.status_code == 201, resp.dumps()
 
@@ -87,7 +86,7 @@ class TestTurboE2E:
             "x-api-key": config.api_key,
         }
 
-        resp = self.api.update_checkpoint_new(checkpoint_id=checkpoint_id, headers=headers, data=data)
+        resp = self.api.update_checkpoint(checkpoint_id=checkpoint_id, headers=headers, data=data)
 
         assert resp.status_code == 200, resp.dumps()
         assert resp.json()["statusCode"] == 200
@@ -127,7 +126,7 @@ class TestTurboE2E:
             }
         }
 
-        resp = self.api.create_inference_new(headers=headers, data=data)
+        resp = self.api.create_inference(headers=headers, data=data)
         assert resp.status_code == 201, resp.dumps()
         global inference_data
         inference_data = resp.json()['data']["inference"]

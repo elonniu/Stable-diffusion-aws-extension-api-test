@@ -30,7 +30,7 @@ class TestUserE2E:
             "roles": ['IT Operator'],
         }
 
-        resp = self.api.create_user_new(headers=headers, data=data)
+        resp = self.api.create_user(headers=headers, data=data)
 
         assert resp.status_code == 201, resp.dumps()
         assert resp.json()["statusCode"] == 201

@@ -84,7 +84,7 @@ class TestUsersApi:
             "roles": ['IT Operator'],
         }
 
-        resp = self.api.create_user_new(headers=headers, data=data)
+        resp = self.api.create_user(headers=headers, data=data)
 
         assert resp.status_code == 400, resp.dumps()
 
@@ -103,7 +103,7 @@ class TestUsersApi:
             "roles": ["admin"],
         }
 
-        resp = self.api.create_user_new(headers=headers, data=data)
+        resp = self.api.create_user(headers=headers, data=data)
 
         assert resp.status_code == 400, resp.dumps()
 

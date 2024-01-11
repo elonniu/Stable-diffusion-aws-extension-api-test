@@ -60,7 +60,7 @@ class TestUpdateCheckPointE2E:
             }
         }
 
-        resp = self.api.create_checkpoint_new(headers=headers, data=data)
+        resp = self.api.create_checkpoint(headers=headers, data=data)
 
         assert resp.status_code == 202, resp.dumps()
         assert 'message' in resp.json()
@@ -80,7 +80,7 @@ class TestUpdateCheckPointE2E:
             }
         }
 
-        resp = self.api.create_checkpoint_new(headers=headers, data=data)
+        resp = self.api.create_checkpoint(headers=headers, data=data)
 
         assert resp.status_code == 400, resp.dumps()
         assert 'already exists' in resp.json()['message']
@@ -99,7 +99,7 @@ class TestUpdateCheckPointE2E:
                 data = {
                     "name": "cartoony"
                 }
-                resp = self.api.update_checkpoint_new(headers=headers, checkpoint_id=checkpoint_id, data=data)
+                resp = self.api.update_checkpoint(headers=headers, checkpoint_id=checkpoint_id, data=data)
                 assert resp.status_code == 202, resp.dumps()
 
     def test_4_checkpoint_update_name_check(self):

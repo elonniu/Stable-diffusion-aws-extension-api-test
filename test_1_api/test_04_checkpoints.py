@@ -110,7 +110,7 @@ class TestCheckpointsApi:
             }
         }
 
-        resp = self.api.create_checkpoint_new(headers=headers, data=data)
+        resp = self.api.create_checkpoint(headers=headers, data=data)
 
         assert resp.status_code == 400, resp.dumps()
 
@@ -144,7 +144,7 @@ class TestCheckpointsApi:
         assert resp.json()["message"] == 'Forbidden'
 
     def test_9_update_checkpoint_without_key(self):
-        resp = self.api.update_checkpoint_new(checkpoint_id="1111-2222-3333-4444")
+        resp = self.api.update_checkpoint(checkpoint_id="1111-2222-3333-4444")
 
         assert resp.status_code == 403, resp.dumps()
         assert resp.json()["message"] == "Forbidden"
