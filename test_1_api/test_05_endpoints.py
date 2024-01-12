@@ -114,6 +114,7 @@ class TestEndpointsApi:
 
         data = {
             "endpoint_name": "test",
+            "endpoint_type": "Async",
             "instance_type": config.instance_type,
             "initial_instance_count": 1000,
             "autoscaling_enabled": True,
@@ -136,6 +137,7 @@ class TestEndpointsApi:
         data = {
             "endpoint_name": "dev-test",
             "instance_type": instance_type,
+            "endpoint_type": "Async",
             "initial_instance_count": 9,
             "autoscaling_enabled": True,
             "assign_to_roles": ["IT Operator"],

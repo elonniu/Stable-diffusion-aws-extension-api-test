@@ -82,6 +82,7 @@ class TestEndpointCheckE2E:
 
         data = {
             "endpoint_name": config.endpoint_name,
+            "endpoint_type": "Async",
             "instance_type": config.instance_type,
             "initial_instance_count": 1,
             "autoscaling_enabled": False,
