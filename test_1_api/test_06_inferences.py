@@ -28,6 +28,7 @@ class TestInferencesApi:
         data = {
             "user_id": config.username,
             "task_type": "txt2img",
+            "inference_type": "Async",
             "models": {
                 "Stable-diffusion": [config.default_model_id],
                 "embeddings": []

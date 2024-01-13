@@ -145,6 +145,7 @@ class TestSLaTxt2Img:
 
         data = {
             "user_id": config.username,
+            "inference_type": "Async",
             "task_type": InferenceType.TXT2IMG.value,
             "models": {
                 "Stable-diffusion": [config.default_model_id],

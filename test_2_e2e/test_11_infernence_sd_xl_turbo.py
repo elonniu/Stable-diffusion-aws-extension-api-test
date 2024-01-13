@@ -115,6 +115,7 @@ class TestTurboE2E:
 
         data = {
             "user_id": config.username,
+            "inference_type": "Async",
             "task_type": InferenceType.TXT2IMG.value,
             "models": {
                 "Stable-diffusion": [filename],
