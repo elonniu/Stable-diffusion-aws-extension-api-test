@@ -97,6 +97,7 @@ class TestEndpointCreateE2E:
 
         data = {
             "endpoint_name": config.endpoint_name,
+            "endpoint_type": 'Async',
             "instance_type": config.instance_type,
             "initial_instance_count": int(config.initial_instance_count),
             "autoscaling_enabled": False,
