@@ -25,7 +25,7 @@ class TestCleanEndpoint:
 
         data = {
             "endpoint_name_list": [
-                f"infer-endpoint-{config.endpoint_name}"
+                f"esd-async-{config.endpoint_name}"
             ],
             "username": config.username
         }

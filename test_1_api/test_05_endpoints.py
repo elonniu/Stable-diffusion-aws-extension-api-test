@@ -19,7 +19,7 @@ class TestEndpointsApi:
         pass
 
     def test_0_endpoints_delete_before(self):
-        endpoint_name = f"infer-endpoint-{config.endpoint_name}"
+        endpoint_name = f"esd-async-{config.endpoint_name}"
         while True:
             status = get_endpoint_status(self.api, endpoint_name)
             if status is None:

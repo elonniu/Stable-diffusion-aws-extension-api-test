@@ -10,7 +10,7 @@ from utils.api import Api
 
 logger = logging.getLogger(__name__)
 
-endpoint_name = f"infer-endpoint-{config.endpoint_name}"
+endpoint_name = f"esd-async-{config.endpoint_name}"
 
 
 class TestEndpointCheckE2E:

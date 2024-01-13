@@ -244,7 +244,7 @@ def delete_sagemaker_endpoint(api_instance):
     response = client.scan(
         TableName=table_name
     )
-    endpoint_name = f"infer-endpoint-{config.endpoint_name}"
+    endpoint_name = f"esd-async-{config.endpoint_name}"
     if "Items" not in response:
         pass
     for item in response['Items']:
@@ -280,7 +280,7 @@ def delete_sagemaker_endpoint_new(api_instance):
 
     data = {
         "endpoint_name_list": [
-            f"infer-endpoint-{config.endpoint_name}"
+            f"esd-async-{config.endpoint_name}"
         ],
         "username": config.username
     }
