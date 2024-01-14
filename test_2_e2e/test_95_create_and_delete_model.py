@@ -107,7 +107,7 @@ class TestModelE2E:
         resp = self.api.update_model(model_id=job_id, headers=headers, data=data)
         assert resp.status_code == 200, resp.dumps()
         assert resp.json()["statusCode"] == 200
-        assert resp.json()['data']["job"]["endpointName"] == "aigc-utils-endpoint"
+        assert resp.json()['data']["job"]["endpointName"] == "esd-utils-endpoint"
 
     @pytest.mark.skipif(config.test_fast, reason="test_fast")
     def test_3_models_v15_check_list(self):
