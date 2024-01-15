@@ -10,7 +10,7 @@ import pytest
 import config as config
 from utils.api import Api
 from utils.helper import get_test_model, \
-    delete_train_item, upload_db_config
+    upload_db_config
 
 logger = logging.getLogger(__name__)
 train_job_id = ""
@@ -19,7 +19,6 @@ train_job_id = ""
 class TestTrainE2E:
     def setup_class(self):
         self.api = Api(config)
-        delete_train_item()
 
     @classmethod
     def teardown_class(cls):
@@ -140,7 +139,7 @@ class TestTrainE2E:
                 break
             time.sleep(50)
         else:
-            raise Exception("train timed out after 50 minutes.")
+            raise Exception(f"train {train_job_id} timed out after 50 minutes.")
 
     def train_wait_for_complete(self):
         global train_job_id
