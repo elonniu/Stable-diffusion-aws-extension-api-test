@@ -22,7 +22,7 @@ class TestEndpointCheckE2E:
     def teardown_class(cls):
         pass
 
-    def test_5_list_endpoints_status(self):
+    def test_1_list_endpoints_status(self):
         headers = {
             "x-api-key": config.api_key,
             "Authorization": config.bearer_token
@@ -74,7 +74,7 @@ class TestEndpointCheckE2E:
         return False
 
     # not support a same role create more than one endpoint
-    def test_6_create_endpoint_role_limit(self):
+    def test_2_create_endpoint_role_limit(self):
         headers = {
             "x-api-key": config.api_key,
             "Authorization": config.bearer_token

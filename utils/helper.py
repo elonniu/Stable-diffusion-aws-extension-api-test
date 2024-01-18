@@ -8,6 +8,7 @@ import tarfile
 
 import boto3
 import requests
+
 import config as config
 from utils.api import Api
 
@@ -204,9 +205,6 @@ def delete_dataset_item(table: str, dataset_name: str):
         )
 
 
-
-
-
 def list_endpoints(api_instance):
     headers = {
         "x-api-key": config.api_key,
@@ -237,42 +235,7 @@ def get_inference_job_status_new(api_instance, job_id):
     return resp.json()['data']['status']
 
 
-# todo will remove
 def delete_sagemaker_endpoint(api_instance):
-    table_name = "SDEndpointDeploymentJobTable"
-    client = boto3.client('dynamodb')
-    response = client.scan(
-        TableName=table_name
-    )
-    endpoint_name = f"esd-async-{config.endpoint_name}"
-    if "Items" not in response:
-        pass
-    for item in response['Items']:
-
-        if item["endpoint_name"]['S'] != endpoint_name:
-            continue
-
-        headers = {
-            "x-api-key": config.api_key,
-            "Authorization": config.bearer_token
-        }
-
-        data = {
-            "delete_endpoint_list": [endpoint_name],
-            "username": config.username
-        }
-
-        api_instance.delete_endpoints(headers=headers, data=data)
-
-        client.delete_item(
-            TableName=table_name,
-            Key={
-                'EndpointDeploymentJobId': item["EndpointDeploymentJobId"],
-            }
-        )
-
-
-def delete_sagemaker_endpoint_new(api_instance):
     headers = {
         "x-api-key": config.api_key,
         "Authorization": config.bearer_token

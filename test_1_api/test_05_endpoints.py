@@ -5,7 +5,7 @@ from time import sleep
 
 import config as config
 from utils.api import Api
-from utils.helper import get_endpoint_status, delete_sagemaker_endpoint_new
+from utils.helper import get_endpoint_status, delete_sagemaker_endpoint
 
 logger = logging.getLogger(__name__)
 
@@ -29,7 +29,7 @@ class TestEndpointsApi:
                 logger.error(f"Endpoint {endpoint_name} is {status}, waiting to delete...")
                 sleep(10)
             else:
-                delete_sagemaker_endpoint_new(self.api)
+                delete_sagemaker_endpoint(self.api)
                 break
         pass
 

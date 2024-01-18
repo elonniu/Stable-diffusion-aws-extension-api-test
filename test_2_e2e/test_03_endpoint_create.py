@@ -5,7 +5,7 @@ from datetime import datetime
 
 import config as config
 from utils.api import Api
-from utils.helper import delete_sagemaker_endpoint_new
+from utils.helper import delete_sagemaker_endpoint
 
 logger = logging.getLogger(__name__)
 
@@ -20,7 +20,7 @@ class TestEndpointCreateE2E:
         pass
 
     def test_1_endpoints_delete(self):
-        delete_sagemaker_endpoint_new(self.api)
+        delete_sagemaker_endpoint(self.api)
         headers = {
             "x-api-key": config.api_key,
             "Authorization": config.bearer_token
@@ -82,6 +82,26 @@ class TestEndpointCreateE2E:
             "initial_instance_count": 1,
             "autoscaling_enabled": False,
             "assign_to_roles": ["IT Operator"],
+            "creator": config.username
+        }
+
+        resp = self.api.create_endpoint(headers=headers, data=data)
+        assert resp.status_code == 202, resp.dumps()
+        assert resp.json()["data"]["endpoint_status"] == "Creating"
+
+    def test_4_create_endpoint_real_time(self):
+        headers = {
+            "x-api-key": config.api_key,
+            "Authorization": config.bearer_token
+        }
+
+        data = {
+            "endpoint_name": config.endpoint_name,
+            "endpoint_type": "Real-time",
+            "instance_type": config.instance_type,
+            "initial_instance_count": 1,
+            "autoscaling_enabled": False,
+            "assign_to_roles": ["byoc"],
             "creator": config.username
         }
 

@@ -33,6 +33,23 @@ class TestRoleE2E:
 
         assert resp.json()["statusCode"] == 201
 
+    def test_2_create_role_byoc(self):
+        headers = {
+            "x-api-key": config.api_key,
+            "Authorization": config.bearer_token,
+        }
+
+        data = {
+            "role_name": "byoc",
+            "creator": "admin",
+            "permissions": ['sagemaker_endpoint:all'],
+        }
+
+        resp = self.api.create_role(headers=headers, data=data)
+        assert resp.status_code == 201, resp.dumps()
+
+        assert resp.json()["statusCode"] == 201
+
     def test_2_list_roles_exists(self):
         headers = {
             "x-api-key": config.api_key,
