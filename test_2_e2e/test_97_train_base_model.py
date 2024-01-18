@@ -155,7 +155,7 @@ class TestTrainE2E:
         jobs = resp.json()['data']["trainJobs"]
         for train in jobs:
             if train["id"] == train_job_id:
-                if train["status"] == "Complete":
+                if train["status"] == "Completed":
                     return True
                 if train["status"] == "Fail":
                     logger.error("Train job failed.")
