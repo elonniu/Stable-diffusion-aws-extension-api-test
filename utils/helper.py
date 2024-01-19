@@ -243,7 +243,8 @@ def delete_sagemaker_endpoint(api_instance):
 
     data = {
         "endpoint_name_list": [
-            f"esd-async-{config.endpoint_name}"
+            f"esd-async-{config.endpoint_name}",
+            f"esd-real-time-{config.endpoint_name}",
         ],
         "username": config.username
     }
