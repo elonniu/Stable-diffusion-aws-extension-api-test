@@ -107,8 +107,6 @@ class TestTxt2ImgInferenceE2E:
             if status == InferenceStatus.SUCCEED.value:
                 break
             if status == InferenceStatus.FAILED.value:
-                logger.error("Inference job failed.")
-                logger.error(resp.dumps())
                 raise Exception("Inference job failed.")
             time.sleep(5)
         else:
