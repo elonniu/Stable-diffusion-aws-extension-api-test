@@ -1,5 +1,6 @@
 from __future__ import print_function
 
+import json
 import logging
 
 import pytest
@@ -53,11 +54,11 @@ class TestTrainStartStopE2E:
 
         for model in models:
             assert "id" in model
-            model_name = model["name"]
+            model_name = model["model_name"]
             if model_name != config.model_name:
                 continue
             model_id = model["id"]
-            model_type = model["model_type"]
+            model_type = 'Stable-diffusion'
             s3_model_path = f"s3://{config.bucket}/Stable-diffusion/model/{model_name}/{model_id}/output"
 
             headers = {

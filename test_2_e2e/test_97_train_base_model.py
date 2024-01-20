@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 train_job_id = ""
 
 
-class TestTrainE2E:
+class TestTrainBaseModelE2E:
     def setup_class(self):
         self.api = Api(config)
 
@@ -34,11 +34,11 @@ class TestTrainE2E:
 
         for model in models:
             assert "id" in model
-            model_name = model["name"]
+            model_name = model["model_name"]
             if model_name != config.model_name:
                 continue
             model_id = model["id"]
-            model_type = model["model_type"]
+            model_type = 'Stable-diffusion'
             s3_model_path = f"s3://{config.bucket}/Stable-diffusion/model/{model_name}/{model_id}/output"
 
             headers = {
