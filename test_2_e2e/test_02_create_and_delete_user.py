@@ -25,7 +25,7 @@ class TestUserE2E:
 
         data = {
             "username": username,
-            "password": "XXXXXXXXXXXXX",
+            "password": username,
             "creator": "admin",
             "roles": ['IT Operator'],
         }

@@ -24,7 +24,7 @@ class TestRolesApi:
 
         data = {
             "username": config.username,
-            "password": "XXXXXXXXXXXXX",
+            "password": config.username,
             "creator": config.username,
             "initial": True,
         }
