@@ -17,6 +17,24 @@ class TestUserE2E:
     def teardown_class(cls):
         pass
 
+    def test_0_create_admin_user(self):
+        headers = {
+            "x-api-key": config.api_key,
+            "Authorization": config.bearer_token,
+        }
+
+        data = {
+            "username": "admin",
+            "password": "admin",
+            "creator": "admin",
+            "roles": ['IT Operator', 'byoc'],
+        }
+
+        resp = self.api.create_user(headers=headers, data=data)
+
+        assert resp.status_code == 201, resp.dumps()
+        assert resp.json()["statusCode"] == 201
+
     def test_1_create_user(self):
         headers = {
             "x-api-key": config.api_key,
@@ -27,7 +45,7 @@ class TestUserE2E:
             "username": username,
             "password": username,
             "creator": "admin",
-            "roles": ['IT Operator'],
+            "roles": ['IT Operator', 'byoc'],
         }
 
         resp = self.api.create_user(headers=headers, data=data)
