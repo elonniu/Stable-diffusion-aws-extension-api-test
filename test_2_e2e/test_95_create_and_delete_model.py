@@ -10,8 +10,7 @@ import pytest
 
 import config as config
 from utils.api import Api
-from utils.helper import clear_model_item, \
-    upload_multipart_file
+from utils.helper import upload_multipart_file
 
 logger = logging.getLogger(__name__)
 
@@ -23,12 +22,34 @@ class TestModelE2E:
 
     def setup_class(self):
         self.api = Api(config)
-        clear_model_item()
         pass
 
     @classmethod
     def teardown_class(cls):
         pass
+
+    def test_0_clear_all_models(self):
+        headers = {
+            "x-api-key": config.api_key,
+            "Authorization": config.bearer_token
+        }
+
+        resp = self.api.list_models(headers=headers)
+
+        assert resp.status_code == 200, resp.dumps()
+        assert 'models' in resp.json()['data']
+        models = resp.json()['data']["models"]
+        for model in models:
+            logger.info(f"Deleting model {model['id']}")
+            data = {
+                "model_id_list": [model['id']],
+            }
+            resp = self.api.delete_models(
+                data=data,
+                headers=headers
+            )
+
+            assert resp.status_code == 204, resp.dumps()
 
     @pytest.mark.skipif(config.test_fast, reason="test_fast")
     def test_1_model_v15_post(self):

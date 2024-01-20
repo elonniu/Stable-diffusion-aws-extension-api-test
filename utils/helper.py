@@ -11,6 +11,7 @@ import requests
 
 import config as config
 from utils.api import Api
+from utils.enums import InferenceStatus
 
 logger = logging.getLogger(__name__)
 ddb_client = boto3.client('dynamodb')
@@ -22,57 +23,6 @@ def get_parts_number(local_path: str):
     file_size = os.stat(local_path).st_size
     part_size = 1000 * 1024 * 1024
     return math.ceil(file_size / part_size)
-
-
-def init_user_role():
-    table = "MultiUserTable"
-
-    ddb_client.put_item(
-        TableName=table,
-        Item={
-            'kind': {"S": "user"},
-            'sort_key': {"S": config.username},
-            'creator': {"S": config.username},
-            'password': {
-                "S": 'AQICAHgwXQBJsY+Vevwb0JKh2sCwtH402nVgKPYiLTSAqt/NdQEAMzbDeO/1wWVFj2DLuY8PAAAAajBoBgkqhkiG9w0BBwagWzBZAgEAMFQGCSqGSIb3DQEHATAeBglghkgBZQMEAS4wEQQM/WkGTx6uM2dLSNsKAgEQgCd/BDR8HJeT8D8KbYAKx8/SLg0o+nytpXxuYcJjyvToT+obz+7y8SA='},
-            'roles': {"L": [
-                {"S": 'IT Operator'}
-            ]},
-        }
-    )
-
-    ddb_client.put_item(
-        TableName=table,
-        Item={
-            'kind': {"S": "role"},
-            'sort_key': {"S": "Designer"},
-            'creator': {"S": config.username},
-            'permissions': {"L": [
-                {"S": "train:all"},
-                {"S": "checkpoint:all"},
-                {"S": "inference:all"},
-                {"S": "sagemaker_endpoint:all"},
-                {"S": "user:all"}
-            ]},
-        }
-    )
-
-    ddb_client.put_item(
-        TableName=table,
-        Item={
-            'kind': {"S": "role"},
-            'sort_key': {"S": "IT Operator"},
-            'creator': {"S": config.username},
-            'permissions': {"L": [
-                {"S": "train:all"},
-                {"S": "checkpoint:all"},
-                {"S": "inference:all"},
-                {"S": "sagemaker_endpoint:all"},
-                {"S": "user:all"},
-                {"S": "role:all"}
-            ]},
-        }
-    )
 
 
 def wget_file(local_file: str, url: str, gcr_url: str = None):
@@ -169,23 +119,6 @@ def create_tar(json_string: str, path: str):
             return tar_buffer.getvalue()
 
 
-def clear_model_item():
-    models = ddb_client.scan(
-        TableName="ModelTable",
-    )
-    for model in models["Items"]:
-        if model["name"]['S'] != config.model_name:
-            continue
-        logger.info(f"Deleting {model}")
-        delete_s3_location_object(model["output_s3_location"]['S'])
-        ddb_client.delete_item(
-            TableName="ModelTable",
-            Key={
-                'id': model["id"],
-            }
-        )
-
-
 def delete_dataset_item(table: str, dataset_name: str):
     response = ddb_client.scan(
         TableName=table,
@@ -231,6 +164,9 @@ def get_inference_job_status_new(api_instance, job_id):
             "Authorization": config.bearer_token
         },
     )
+
+    if InferenceStatus.FAILED.value == resp.json()['data']['status']:
+        logger.error(f"Failed inference: {resp.json()['data']}")
 
     return resp.json()['data']['status']
 
@@ -286,34 +222,6 @@ def delete_inference_jobs(inference_id_list: [str]):
         headers={
             "x-api-key": config.api_key,
         },
-    )
-
-
-def delete_inference_job(job_id: str):
-    api = Api(config)
-    response = api.get_inference_job(
-        job_id=job_id,
-        headers={
-            "x-api-key": config.api_key,
-            "Authorization": config.bearer_token
-        },
-    )
-    job = response.json()
-
-    if 'params' in job:
-        if 'input_body_s3' in job['params']:
-            delete_s3_location_object(job['params']['input_body_s3'])
-
-        if 'output_path' in job['params']:
-            delete_s3_location_object(job['params']['output_path'])
-
-    ddb_client.delete_item(
-        TableName='SDInferenceJobTable',
-        Key={
-            'InferenceJobId': {
-                'S': job['InferenceJobId']
-            },
-        }
     )
 
 
