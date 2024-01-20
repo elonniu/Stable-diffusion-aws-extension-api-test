@@ -6,7 +6,6 @@ import os
 import subprocess
 import tarfile
 
-import boto3
 import requests
 
 import config as config
@@ -14,9 +13,6 @@ from utils.api import Api
 from utils.enums import InferenceStatus
 
 logger = logging.getLogger(__name__)
-ddb_client = boto3.client('dynamodb')
-s3_client = boto3.client('s3')
-s3 = boto3.resource('s3')
 
 
 def get_parts_number(local_path: str):
@@ -34,55 +30,6 @@ def wget_file(local_file: str, url: str, gcr_url: str = None):
         wget_process = subprocess.run(['wget', '-qP', local_path, url], capture_output=True)
         if wget_process.returncode != 0:
             raise subprocess.CalledProcessError(wget_process.returncode, 'wget failed')
-
-
-def get_test_model():
-    models = ddb_client.scan(
-        TableName="ModelTable",
-    )
-    return models
-
-
-def clear_checkpoint(message: str):
-    table = "CheckpointTable"
-    checkpoints = ddb_client.scan(
-        TableName=table
-    )
-    for checkpoint in checkpoints['Items']:
-        if 'params' not in checkpoint:
-            logger.info(f"checkpoint no params: {checkpoint}")
-            continue
-        if 'message' not in checkpoint["params"]['M']:
-            logger.info(f"checkpoint no message: {checkpoint}")
-            continue
-        if checkpoint["params"]['M']['message']['S'] != message:
-            continue
-        logger.info(f"Deleting {checkpoint}")
-        delete_s3_location_object(checkpoint["s3_location"]["S"])
-        ddb_client.delete_item(
-            TableName=table,
-            Key={
-                'id': checkpoint["id"],
-            }
-        )
-
-
-def clear_dataset_info(table: str, dataset_name: str):
-    response = ddb_client.scan(
-        TableName=table,
-        FilterExpression="dataset_name = :dataset_name",
-        ExpressionAttributeValues={
-            ":dataset_name": {"S": dataset_name}
-        }
-    )
-    for item in response["Items"]:
-        logger.info(f"Deleting {item}")
-        ddb_client.delete_item(
-            TableName=table,
-            Key={
-                'dataset_name': item["dataset_name"],
-            }
-        )
 
 
 def upload_db_config(s3_presign_url: str):
@@ -117,25 +64,6 @@ def create_tar(json_string: str, path: str):
             tarinfo.size = len(json_bytes)
             tar.addfile(tarinfo, json_buffer)
             return tar_buffer.getvalue()
-
-
-def delete_dataset_item(table: str, dataset_name: str):
-    response = ddb_client.scan(
-        TableName=table,
-        FilterExpression="dataset_name = :dataset_name",
-        ExpressionAttributeValues={
-            ":dataset_name": {"S": dataset_name}
-        }
-    )
-    for item in response["Items"]:
-        logger.info(f"Deleting {item}")
-        ddb_client.delete_item(
-            TableName=table,
-            Key={
-                'dataset_name': item["dataset_name"],
-                'sort_key': item["sort_key"]
-            }
-        )
 
 
 def list_endpoints(api_instance):
@@ -189,27 +117,6 @@ def delete_sagemaker_endpoint(api_instance):
     assert resp.status_code == 204, resp.dumps()
 
 
-def delete_train_item():
-    trains = ddb_client.scan(
-        TableName="TrainingTable",
-    )
-    for train in trains["Items"]:
-        model_name = train["params"]['M']['training_params']['M']['model_name']['S']
-        if model_name != config.model_name:
-            continue
-
-        delete_s3_location_object(train["input_s3_location"]['S'])
-        ddb_client.delete_item(TableName="CheckpointTable", Key={'id': train["checkpoint_id"]})
-        ddb_client.delete_item(TableName="TrainingTable", Key={'id': train["id"]})
-
-
-def delete_prefix_in_s3(prefix: str):
-    if prefix.startswith("s3://"):
-        prefix = prefix.replace(f"s3://{config.bucket}/", "")
-    bucket = s3.Bucket(config.bucket)
-    bucket.objects.filter(Prefix=prefix).delete()
-
-
 def delete_inference_jobs(inference_id_list: [str]):
     api = Api(config)
 
@@ -223,14 +130,6 @@ def delete_inference_jobs(inference_id_list: [str]):
             "x-api-key": config.api_key,
         },
     )
-
-
-def delete_s3_location_object(location: str):
-    logger.info(f"Deleting {config.bucket} {location}")
-    if location.startswith("s3://"):
-        location = location.replace(f"s3://{config.bucket}/", "")
-        logger.info(f"Deleting {config.bucket} {location}")
-    s3_client.delete_object(Bucket=config.bucket, Key=location)
 
 
 def upload_with_put(s3_url, local_file):

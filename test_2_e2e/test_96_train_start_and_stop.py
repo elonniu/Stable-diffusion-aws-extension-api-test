@@ -6,8 +6,7 @@ import pytest
 
 import config as config
 from utils.api import Api
-from utils.helper import get_test_model, \
-    delete_train_item, upload_db_config
+from utils.helper import upload_db_config
 
 logger = logging.getLogger(__name__)
 train_job_id = ""
@@ -16,28 +15,49 @@ train_job_id = ""
 class TestTrainStartStopE2E:
     def setup_class(self):
         self.api = Api(config)
-        delete_train_item()
 
     @classmethod
     def teardown_class(cls):
         pass
 
+    def test_0_clear_all_trains(self):
+        headers = {
+            "x-api-key": config.api_key,
+            "Authorization": config.bearer_token
+        }
+
+        resp = self.api.list_trainings(headers=headers)
+
+        assert resp.status_code == 200, resp.dumps()
+        assert resp.json()["statusCode"] == 200
+        assert 'trainJobs' in resp.json()["data"]
+        trainJobs = resp.json()["data"]["trainJobs"]
+        for trainJob in trainJobs:
+            data = {
+                "training_id_list": [trainJob["id"]],
+            }
+            resp = self.api.delete_trainings(
+                data=data,
+                headers=headers
+            )
+            assert resp.status_code == 204, resp.dumps()
+
     @pytest.mark.skipif(config.test_fast, reason="test_fast")
     def test_1_train_job_create(self):
-        models = get_test_model()
+        headers = {
+            "x-api-key": config.api_key,
+            "Authorization": config.bearer_token
+        }
 
-        assert 'Items' in models
-        if len(models['Items']) == 0:
-            pass
-            return
+        models = self.api.list_models(headers=headers).json()["data"]['models']
 
-        for model in models["Items"]:
+        for model in models:
             assert "id" in model
-            model_name = model["name"]['S']
+            model_name = model["name"]
             if model_name != config.model_name:
                 continue
-            model_id = model["id"]['S']
-            model_type = model["model_type"]['S']
+            model_id = model["id"]
+            model_type = model["model_type"]
             s3_model_path = f"s3://{config.bucket}/Stable-diffusion/model/{model_name}/{model_id}/output"
 
             headers = {

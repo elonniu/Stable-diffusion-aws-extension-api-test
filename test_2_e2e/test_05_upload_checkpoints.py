@@ -6,7 +6,7 @@ import pytest
 
 import config as config
 from utils.api import Api
-from utils.helper import clear_checkpoint, upload_multipart_file, wget_file
+from utils.helper import upload_multipart_file, wget_file
 
 logger = logging.getLogger(__name__)
 checkpoint_id = None
@@ -17,13 +17,12 @@ class TestCheckPointE2E:
 
     def setup_class(self):
         self.api = Api(config)
-        clear_checkpoint(config.ckpt_message)
 
     @classmethod
     def teardown_class(cls):
         pass
 
-    def test_0_clean_checkpoints(self):
+    def test_0_clean_all_checkpoints(self):
         headers = {
             "x-api-key": config.api_key,
             "Authorization": config.bearer_token,

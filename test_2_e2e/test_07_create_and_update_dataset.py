@@ -7,8 +7,6 @@ import requests
 
 import config as config
 from utils.api import Api
-from utils.helper import delete_prefix_in_s3, delete_dataset_item, \
-    clear_dataset_info
 
 logger = logging.getLogger(__name__)
 dataset = {}
@@ -17,13 +15,29 @@ dataset = {}
 class TestDatasetE2E:
     def setup_class(self):
         self.api = Api(config)
-        clear_dataset_info("DatasetInfoTable", config.dataset_name)
-        delete_dataset_item("DatasetItemTable", config.dataset_name)
-        delete_prefix_in_s3(f"dataset/{config.dataset_name}")
 
     @classmethod
     def teardown_class(cls):
         pass
+
+    def test_0_clear_all_datasets(self):
+        headers = {
+            "x-api-key": config.api_key,
+            "Authorization": config.bearer_token,
+        }
+
+        resp = self.api.list_datasets(headers=headers)
+        assert resp.status_code == 200, resp.dumps()
+        assert 'datasets' in resp.json()['data'], resp.dumps()
+        datasets = resp.json()['data']['datasets']
+        for dataset in datasets:
+            data = {
+                "dataset_name_list": [
+                    dataset['datasetName'],
+                ],
+            }
+            resp = self.api.delete_datasets(data=data, headers=headers)
+            assert resp.status_code == 204, resp.dumps()
 
     def test_1_dataset_post(self):
         dataset_content = []
