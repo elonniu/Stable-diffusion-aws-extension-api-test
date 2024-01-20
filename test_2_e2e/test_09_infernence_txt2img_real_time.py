@@ -1,14 +1,12 @@
 from __future__ import print_function
 
 import logging
-import time
 from datetime import datetime
-from datetime import timedelta
 
 import config as config
 from utils.api import Api
-from utils.enums import InferenceStatus, InferenceType
-from utils.helper import upload_with_put, get_inference_job_status_new
+from utils.enums import InferenceType
+from utils.helper import upload_with_put
 
 logger = logging.getLogger(__name__)
 
@@ -24,7 +22,7 @@ class TestTxt2ImgInferenceRealTimeE2E:
     def teardown_class(cls):
         pass
 
-    def test_1_txt2img_inference_job_create(self):
+    def test_1_txt2img_rt_inference_job_create(self):
         headers = {
             "x-api-key": config.api_key,
             "Authorization": config.bearer_token
@@ -56,7 +54,7 @@ class TestTxt2ImgInferenceRealTimeE2E:
 
         upload_with_put(inference_data["api_params_s3_upload_url"], "./data/api_params/txt2img_api_param.json")
 
-    def test_2_txt2img_inference_job_exists(self):
+    def test_2_txt2img_rt_inference_job_exists(self):
         global inference_data
         assert inference_data["type"] == InferenceType.TXT2IMG.value
 
@@ -76,7 +74,7 @@ class TestTxt2ImgInferenceRealTimeE2E:
         inferences = resp.json()['data']["inferences"]
         assert inference_data["id"] in [inference["InferenceJobId"] for inference in inferences]
 
-    def test_5_txt2img_inference_job_run_and_succeed(self):
+    def test_3_txt2img_rt_inference_job_run_and_succeed(self):
         global inference_data
         assert inference_data["type"] == InferenceType.TXT2IMG.value
 
@@ -88,4 +86,6 @@ class TestTxt2ImgInferenceRealTimeE2E:
         }
 
         resp = self.api.start_inference_job(job_id=inference_id, headers=headers)
-        print(resp.json())
+        assert resp.status_code == 200, resp.dumps()
+        assert 'img_presigned_urls' in resp.json()['data'], resp.dumps()
+        assert len(resp.json()['data']['img_presigned_urls']) > 0, resp.dumps()
