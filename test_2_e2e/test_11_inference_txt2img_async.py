@@ -24,7 +24,7 @@ class TestTxt2ImgInferenceAsyncE2E:
     def teardown_class(cls):
         pass
 
-    def test_1_txt2img_inference_job_create(self):
+    def test_1_txt2img_inference_async_create(self):
         headers = {
             "x-api-key": config.api_key,
             "Authorization": config.bearer_token
@@ -56,7 +56,7 @@ class TestTxt2ImgInferenceAsyncE2E:
 
         upload_with_put(inference_data["api_params_s3_upload_url"], "./data/api_params/txt2img_api_param.json")
 
-    def test_2_txt2img_inference_job_exists(self):
+    def test_2_txt2img_inference_async_exists(self):
         global inference_data
         assert inference_data["type"] == InferenceType.TXT2IMG.value
 
@@ -76,7 +76,7 @@ class TestTxt2ImgInferenceAsyncE2E:
         inferences = resp.json()['data']["inferences"]
         assert inference_data["id"] in [inference["InferenceJobId"] for inference in inferences]
 
-    def test_5_txt2img_inference_job_run_and_succeed(self):
+    def test_5_txt2img_inference_async_start_and_succeed(self):
         global inference_data
         assert inference_data["type"] == InferenceType.TXT2IMG.value
 
@@ -103,18 +103,18 @@ class TestTxt2ImgInferenceAsyncE2E:
             if status == InferenceStatus.SUCCEED.value:
                 break
             if status == InferenceStatus.FAILED.value:
-                raise Exception("Inference job failed.")
+                logger.error(inference_data)
+                raise Exception(f"Inference job {inference_id} failed.")
             time.sleep(5)
         else:
-            raise Exception("Inference execution timed out after 5 minutes.")
+            raise Exception(f"Inference execution {inference_id} timed out after 5 minutes.")
 
-    def test_7_txt2img_inference_job_delete_succeed(self):
+    def test_7_txt2img_inference_async_delete_succeed(self):
         headers = {
             "x-api-key": config.api_key
         }
 
         data = {
-            # todo will use exists id
             "inference_id_list": ['any_one'],
         }
 

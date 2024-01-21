@@ -160,9 +160,9 @@ class TestTurboE2E:
             if status == InferenceStatus.SUCCEED.value:
                 break
             if status == InferenceStatus.FAILED.value:
-                logger.error("Inference job failed.")
                 logger.error(resp.dumps())
-                raise Exception("Inference job failed.")
+                logger.error(inference_data)
+                raise Exception(f"Inference job {inference_id} failed.")
             time.sleep(5)
         else:
             raise Exception("Inference execution timed out after 4 minutes.")
