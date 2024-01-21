@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 inference_data = {}
 
 
-class TestImg2ImgRembgE2E:
+class TestRembgRealTimeE2E:
 
     def setup_class(self):
         self.api = Api(config)
@@ -22,7 +22,7 @@ class TestImg2ImgRembgE2E:
     def teardown_class(cls):
         pass
 
-    def test_1_txt2img_rt_inference_job_create(self):
+    def test_1_rembg_rt_inference_job_create(self):
         headers = {
             "x-api-key": config.api_key,
             "Authorization": config.bearer_token
@@ -31,7 +31,7 @@ class TestImg2ImgRembgE2E:
         data = {
             "user_id": config.username,
             "inference_type": "Real-time",
-            "task_type": InferenceType.TXT2IMG.value,
+            "task_type": InferenceType.REMBG.value,
             "models": {
                 "Stable-diffusion": [config.default_model_id],
                 "embeddings": []
@@ -49,14 +49,14 @@ class TestImg2ImgRembgE2E:
         inference_data = resp.json()['data']["inference"]
 
         assert resp.json()["statusCode"] == 201
-        assert inference_data["type"] == InferenceType.TXT2IMG.value
+        assert inference_data["type"] == InferenceType.REMBG.value
         assert len(inference_data["api_params_s3_upload_url"]) > 0
 
-        upload_with_put(inference_data["api_params_s3_upload_url"], "./data/api_params/txt2img_api_param.json")
+        upload_with_put(inference_data["api_params_s3_upload_url"], "./data/api_params/rembg-api-params.json")
 
-    def test_2_txt2img_rt_inference_job_exists(self):
+    def test_2_rembg_rt_inference_job_exists(self):
         global inference_data
-        assert inference_data["type"] == InferenceType.TXT2IMG.value
+        assert inference_data["type"] == InferenceType.REMBG.value
 
         headers = {
             "x-api-key": config.api_key,
@@ -74,9 +74,9 @@ class TestImg2ImgRembgE2E:
         inferences = resp.json()['data']["inferences"]
         assert inference_data["id"] in [inference["InferenceJobId"] for inference in inferences]
 
-    def test_3_txt2img_rt_inference_job_run_and_succeed(self):
+    def test_3_rembg_rt_inference_job_run_and_succeed(self):
         global inference_data
-        assert inference_data["type"] == InferenceType.TXT2IMG.value
+        assert inference_data["type"] == InferenceType.REMBG.value
 
         inference_id = inference_data["id"]
 

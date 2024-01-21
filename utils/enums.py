@@ -12,3 +12,4 @@ class InferenceStatus(Enum):
 class InferenceType(Enum):
     TXT2IMG = "txt2img"
     IMG2IMG = "img2img"
+    REMBG = "rembg"

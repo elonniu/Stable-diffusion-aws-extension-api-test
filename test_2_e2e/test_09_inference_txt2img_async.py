@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 inference_data = {}
 
 
-class TestTxt2ImgInferenceE2E:
+class TestTxt2ImgInferenceAsyncE2E:
 
     def setup_class(self):
         self.api = Api(config)
