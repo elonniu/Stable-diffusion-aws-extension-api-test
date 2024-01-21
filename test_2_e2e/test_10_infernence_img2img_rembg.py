@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 inference_data = {}
 
 
-class TestTxt2ImgInferenceRealTimeE2E:
+class TestImg2ImgRembgE2E:
 
     def setup_class(self):
         self.api = Api(config)
@@ -86,4 +86,6 @@ class TestTxt2ImgInferenceRealTimeE2E:
         }
 
         resp = self.api.start_inference_job(job_id=inference_id, headers=headers)
-        assert resp.status_code in [200, 504], resp.dumps()
+        assert resp.status_code == 200, resp.dumps()
+        assert 'img_presigned_urls' in resp.json()['data'], resp.dumps()
+        assert len(resp.json()['data']['img_presigned_urls']) > 0, resp.dumps()

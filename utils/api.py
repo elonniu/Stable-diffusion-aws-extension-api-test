@@ -37,7 +37,7 @@ class Api:
             headers=headers,
             data=data,
             params=params,
-            timeout=(20, 30)
+            timeout=(30, 40)
         )
 
         dump_string = ""
