@@ -1,18 +1,21 @@
 from __future__ import print_function
 
 import logging
+import time
+from datetime import datetime
+from datetime import timedelta
 
 import config as config
 from utils.api import Api
-from utils.enums import InferenceType
-from utils.helper import upload_with_put
+from utils.enums import InferenceStatus, InferenceType
+from utils.helper import upload_with_put, get_inference_job_status_new
 
 logger = logging.getLogger(__name__)
 
 inference_data = {}
 
 
-class TestImg2ImgInferenceRealTimeE2E:
+class TestEsiInferenceAsyncE2E:
 
     def setup_class(self):
         self.api = Api(config)
@@ -21,7 +24,7 @@ class TestImg2ImgInferenceRealTimeE2E:
     def teardown_class(cls):
         pass
 
-    def test_1_img2img_inference_rt_job_create(self):
+    def test_1_esi_inference_job_create(self):
         headers = {
             "x-api-key": config.api_key,
             "Authorization": config.bearer_token
@@ -29,8 +32,8 @@ class TestImg2ImgInferenceRealTimeE2E:
 
         data = {
             "user_id": config.username,
-            "inference_type": "Real-time",
-            "task_type": InferenceType.IMG2IMG.value,
+            "inference_type": "Async",
+            "task_type": InferenceType.ESI.value,
             "models": {
                 "Stable-diffusion": [config.default_model_id],
                 "embeddings": []
@@ -45,14 +48,15 @@ class TestImg2ImgInferenceRealTimeE2E:
         inference_data = resp.json()['data']["inference"]
 
         assert resp.json()["statusCode"] == 201
-        assert inference_data["type"] == InferenceType.IMG2IMG.value
+        assert inference_data["type"] == InferenceType.ESI.value
         assert len(inference_data["api_params_s3_upload_url"]) > 0
 
-        upload_with_put(inference_data["api_params_s3_upload_url"], "./data/api_params/img2img_api_param.json")
+        upload_with_put(inference_data["api_params_s3_upload_url"],
+                        "./data/api_params/extra-single-image-api-params.json")
 
-    def test_2_img2img_inference_rt_job_exists(self):
+    def test_2_esi_inference_job_exists(self):
         global inference_data
-        assert inference_data["type"] == InferenceType.IMG2IMG.value
+        assert inference_data["type"] == InferenceType.ESI.value
 
         headers = {
             "x-api-key": config.api_key,
@@ -70,9 +74,9 @@ class TestImg2ImgInferenceRealTimeE2E:
         inferences = resp.json()['data']["inferences"]
         assert inference_data["id"] in [inference["InferenceJobId"] for inference in inferences]
 
-    def test_5_img2img_inference_rt_job_run_and_succeed(self):
+    def test_3_esi_inference_job_run_and_succeed(self):
         global inference_data
-        assert inference_data["type"] == InferenceType.IMG2IMG.value
+        assert inference_data["type"] == InferenceType.ESI.value
 
         inference_id = inference_data["id"]
 
@@ -82,6 +86,24 @@ class TestImg2ImgInferenceRealTimeE2E:
         }
 
         resp = self.api.start_inference_job(job_id=inference_id, headers=headers)
-        assert resp.status_code == 200, resp.dumps()
-        assert 'img_presigned_urls' in resp.json()['data'], resp.dumps()
-        assert len(resp.json()['data']['img_presigned_urls']) > 0, resp.dumps()
+        assert resp.status_code == 202, resp.dumps()
+
+        assert resp.json()['data']["inference"]["status"] == InferenceStatus.INPROGRESS.value
+
+        timeout = datetime.now() + timedelta(minutes=5)
+
+        while datetime.now() < timeout:
+            status = get_inference_job_status_new(
+                api_instance=self.api,
+                job_id=inference_id
+            )
+            logger.info(f"inference is {status}")
+            if status == InferenceStatus.SUCCEED.value:
+                break
+            if status == InferenceStatus.FAILED.value:
+                logger.error("Inference job failed.")
+                logger.error(resp.dumps())
+                raise Exception("Inference job failed.")
+            time.sleep(5)
+        else:
+            raise Exception("Inference execution timed out after 5 minutes.")

@@ -13,3 +13,4 @@ class InferenceType(Enum):
     TXT2IMG = "txt2img"
     IMG2IMG = "img2img"
     REMBG = "rembg"
+    ESI = "extra-single-image"
