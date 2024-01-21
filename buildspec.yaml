@@ -30,7 +30,7 @@ phases:
         python --version
         sudo yum install wget -y
         
-        API_BUCKET=sd-test-$ACCOUNT_ID-$AWS_DEFAULT_REGION-$CODE_BRANCH-$CODEBUILD_BUILD_NUMBER
+        API_BUCKET=sd-test-$ACCOUNT_ID-$AWS_DEFAULT_REGION-$CODEBUILD_BUILD_NUMBER
         
         if [ "$DEPLOY_STACK" = "cdk" ]; then
            echo "----------------------------------------------------------------"
@@ -113,7 +113,7 @@ phases:
         properties+=("Region: $AWS_DEFAULT_REGION")
         properties+=("Test Branch: $TEST_BRANCH")
         
-        API_BUCKET=sd-test-$ACCOUNT_ID-$AWS_DEFAULT_REGION-$CODE_BRANCH-$CODEBUILD_BUILD_NUMBER
+        API_BUCKET=sd-test-$ACCOUNT_ID-$AWS_DEFAULT_REGION-$CODEBUILD_BUILD_NUMBER
 
         if [ -n "$DEPLOY_DURATION_TIME" ]; then
           DEPLOY_DURATION_TIME=$(printf "%dm%ds\n" $(($DEPLOY_DURATION_TIME/60)) $(($DEPLOY_DURATION_TIME%60)))
