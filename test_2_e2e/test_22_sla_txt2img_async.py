@@ -2,6 +2,7 @@ from __future__ import print_function
 
 import json
 import logging
+import os
 import time
 from datetime import datetime
 from datetime import timedelta
@@ -15,7 +16,7 @@ from utils.enums import InferenceStatus, InferenceType
 from utils.helper import get_inference_job_status_new
 
 logger = logging.getLogger(__name__)
-
+sla_batch_size = os.environ.get("SLA_BATCH_SIZE", 100)
 inference_data = {}
 
 
