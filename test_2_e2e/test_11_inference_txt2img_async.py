@@ -99,7 +99,7 @@ class TestTxt2ImgInferenceAsyncE2E:
                 api_instance=self.api,
                 job_id=inference_id
             )
-            logger.info(f"inference is {status}")
+            logger.info(f"txt2img_inference_async is {status}")
             if status == InferenceStatus.SUCCEED.value:
                 break
             if status == InferenceStatus.FAILED.value:
