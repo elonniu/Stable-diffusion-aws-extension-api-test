@@ -21,7 +21,7 @@ class TestImg2ImgInferenceRealTimeE2E:
     def teardown_class(cls):
         pass
 
-    def test_1_img2img_inference_rt_job_create(self):
+    def test_1_img2img_inference_real_time_create(self):
         headers = {
             "x-api-key": config.api_key,
             "Authorization": config.bearer_token
@@ -50,7 +50,7 @@ class TestImg2ImgInferenceRealTimeE2E:
 
         upload_with_put(inference_data["api_params_s3_upload_url"], "./data/api_params/img2img_api_param.json")
 
-    def test_2_img2img_inference_rt_job_exists(self):
+    def test_2_img2img_inference_real_time_exists(self):
         global inference_data
         assert inference_data["type"] == InferenceType.IMG2IMG.value
 
@@ -70,7 +70,7 @@ class TestImg2ImgInferenceRealTimeE2E:
         inferences = resp.json()['data']["inferences"]
         assert inference_data["id"] in [inference["InferenceJobId"] for inference in inferences]
 
-    def test_5_img2img_inference_rt_job_run_and_succeed(self):
+    def test_5_img2img_inference_real_time_start_and_succeed(self):
         global inference_data
         assert inference_data["type"] == InferenceType.IMG2IMG.value
 

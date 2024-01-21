@@ -24,7 +24,7 @@ class TestEsiInferenceAsyncE2E:
     def teardown_class(cls):
         pass
 
-    def test_1_esi_inference_job_create(self):
+    def test_1_esi_inference_async_create(self):
         headers = {
             "x-api-key": config.api_key,
             "Authorization": config.bearer_token
@@ -54,7 +54,7 @@ class TestEsiInferenceAsyncE2E:
         upload_with_put(inference_data["api_params_s3_upload_url"],
                         "./data/api_params/extra-single-image-api-params.json")
 
-    def test_2_esi_inference_job_exists(self):
+    def test_2_esi_inference_async_exists(self):
         global inference_data
         assert inference_data["type"] == InferenceType.ESI.value
 
@@ -74,7 +74,7 @@ class TestEsiInferenceAsyncE2E:
         inferences = resp.json()['data']["inferences"]
         assert inference_data["id"] in [inference["InferenceJobId"] for inference in inferences]
 
-    def test_3_esi_inference_job_run_and_succeed(self):
+    def test_3_esi_inference_async_and_succeed(self):
         global inference_data
         assert inference_data["type"] == InferenceType.ESI.value
 
