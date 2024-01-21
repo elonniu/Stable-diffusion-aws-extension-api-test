@@ -58,7 +58,6 @@ class TestCreateAndDeleteDatasetE2E:
         for filename, presign_url in dataset['data']['s3PresignUrl'].items():
             file_path = f"./data/dataset/{filename}"
             with open(file_path, 'rb') as file:
-                logger.info(f"Uploading {file_path}")
                 resp = requests.put(presign_url, file)
                 resp.raise_for_status()
                 assert resp.status_code == 200

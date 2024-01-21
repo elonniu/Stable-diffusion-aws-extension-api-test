@@ -27,7 +27,7 @@ class TestCleanEndpoint:
                 break
 
             if status in ['Creating', 'Updating']:
-                logger.error(f"Endpoint {endpoint_name} is {status}, waiting to delete...")
+                logger.warning(f"Endpoint {endpoint_name} is {status}, waiting to delete...")
                 sleep(10)
             else:
                 delete_sagemaker_endpoint(self.api)
@@ -42,7 +42,7 @@ class TestCleanEndpoint:
                 break
 
             if status in ['Creating', 'Updating']:
-                logger.error(f"Endpoint {endpoint_name} is {status}, waiting to delete...")
+                logger.warning(f"Endpoint {endpoint_name} is {status}, waiting to delete...")
                 sleep(10)
             else:
                 delete_sagemaker_endpoint(self.api)
