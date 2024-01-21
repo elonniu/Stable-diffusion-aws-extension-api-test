@@ -3,7 +3,7 @@ version: 0.2
 env:
   variables:
     ECR_IMAGE_TAG: "v1.4.0-200e0ea"
-    STACK_NAME: "Extension-for-Stable-Diffusion-on-AWS"
+    STACK_NAME: "ESD"
     CODE_REPO: "https://github.com/awslabs/stable-diffusion-aws-extension"
     CODE_BRANCH: "dev"
     DEPLOY_STACK: "cdk"
