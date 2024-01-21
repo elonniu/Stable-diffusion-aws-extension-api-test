@@ -88,7 +88,7 @@ class TestXyzRefinerCheckpointE2E:
                 api_instance=self.api,
                 job_id=inference_id
             )
-            logger.info(f"inference is {status}")
+            logger.info(f"xyz refiner inference is {status}")
             if status == InferenceStatus.SUCCEED.value:
                 break
             if status == InferenceStatus.FAILED.value:
