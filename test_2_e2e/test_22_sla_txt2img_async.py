@@ -36,6 +36,7 @@ class TestSLaTxt2Img:
             prompts = f.readlines()
             prompts = [prompt.strip() for prompt in prompts]
             prompts = [prompt for prompt in prompts if prompt != ""]
+            prompts = prompts[:sla_batch_size]
             prompts_count = len(prompts)
             duration_list = []
             result_list = []
