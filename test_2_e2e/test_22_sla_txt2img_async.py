@@ -118,7 +118,7 @@ class TestSLaTxt2Img:
             with open("/tmp/txt2img_sla_report.json", "w") as sla_report:
                 sla_report.write(json.dumps(json_result))
 
-            logger.error(json_result)
+            logger.warning(json_result)
 
     def sla_job(self, prompt: str):
         # get start time
