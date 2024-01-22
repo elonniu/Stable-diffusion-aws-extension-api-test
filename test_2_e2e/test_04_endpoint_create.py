@@ -69,7 +69,7 @@ class TestEndpointCreateE2E:
         assert resp.json()["statusCode"] == 400
         assert resp.json()["message"] == 'no available Async endpoints for user "admin"'
 
-    def test_3_create_endpoint(self):
+    def test_3_create_endpoint_async(self):
         headers = {
             "x-api-key": config.api_key,
             "Authorization": config.bearer_token
@@ -78,7 +78,7 @@ class TestEndpointCreateE2E:
         data = {
             "endpoint_name": config.endpoint_name,
             "endpoint_type": "Async",
-            "instance_type": config.instance_type,
+            "instance_type": config.async_instance_type,
             "initial_instance_count": 1,
             "autoscaling_enabled": False,
             "assign_to_roles": ["IT Operator"],
@@ -98,7 +98,7 @@ class TestEndpointCreateE2E:
         data = {
             "endpoint_name": config.endpoint_name,
             "endpoint_type": "Real-time",
-            "instance_type": config.instance_type,
+            "instance_type": config.real_time_instance_type,
             "initial_instance_count": 1,
             "autoscaling_enabled": False,
             "assign_to_roles": ["byoc"],
@@ -118,7 +118,7 @@ class TestEndpointCreateE2E:
         data = {
             "endpoint_name": config.endpoint_name,
             "endpoint_type": 'Async',
-            "instance_type": config.instance_type,
+            "instance_type": config.async_instance_type,
             "initial_instance_count": int(config.initial_instance_count),
             "autoscaling_enabled": False,
             "assign_to_roles": ["Designer"],

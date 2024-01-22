@@ -90,7 +90,7 @@ class TestTrainStartStopE2E:
                         "s3_class_data_path_list": [
                             ""
                         ],
-                        "training_instance_type": config.instance_type
+                        "training_instance_type": config.async_instance_type
                     }
                 }
             }

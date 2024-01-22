@@ -100,7 +100,7 @@ class TestSLaTxt2ImgAsync:
 
             json_result = {
                 "model_id": config.default_model_id,
-                "instance_type": config.instance_type,
+                "instance_type": "g4/g5",
                 "instance_count": int(config.initial_instance_count),
                 "count": prompts_count,
                 "succeed": succeed,
