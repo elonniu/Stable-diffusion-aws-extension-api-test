@@ -15,6 +15,8 @@ env:
     TEST_FAST: "false"
     TEST_LOG_LEVEL: "ERROR"
     SLA_BATCH_SIZE: 2
+    ASYNC_INSTANCE_TYPE: "ml.g4dn.xlarge"
+    REAL_TIME_INSTANCE_TYPE: "ml.g5.2xlarge"
     TEMPLATE_FILE: "https://aws-gcr-solutions.s3.amazonaws.com/stable-diffusion-aws-extension-github-mainline/latest/custom-domain/Extension-for-Stable-Diffusion-on-AWS.template.json"
 phases:
   build:
@@ -23,6 +25,8 @@ phases:
         set -euxo pipefail
         
         ACCOUNT_ID=$(aws sts get-caller-identity --query "Account" --output text)
+        
+        aws logs describe-log-groups | jq -r '.logGroups[].logGroupName' | grep -v codebuild | xargs -I {} aws logs delete-log-group --log-group-name {}
 
         echo "----------------------------------------------------------------"
         echo "phases -> build -> commands"
@@ -156,14 +160,18 @@ phases:
            aws sns delete-topic --topic-arn "arn:aws:sns:$AWS_DEFAULT_REGION:$ACCOUNT_ID:sde-api-test-result" | jq
            aws sns delete-topic --topic-arn "arn:aws:sns:$AWS_DEFAULT_REGION:$ACCOUNT_ID:StableDiffusionSnsUserTopic" | jq
            aws sns delete-topic --topic-arn "arn:aws:sns:$AWS_DEFAULT_REGION:$ACCOUNT_ID:successCreateModel" | jq
-        
-           # aws logs describe-log-groups | jq -r '.logGroups[].logGroupName' | grep -v codebuild | xargs -I {} aws logs delete-log-group --log-group-name {}
         fi
         
         if [ $CODEBUILD_BUILD_SUCCEEDING -eq 0 ]; then
           result="Failed"
         else
           result="Passed"
+          properties+=("G5 Instance Type: OK")
+          properties+=("G4 Instance Type: OK")
+          properties+=("txt2img Task Type: OK")
+          properties+=("img2img Task Type: OK")
+          properties+=("rembg Task Type: OK")
+          properties+=("extra-single-image Task Type: OK")
         fi
         properties+=("Result: ${result}")
         
