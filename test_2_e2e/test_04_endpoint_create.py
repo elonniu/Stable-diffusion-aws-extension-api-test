@@ -80,7 +80,7 @@ class TestEndpointCreateE2E:
             "endpoint_type": "Async",
             "instance_type": config.async_instance_type,
             "initial_instance_count": 1,
-            "autoscaling_enabled": False,
+            "autoscaling_enabled": True,
             "assign_to_roles": ["IT Operator"],
             "creator": config.username
         }
