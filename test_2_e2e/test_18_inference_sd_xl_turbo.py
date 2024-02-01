@@ -117,10 +117,6 @@ class TestTurboE2E:
                 "Stable-diffusion": [filename],
                 "embeddings": []
             },
-            "filters": {
-                "createAt": datetime.now().timestamp(),
-                "creator": "sd-webui"
-            }
         }
 
         resp = self.api.create_inference(headers=headers, data=data)

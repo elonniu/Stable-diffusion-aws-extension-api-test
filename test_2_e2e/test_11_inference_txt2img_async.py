@@ -38,10 +38,6 @@ class TestTxt2ImgInferenceAsyncE2E:
                 "Stable-diffusion": [config.default_model_id],
                 "embeddings": []
             },
-            "filters": {
-                "createAt": datetime.now().timestamp(),
-                "creator": "sd-webui"
-            }
         }
 
         resp = self.api.create_inference(headers=headers, data=data)
