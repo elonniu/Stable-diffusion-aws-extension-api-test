@@ -85,7 +85,7 @@ def get_endpoint_status(api_instance, endpoint_name: str):
 
 
 def get_inference_job_status_new(api_instance, job_id):
-    resp = api_instance.get_inference_job_new(
+    resp = api_instance.get_inference_job(
         job_id=job_id,
         headers={
             "x-api-key": config.api_key,

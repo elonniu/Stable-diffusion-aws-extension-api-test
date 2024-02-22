@@ -109,7 +109,7 @@ class TestInferencesApi:
         assert resp.status_code == 204, resp.dumps()
 
     def test_18_get_inference_job_without_key(self):
-        resp = self.api.get_inference_job_new(job_id="job_id")
+        resp = self.api.get_inference_job(job_id="job_id")
         assert resp.status_code == 403, resp.dumps()
         assert 'Forbidden' == resp.json()["message"]
 
@@ -120,6 +120,6 @@ class TestInferencesApi:
 
         job_id = "not_exists"
 
-        resp = self.api.get_inference_job_new(job_id=job_id, headers=headers)
+        resp = self.api.get_inference_job(job_id=job_id, headers=headers)
         assert resp.status_code == 404, resp.dumps()
         assert f'inference with id {job_id} not found' == resp.json()["message"]

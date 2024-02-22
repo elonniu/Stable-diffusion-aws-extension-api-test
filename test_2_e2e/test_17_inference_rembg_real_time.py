@@ -59,16 +59,8 @@ class TestRembgRealTimeE2E:
             "username": config.username
         }
 
-        params = {
-            "username": config.username
-        }
-
-        resp = self.api.list_inferences(headers=headers, params=params)
+        resp = self.api.get_inference_job(headers=headers, job_id=inference_data["id"])
         assert resp.status_code == 200, resp.dumps()
-
-        assert resp.json()["statusCode"] == 200
-        inferences = resp.json()['data']["inferences"]
-        assert inference_data["id"] in [inference["InferenceJobId"] for inference in inferences]
 
     def test_3_rembg_inference_real_time_start_and_succeed(self):
         global inference_data

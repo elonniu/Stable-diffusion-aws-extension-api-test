@@ -225,5 +225,5 @@ class TestSLaTxt2ImgAsync:
             "username": config.username
         }
 
-        resp = self.api.get_inference_job_new(job_id=inference_id, headers=headers)
+        resp = self.api.get_inference_job(job_id=inference_id, headers=headers)
         return resp.json()['data']['status'] == 'succeed'

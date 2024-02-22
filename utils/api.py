@@ -246,16 +246,6 @@ class Api:
     def get_inference_job(self, job_id: str, headers=None):
         return self.req(
             "GET",
-            "inference/get-inference-job",
-            headers=headers,
-            params={
-                "jobID": job_id
-            }
-        )
-
-    def get_inference_job_new(self, job_id: str, headers=None):
-        return self.req(
-            "GET",
             f"inferences/{job_id}",
             headers=headers
         )
