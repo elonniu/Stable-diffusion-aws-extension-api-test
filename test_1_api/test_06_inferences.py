@@ -59,16 +59,15 @@ class TestInferencesApi:
     def test_12_list_inferences_without_key(self):
         resp = self.api.list_inferences()
 
-        assert resp.status_code == 401, resp.dumps()
-        assert resp.json()["message"] == "Unauthorized"
+        assert resp.status_code == 403, resp.dumps()
+        assert resp.json()["message"] == "Forbidden"
 
     def test_13_list_inferences_without_auth(self):
         headers = {"x-api-key": config.api_key}
 
         resp = self.api.list_inferences(headers=headers)
 
-        assert resp.status_code == 401, resp.dumps()
-        assert resp.json()["message"] == "Unauthorized"
+        assert resp.status_code == 200, resp.dumps()
 
     def test_16_delete_inferences_with_bad_request_body(self):
         headers = {

@@ -51,8 +51,8 @@ class TestEndpointsApi:
     def test_1_list_endpoints_without_key(self):
         resp = self.api.list_endpoints()
 
-        assert resp.status_code == 401, resp.dumps()
-        assert resp.json()["message"] == "Unauthorized"
+        assert resp.status_code == 403, resp.dumps()
+        assert resp.json()["message"] == "Forbidden"
 
     def test_2_list_endpoints_without_auth(self):
         headers = {"x-api-key": config.api_key}
@@ -167,14 +167,14 @@ class TestEndpointsApi:
     def test_9_delete_endpoints_without_key(self):
         resp = self.api.delete_endpoints()
 
-        assert resp.status_code == 401, resp.dumps()
-        assert resp.json()["message"] == "Unauthorized"
+        assert resp.status_code == 403, resp.dumps()
+        assert resp.json()["message"] == "Forbidden"
 
     def test_10_create_endpoint_without_key(self):
         resp = self.api.create_endpoint()
 
-        assert resp.status_code == 401, resp.dumps()
-        assert resp.json()["message"] == "Unauthorized"
+        assert resp.status_code == 403, resp.dumps()
+        assert resp.json()["message"] == "Forbidden"
 
     # if endpoint is old, it still will be deleted
     def test_11_delete_endpoints_old_data(self):

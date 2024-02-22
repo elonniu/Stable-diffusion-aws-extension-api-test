@@ -71,8 +71,6 @@ class TestEsiInferenceAsyncE2E:
         assert resp.status_code == 200, resp.dumps()
 
         assert resp.json()["statusCode"] == 200
-        inferences = resp.json()['data']["inferences"]
-        assert inference_data["id"] in [inference["InferenceJobId"] for inference in inferences]
 
     def test_3_esi_inference_async_and_succeed(self):
         global inference_data

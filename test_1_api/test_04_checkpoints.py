@@ -45,8 +45,8 @@ class TestCheckpointsApi:
     def test_1_list_checkpoints_without_key(self):
         resp = self.api.list_checkpoints()
 
-        assert resp.status_code == 401, resp.dumps()
-        assert resp.json()["message"] == "Unauthorized"
+        assert resp.status_code == 403, resp.dumps()
+        assert resp.json()["message"] == "Forbidden"
 
     def test_2_list_checkpoints_without_auth(self):
         headers = {"x-api-key": config.api_key}

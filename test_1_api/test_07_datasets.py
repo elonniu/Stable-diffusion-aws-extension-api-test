@@ -19,8 +19,8 @@ class TestDatasetsApi:
     def test_1_list_datasets_without_key(self):
         resp = self.api.list_datasets()
 
-        assert resp.status_code == 401, resp.dumps()
-        assert resp.json()["message"] == "Unauthorized"
+        assert resp.status_code == 403, resp.dumps()
+        assert resp.json()["message"] == "Forbidden"
 
     def test_2_list_datasets_without_auth(self):
         headers = {"x-api-key": config.api_key}

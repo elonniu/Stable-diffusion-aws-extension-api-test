@@ -53,9 +53,9 @@ class TestUsersApi:
 
         resp = self.api.delete_users(headers={}, data=data)
 
-        assert resp.status_code == 401, resp.dumps()
+        assert resp.status_code == 403, resp.dumps()
 
-        assert resp.json()["message"] == "Unauthorized"
+        assert resp.json()["message"] == "Forbidden"
 
     def test_5_delete_users_not_found(self):
         headers = {
