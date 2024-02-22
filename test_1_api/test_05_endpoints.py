@@ -64,7 +64,7 @@ class TestEndpointsApi:
     def test_3_list_endpoints(self):
         headers = {
             "x-api-key": config.api_key,
-            "Authorization": config.bearer_token
+            "username": config.username
         }
         resp = self.api.list_endpoints(headers=headers)
 
@@ -76,7 +76,7 @@ class TestEndpointsApi:
     def test_4_list_endpoints_with_username(self):
         headers = {
             "x-api-key": config.api_key,
-            "Authorization": config.bearer_token
+            "username": config.username
         }
 
         params = {
@@ -93,7 +93,7 @@ class TestEndpointsApi:
     def test_5_list_endpoints_with_bad_username(self):
         headers = {
             "x-api-key": config.api_key,
-            "Authorization": config.bearer_token
+            "username": config.username
         }
 
         params = {
@@ -109,7 +109,7 @@ class TestEndpointsApi:
     def test_6_create_endpoint_without_params(self):
         headers = {
             "x-api-key": config.api_key,
-            "Authorization": config.bearer_token
+            "username": config.username
         }
 
         data = {
@@ -124,7 +124,7 @@ class TestEndpointsApi:
     def test_7_create_endpoint_with_bad_instance_count(self):
         headers = {
             "x-api-key": config.api_key,
-            "Authorization": config.bearer_token
+            "username": config.username
         }
 
         data = {
@@ -144,7 +144,7 @@ class TestEndpointsApi:
     def test_8_create_endpoint_with_larger(self):
         headers = {
             "x-api-key": config.api_key,
-            "Authorization": config.bearer_token
+            "username": config.username
         }
 
         instance_type = "ml.g4dn.16xlarge"
@@ -180,7 +180,7 @@ class TestEndpointsApi:
     def test_11_delete_endpoints_old_data(self):
         headers = {
             "x-api-key": config.api_key,
-            "Authorization": config.bearer_token
+            "username": config.username
         }
 
         data = {
@@ -197,7 +197,7 @@ class TestEndpointsApi:
     def test_12_delete_endpoints_bad_username(self):
         headers = {
             "x-api-key": config.api_key,
-            "Authorization": config.bearer_token
+            "username": config.username
         }
 
         data = {

@@ -91,7 +91,7 @@ class TestTurboE2E:
     def test_3_list_turbo_checkpoint(self):
         headers = {
             "x-api-key": config.api_key,
-            "Authorization": config.bearer_token,
+            "username": config.username,
         }
 
         params = {
@@ -106,7 +106,7 @@ class TestTurboE2E:
     def test_4_turbo_txt2img_inference_job_create(self):
         headers = {
             "x-api-key": config.api_key,
-            "Authorization": config.bearer_token
+            "username": config.username
         }
 
         data = {
@@ -138,7 +138,7 @@ class TestTurboE2E:
 
         headers = {
             "x-api-key": config.api_key,
-            "Authorization": config.bearer_token
+            "username": config.username
         }
 
         resp = self.api.start_inference_job(job_id=inference_id, headers=headers)

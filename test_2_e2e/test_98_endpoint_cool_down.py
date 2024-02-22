@@ -24,7 +24,7 @@ class TestEndpointCoolDownE2E:
 
         headers = {
             "x-api-key": config.api_key,
-            "Authorization": config.bearer_token
+            "username": config.username
         }
 
         resp = self.api.list_endpoints(headers=headers)
@@ -46,7 +46,7 @@ class TestEndpointCoolDownE2E:
 
         headers = {
             "x-api-key": config.api_key,
-            "Authorization": config.bearer_token
+            "username": config.username
         }
 
         resp = self.api.list_endpoints(headers=headers)

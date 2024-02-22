@@ -19,9 +19,9 @@ class TestUsersApi:
     def test_1_list_users_without_key(self):
         resp = self.api.list_users()
 
-        assert resp.status_code == 401, resp.dumps()
+        assert resp.status_code == 403, resp.dumps()
 
-        assert resp.json()["message"] == "Unauthorized"
+        assert resp.json()["message"] == "Forbidden"
 
     def test_2_list_users_without_auth(self):
         headers = {"x-api-key": config.api_key}
@@ -35,7 +35,7 @@ class TestUsersApi:
     def test_3_list_users(self):
         headers = {
             "x-api-key": config.api_key,
-            "Authorization": config.bearer_token
+            "username": config.username
         }
 
         resp = self.api.list_users(headers=headers)
@@ -60,7 +60,7 @@ class TestUsersApi:
     def test_5_delete_users_not_found(self):
         headers = {
             "x-api-key": config.api_key,
-            "Authorization": config.bearer_token
+            "username": config.username
         }
 
         data = {
@@ -74,7 +74,7 @@ class TestUsersApi:
     def test_6_create_user_bad_creator(self):
         headers = {
             "x-api-key": config.api_key,
-            "Authorization": config.bearer_token
+            "username": config.username
         }
 
         data = {
@@ -93,7 +93,7 @@ class TestUsersApi:
     def test_7_create_user_with_bad_role(self):
         headers = {
             "x-api-key": config.api_key,
-            "Authorization": config.bearer_token
+            "username": config.username
         }
 
         data = {
@@ -112,7 +112,7 @@ class TestUsersApi:
     def test_8_delete_users_with_bad_params(self):
         headers = {
             "x-api-key": config.api_key,
-            "Authorization": config.bearer_token
+            "username": config.username
         }
 
         data = {
@@ -127,7 +127,7 @@ class TestUsersApi:
     def test_9_delete_users_with_username_empty(self):
         headers = {
             "x-api-key": config.api_key,
-            "Authorization": config.bearer_token
+            "username": config.username
         }
 
         data = {

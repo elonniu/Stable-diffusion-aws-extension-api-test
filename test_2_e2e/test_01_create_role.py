@@ -19,7 +19,7 @@ class TestRoleE2E:
     def test_1_create_role(self):
         headers = {
             "x-api-key": config.api_key,
-            "Authorization": config.bearer_token,
+            "username": config.username,
         }
 
         data = {
@@ -36,7 +36,7 @@ class TestRoleE2E:
     def test_2_create_role_byoc(self):
         headers = {
             "x-api-key": config.api_key,
-            "Authorization": config.bearer_token,
+            "username": config.username,
         }
 
         data = {
@@ -53,7 +53,7 @@ class TestRoleE2E:
     def test_2_list_roles_exists(self):
         headers = {
             "x-api-key": config.api_key,
-            "Authorization": config.bearer_token,
+            "username": config.username,
         }
 
         resp = self.api.list_roles(headers=headers)

@@ -25,7 +25,7 @@ class TestCheckPointE2E:
     def test_0_clean_all_checkpoints(self):
         headers = {
             "x-api-key": config.api_key,
-            "Authorization": config.bearer_token,
+            "username": config.username,
         }
 
         resp = self.api.list_checkpoints(headers=headers).json()
@@ -123,7 +123,7 @@ class TestCheckPointE2E:
     def test_4_list_checkpoints_v15_check(self):
         headers = {
             "x-api-key": config.api_key,
-            "Authorization": config.bearer_token,
+            "username": config.username,
         }
 
         params = {
@@ -202,7 +202,7 @@ class TestCheckPointE2E:
     def test_7_list_checkpoints_cute_check(self):
         headers = {
             "x-api-key": config.api_key,
-            "Authorization": config.bearer_token,
+            "username": config.username,
         }
 
         params = {
@@ -222,7 +222,7 @@ class TestCheckPointE2E:
 
         headers = {
             "x-api-key": config.api_key,
-            "Authorization": config.bearer_token,
+            "username": config.username,
         }
 
         data = {
@@ -271,7 +271,7 @@ class TestCheckPointE2E:
 
         headers = {
             "x-api-key": config.api_key,
-            "Authorization": config.bearer_token,
+            "username": config.username,
         }
 
         resp = self.api.update_checkpoint(checkpoint_id=checkpoint_id, headers=headers, data=data)
@@ -284,7 +284,7 @@ class TestCheckPointE2E:
     def test_10_list_checkpoints_lora_check(self):
         headers = {
             "x-api-key": config.api_key,
-            "Authorization": config.bearer_token,
+            "username": config.username,
         }
 
         params = {
@@ -304,7 +304,7 @@ class TestCheckPointE2E:
 
         headers = {
             "x-api-key": config.api_key,
-            "Authorization": config.bearer_token,
+            "username": config.username,
         }
 
         data = {
@@ -348,7 +348,7 @@ class TestCheckPointE2E:
 
         headers = {
             "x-api-key": config.api_key,
-            "Authorization": config.bearer_token,
+            "username": config.username,
         }
 
         data = {
@@ -366,7 +366,7 @@ class TestCheckPointE2E:
     def test_13_list_checkpoints_canny_check(self):
         headers = {
             "x-api-key": config.api_key,
-            "Authorization": config.bearer_token,
+            "username": config.username,
         }
 
         params = {
@@ -386,7 +386,7 @@ class TestCheckPointE2E:
 
         headers = {
             "x-api-key": config.api_key,
-            "Authorization": config.bearer_token,
+            "username": config.username,
         }
 
         data = {
@@ -430,7 +430,7 @@ class TestCheckPointE2E:
 
         headers = {
             "x-api-key": config.api_key,
-            "Authorization": config.bearer_token,
+            "username": config.username,
         }
 
         data = {
@@ -448,7 +448,7 @@ class TestCheckPointE2E:
     def test_16_list_checkpoints_openpose_check(self):
         headers = {
             "x-api-key": config.api_key,
-            "Authorization": config.bearer_token,
+            "username": config.username,
         }
 
         params = {

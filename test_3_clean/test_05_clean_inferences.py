@@ -20,7 +20,7 @@ class TestCleanInferences:
     def test_1_clean_inferences(self):
         headers = {
             "x-api-key": config.api_key,
-            "Authorization": config.bearer_token
+            "username": config.username
         }
 
         inferences = self.api.list_inferences(headers=headers).json()['data']['inferences']

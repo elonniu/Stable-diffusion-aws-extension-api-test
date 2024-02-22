@@ -29,7 +29,7 @@ class TestUpdateCheckPointE2E:
     def test_0_clean_checkpoints(self):
         headers = {
             "x-api-key": config.api_key,
-            "Authorization": config.bearer_token,
+            "username": config.username,
         }
 
         resp = self.api.list_checkpoints(headers=headers).json()
@@ -88,7 +88,7 @@ class TestUpdateCheckPointE2E:
     def test_3_checkpoint_update_name(self):
         headers = {
             "x-api-key": config.api_key,
-            "Authorization": config.bearer_token,
+            "username": config.username,
         }
 
         ckpts = self.api.list_checkpoints(headers=headers).json()['data']['checkpoints']
@@ -106,7 +106,7 @@ class TestUpdateCheckPointE2E:
         sleep(5)
         headers = {
             "x-api-key": config.api_key,
-            "Authorization": config.bearer_token,
+            "username": config.username,
         }
 
         rename = False

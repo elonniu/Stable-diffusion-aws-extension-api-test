@@ -25,7 +25,7 @@ class TestEndpointRealTimeCheckE2E:
     def test_1_list_real_time_endpoints_status(self):
         headers = {
             "x-api-key": config.api_key,
-            "Authorization": config.bearer_token
+            "username": config.username
         }
 
         params = {
@@ -53,7 +53,7 @@ class TestEndpointRealTimeCheckE2E:
     def endpoints_wait_for_in_service(self):
         headers = {
             "x-api-key": config.api_key,
-            "Authorization": config.bearer_token
+            "username": config.username
         }
 
         params = {

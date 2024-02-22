@@ -32,7 +32,7 @@ class TestDatasetsApi:
     def test_3_list_datasets(self):
         headers = {
             "x-api-key": config.api_key,
-            "Authorization": config.bearer_token,
+            "username": config.username,
         }
 
         resp = self.api.list_datasets(headers=headers)
@@ -43,7 +43,7 @@ class TestDatasetsApi:
     def test_4_get_dataset_missing_name(self):
         headers = {
             "x-api-key": config.api_key,
-            "Authorization": config.bearer_token,
+            "username": config.username,
         }
 
         name = "not_exists"

@@ -20,7 +20,7 @@ class TestCleanRoles:
     def test_1_clean_roles(self):
         headers = {
             "x-api-key": config.api_key,
-            "Authorization": config.bearer_token
+            "username": config.username
         }
 
         role_name_list = []

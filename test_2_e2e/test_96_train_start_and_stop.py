@@ -24,7 +24,7 @@ class TestTrainStartStopE2E:
     def test_0_clear_all_trains(self):
         headers = {
             "x-api-key": config.api_key,
-            "Authorization": config.bearer_token
+            "username": config.username
         }
 
         resp = self.api.list_trainings(headers=headers)
@@ -47,7 +47,7 @@ class TestTrainStartStopE2E:
     def test_1_train_job_create(self):
         headers = {
             "x-api-key": config.api_key,
-            "Authorization": config.bearer_token
+            "username": config.username
         }
 
         models = self.api.list_models(headers=headers).json()["data"]['models']
@@ -63,7 +63,7 @@ class TestTrainStartStopE2E:
 
             headers = {
                 "x-api-key": config.api_key,
-                "Authorization": config.bearer_token
+                "username": config.username
             }
 
             data = {

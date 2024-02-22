@@ -25,7 +25,7 @@ class TestTrainingsApi:
     def test_2_start_training_job_with_bad_params(self):
         headers = {
             "x-api-key": config.api_key,
-            "Authorization": config.bearer_token
+            "username": config.username
         }
 
         data = {
@@ -40,7 +40,7 @@ class TestTrainingsApi:
     def test_3_start_training_job_with_bad_id(self):
         headers = {
             "x-api-key": config.api_key,
-            "Authorization": config.bearer_token
+            "username": config.username
         }
 
         data = {
@@ -70,7 +70,7 @@ class TestTrainingsApi:
     def test_6_list_trainings(self):
         headers = {
             "x-api-key": config.api_key,
-            "Authorization": config.bearer_token
+            "username": config.username
         }
 
         resp = self.api.list_trainings(headers=headers)

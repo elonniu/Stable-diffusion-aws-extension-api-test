@@ -43,7 +43,7 @@ class TestInferencesApi:
     def test_3_create_inference_with_bad_params(self):
         headers = {
             "x-api-key": config.api_key,
-            "Authorization": config.bearer_token
+            "username": config.username
         }
 
         data = {

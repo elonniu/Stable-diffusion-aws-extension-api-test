@@ -31,7 +31,7 @@ class TestModelE2E:
     def test_0_clear_all_models(self):
         headers = {
             "x-api-key": config.api_key,
-            "Authorization": config.bearer_token
+            "username": config.username
         }
 
         resp = self.api.list_models(headers=headers)
@@ -58,7 +58,7 @@ class TestModelE2E:
 
         headers = {
             "x-api-key": config.api_key,
-            "Authorization": config.bearer_token
+            "username": config.username
         }
 
         data = {
@@ -117,7 +117,7 @@ class TestModelE2E:
 
         headers = {
             "x-api-key": config.api_key,
-            "Authorization": config.bearer_token
+            "username": config.username
         }
 
         data = {
@@ -134,7 +134,7 @@ class TestModelE2E:
     def test_3_models_v15_check_list(self):
         headers = {
             "x-api-key": config.api_key,
-            "Authorization": config.bearer_token
+            "username": config.username
         }
 
         resp = self.api.list_models(headers=headers)
@@ -158,7 +158,7 @@ class TestModelE2E:
 
         headers = {
             "x-api-key": config.api_key,
-            "Authorization": config.bearer_token
+            "username": config.username
         }
 
         resp = self.api.list_models(headers=headers)

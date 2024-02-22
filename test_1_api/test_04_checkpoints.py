@@ -21,7 +21,7 @@ class TestCheckpointsApi:
     def test_0_clean_checkpoints(self):
         headers = {
             "x-api-key": config.api_key,
-            "Authorization": config.bearer_token
+            "username": config.username
         }
 
         resp = self.api.list_checkpoints(headers=headers)
@@ -59,7 +59,7 @@ class TestCheckpointsApi:
     def test_3_list_checkpoints_without_username(self):
         headers = {
             "x-api-key": config.api_key,
-            "Authorization": config.bearer_token
+            "username": config.username
         }
 
         resp = self.api.list_checkpoints(headers=headers)
@@ -72,7 +72,7 @@ class TestCheckpointsApi:
     def test_4_list_checkpoints_with_user_name(self):
         headers = {
             "x-api-key": config.api_key,
-            "Authorization": config.bearer_token
+            "username": config.username
         }
 
         params = {"username": config.username}

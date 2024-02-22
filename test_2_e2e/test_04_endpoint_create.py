@@ -23,7 +23,7 @@ class TestEndpointCreateE2E:
         delete_sagemaker_endpoint(self.api)
         headers = {
             "x-api-key": config.api_key,
-            "Authorization": config.bearer_token
+            "username": config.username
         }
 
         resp = self.api.list_endpoints(headers=headers)
@@ -33,7 +33,7 @@ class TestEndpointCreateE2E:
     def test_2_no_available_endpoint(self):
         headers = {
             "x-api-key": config.api_key,
-            "Authorization": config.bearer_token
+            "username": config.username
         }
 
         params = {
@@ -47,7 +47,7 @@ class TestEndpointCreateE2E:
 
         headers = {
             "x-api-key": config.api_key,
-            "Authorization": config.bearer_token
+            "username": config.username
         }
 
         data = {
@@ -68,7 +68,7 @@ class TestEndpointCreateE2E:
     def test_3_create_endpoint_async(self):
         headers = {
             "x-api-key": config.api_key,
-            "Authorization": config.bearer_token
+            "username": config.username
         }
 
         data = {
@@ -88,7 +88,7 @@ class TestEndpointCreateE2E:
     def test_4_create_endpoint_real_time(self):
         headers = {
             "x-api-key": config.api_key,
-            "Authorization": config.bearer_token
+            "username": config.username
         }
 
         data = {
@@ -108,7 +108,7 @@ class TestEndpointCreateE2E:
     def test_4_create_endpoint_exists(self):
         headers = {
             "x-api-key": config.api_key,
-            "Authorization": config.bearer_token
+            "username": config.username
         }
 
         data = {

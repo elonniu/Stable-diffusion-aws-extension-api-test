@@ -1,4 +1,3 @@
-import base64
 import logging
 import os
 
@@ -27,8 +26,6 @@ logger.info(f"config.api_key: {api_key}")
 
 username = "admin"
 logger.info(f"config.username: {username}")
-
-bearer_token = f'Bearer {base64.b16encode(username.encode("utf-8")).decode("utf-8")}'
 
 bucket = os.environ.get("API_BUCKET")
 if not bucket:

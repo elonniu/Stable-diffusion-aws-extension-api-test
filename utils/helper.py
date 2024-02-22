@@ -69,7 +69,7 @@ def create_tar(json_string: str, path: str):
 def list_endpoints(api_instance):
     headers = {
         "x-api-key": config.api_key,
-        "Authorization": config.bearer_token
+        "username": config.username
     }
     resp = api_instance.list_endpoints(headers=headers)
     endpoints = resp.json()['data']["endpoints"]
@@ -89,7 +89,7 @@ def get_inference_job_status_new(api_instance, job_id):
         job_id=job_id,
         headers={
             "x-api-key": config.api_key,
-            "Authorization": config.bearer_token
+            "username": config.username
         },
     )
 
@@ -102,7 +102,7 @@ def get_inference_job_status_new(api_instance, job_id):
 def delete_sagemaker_endpoint(api_instance):
     headers = {
         "x-api-key": config.api_key,
-        "Authorization": config.bearer_token
+        "username": config.username
     }
 
     data = {

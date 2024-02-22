@@ -20,7 +20,7 @@ class TestCleanCheckpoints:
     def test_1_clean_checkpoints(self):
         headers = {
             "x-api-key": config.api_key,
-            "Authorization": config.bearer_token
+            "username": config.username
         }
 
         resp = self.api.list_checkpoints(headers=headers)

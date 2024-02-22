@@ -142,7 +142,7 @@ class TestSLaTxt2ImgAsync:
     def start_job(self, prompt: str):
         headers = {
             "x-api-key": config.api_key,
-            "Authorization": config.bearer_token
+            "username": config.username
         }
 
         data = {
@@ -190,7 +190,7 @@ class TestSLaTxt2ImgAsync:
 
         headers = {
             "x-api-key": config.api_key,
-            "Authorization": config.bearer_token
+            "username": config.username
         }
 
         resp = self.api.start_inference_job(job_id=inference_id, headers=headers)
@@ -222,7 +222,7 @@ class TestSLaTxt2ImgAsync:
 
         headers = {
             "x-api-key": config.api_key,
-            "Authorization": config.bearer_token
+            "username": config.username
         }
 
         resp = self.api.get_inference_job_new(job_id=inference_id, headers=headers)

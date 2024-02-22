@@ -21,7 +21,7 @@ def task_to_run(inference_id):
 
     headers = {
         "x-api-key": config.api_key,
-        "Authorization": config.bearer_token
+        "username": config.username
     }
     api = Api(config)
 
@@ -43,7 +43,7 @@ class TestTpsRealTimeE2E:
     def test_0_clear_inferences_jobs(self):
         headers = {
             "x-api-key": config.api_key,
-            "Authorization": config.bearer_token
+            "username": config.username
         }
         resp = self.api.list_inferences(headers)
         assert resp.status_code == 200, resp.dumps()
@@ -76,7 +76,7 @@ class TestTpsRealTimeE2E:
     def tps_inference_real_time_create(self):
         headers = {
             "x-api-key": config.api_key,
-            "Authorization": config.bearer_token
+            "username": config.username
         }
 
         data = {

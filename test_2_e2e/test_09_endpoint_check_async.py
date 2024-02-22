@@ -25,7 +25,7 @@ class TestEndpointCheckE2E:
     def test_1_list_endpoints_status(self):
         headers = {
             "x-api-key": config.api_key,
-            "Authorization": config.bearer_token
+            "username": config.username
         }
 
         params = {
@@ -53,7 +53,7 @@ class TestEndpointCheckE2E:
     def endpoints_wait_for_in_service(self):
         headers = {
             "x-api-key": config.api_key,
-            "Authorization": config.bearer_token
+            "username": config.username
         }
 
         params = {
@@ -77,7 +77,7 @@ class TestEndpointCheckE2E:
     def test_2_create_endpoint_role_limit(self):
         headers = {
             "x-api-key": config.api_key,
-            "Authorization": config.bearer_token
+            "username": config.username
         }
 
         data = {

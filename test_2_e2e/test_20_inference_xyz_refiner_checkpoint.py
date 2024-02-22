@@ -38,7 +38,7 @@ class TestXyzRefinerCheckpointE2E:
 
         headers = {
             "x-api-key": config.api_key,
-            "Authorization": config.bearer_token
+            "username": config.username
         }
 
         data = {
@@ -74,7 +74,7 @@ class TestXyzRefinerCheckpointE2E:
 
         headers = {
             "x-api-key": config.api_key,
-            "Authorization": config.bearer_token
+            "username": config.username
         }
 
         resp = self.api.start_inference_job(job_id=inference_id, headers=headers)

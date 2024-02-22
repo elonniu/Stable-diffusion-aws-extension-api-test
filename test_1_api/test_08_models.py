@@ -46,7 +46,7 @@ class TestModelsApi:
     def test_4_list_models(self):
         headers = {
             "x-api-key": config.api_key,
-            "Authorization": config.bearer_token
+            "username": config.username
         }
 
         resp = self.api.list_models(headers=headers)

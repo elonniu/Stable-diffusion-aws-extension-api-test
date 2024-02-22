@@ -23,7 +23,7 @@ class TestDatasetE2E:
     def test_0_clear_all_datasets(self):
         headers = {
             "x-api-key": config.api_key,
-            "Authorization": config.bearer_token,
+            "username": config.username,
         }
 
         resp = self.api.list_datasets(headers=headers)
@@ -52,7 +52,7 @@ class TestDatasetE2E:
 
         headers = {
             "x-api-key": config.api_key,
-            "Authorization": config.bearer_token,
+            "username": config.username,
         }
 
         data = {
@@ -84,7 +84,7 @@ class TestDatasetE2E:
         global dataset
         headers = {
             "x-api-key": config.api_key,
-            "Authorization": config.bearer_token,
+            "username": config.username,
         }
 
         data = {
@@ -99,7 +99,7 @@ class TestDatasetE2E:
     def test_4_datasets_get(self):
         headers = {
             "x-api-key": config.api_key,
-            "Authorization": config.bearer_token,
+            "username": config.username,
         }
 
         resp = self.api.list_datasets(headers=headers)
@@ -114,7 +114,7 @@ class TestDatasetE2E:
 
         headers = {
             "x-api-key": config.api_key,
-            "Authorization": config.bearer_token,
+            "username": config.username,
         }
 
         resp = self.api.get_dataset(name=dataset_name, headers=headers)

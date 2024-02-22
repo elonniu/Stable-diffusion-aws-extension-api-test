@@ -19,7 +19,7 @@ class TestRolesApi:
     def test_1_init_user_and_role(self):
         headers = {
             "x-api-key": config.api_key,
-            "Authorization": config.bearer_token
+            "username": config.username
         }
 
         data = {
@@ -37,8 +37,8 @@ class TestRolesApi:
     def test_2_list_roles_without_api_key(self):
         resp = self.api.list_roles()
 
-        assert resp.status_code == 401, resp.dumps()
-        assert resp.json()["message"] == "Unauthorized"
+        assert resp.status_code == 403, resp.dumps()
+        assert resp.json()["message"] == "Forbidden"
 
     def test_3_list_roles_without_auth(self):
         headers = {"x-api-key": config.api_key}
@@ -56,7 +56,7 @@ class TestRolesApi:
     def test_5_create_role_with_bad_creator(self):
         headers = {
             "x-api-key": config.api_key,
-            "Authorization": config.bearer_token,
+            "username": config.username
         }
 
         data = {
@@ -74,7 +74,7 @@ class TestRolesApi:
     def test_6_list_roles(self):
         headers = {
             "x-api-key": config.api_key,
-            "Authorization": config.bearer_token,
+            "username": config.username
         }
 
         params = {
@@ -90,7 +90,7 @@ class TestRolesApi:
     def test_7_list_roles_without_params(self):
         headers = {
             "x-api-key": config.api_key,
-            "Authorization": config.bearer_token,
+            "username": config.username
         }
 
         params = {
@@ -132,7 +132,7 @@ class TestRolesApi:
     def test_10_delete_default_role(self):
         headers = {
             "x-api-key": config.api_key,
-            "Authorization": config.bearer_token
+            "username": config.username
         }
 
         data = {
