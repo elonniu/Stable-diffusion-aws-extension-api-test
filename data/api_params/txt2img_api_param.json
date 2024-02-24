@@ -2,7 +2,7 @@
   "prompt": "aws logo",
   "negative_prompt": "",
   "styles": [],
-  "seed": -1,
+  "seed": 223104262,
   "subseed": -1,
   "subseed_strength": 0.0,
   "seed_resize_from_h": -1,
@@ -49,22 +49,8 @@
   "send_images": true,
   "save_images": false,
   "alwayson_scripts": {
-    "refiner": {
-      "args": [
-        false,
-        "",
-        0.8
-      ]
-    },
-    "seed": {
-      "args": [
-        -1,
-        false,
-        -1,
-        0,
-        0,
-        0
-      ]
+    "extra options": {
+      "args": []
     },
     "tiled diffusion": {
       "args": [
@@ -174,8 +160,8 @@
     "tiled vae": {
       "args": [
         false,
-        3072,
-        192,
+        2048,
+        128,
         true,
         true,
         true,
@@ -199,6 +185,7 @@
           "guidance_end": 1,
           "pixel_perfect": false,
           "control_mode": "Balanced",
+          "save_detected_map": true,
           "is_ui": true,
           "input_mode": "simple",
           "batch_images": "",
@@ -220,6 +207,7 @@
           "guidance_end": 1,
           "pixel_perfect": false,
           "control_mode": "Balanced",
+          "save_detected_map": true,
           "is_ui": true,
           "input_mode": "simple",
           "batch_images": "",
@@ -241,6 +229,7 @@
           "guidance_end": 1,
           "pixel_perfect": false,
           "control_mode": "Balanced",
+          "save_detected_map": true,
           "is_ui": true,
           "input_mode": "simple",
           "batch_images": "",
@@ -249,8 +238,22 @@
         }
       ]
     },
-    "extra options": {
-      "args": []
+    "refiner": {
+      "args": [
+        false,
+        "",
+        0.8
+      ]
+    },
+    "seed": {
+      "args": [
+        223104262,
+        false,
+        -1,
+        0,
+        0,
+        0
+      ]
     }
   }
 }

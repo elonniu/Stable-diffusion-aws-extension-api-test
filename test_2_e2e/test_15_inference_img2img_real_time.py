@@ -5,7 +5,7 @@ import logging
 import config as config
 from utils.api import Api
 from utils.enums import InferenceType
-from utils.helper import upload_with_put
+from utils.helper import upload_with_put, get_inference_job_image
 
 logger = logging.getLogger(__name__)
 
@@ -75,3 +75,17 @@ class TestImg2ImgInferenceRealTimeE2E:
 
         resp = self.api.start_inference_job(job_id=inference_id, headers=headers)
         assert resp.status_code in [200, 504], resp.dumps()
+        if resp.status_code == 504:
+            import time
+            time.sleep(5)
+
+    def test_6_img2img_inference_real_time_content(self):
+        global inference_data
+
+        inference_id = inference_data["id"]
+
+        get_inference_job_image(
+            api_instance=self.api,
+            job_id=inference_id,
+            target_file="./data/api_params/img2img_api_param.png"
+        )

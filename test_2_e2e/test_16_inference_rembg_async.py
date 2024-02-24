@@ -8,7 +8,7 @@ from datetime import timedelta
 import config as config
 from utils.api import Api
 from utils.enums import InferenceStatus, InferenceType
-from utils.helper import upload_with_put, get_inference_job_status_new
+from utils.helper import upload_with_put, get_inference_job_status, get_inference_job_image
 
 logger = logging.getLogger(__name__)
 
@@ -84,7 +84,7 @@ class TestRembgInferenceAsyncE2E:
         timeout = datetime.now() + timedelta(minutes=5)
 
         while datetime.now() < timeout:
-            status = get_inference_job_status_new(
+            status = get_inference_job_status(
                 api_instance=self.api,
                 job_id=inference_id
             )
@@ -98,3 +98,14 @@ class TestRembgInferenceAsyncE2E:
             time.sleep(5)
         else:
             raise Exception("Inference execution timed out after 5 minutes.")
+
+    def test_4_rembg_inference_async_content(self):
+        global inference_data
+
+        inference_id = inference_data["id"]
+
+        get_inference_job_image(
+            api_instance=self.api,
+            job_id=inference_id,
+            target_file="./data/api_params/rembg-api-params.png"
+        )

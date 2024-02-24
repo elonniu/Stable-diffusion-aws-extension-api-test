@@ -5,7 +5,7 @@ import logging
 import config as config
 from utils.api import Api
 from utils.enums import InferenceType
-from utils.helper import upload_with_put
+from utils.helper import upload_with_put, get_inference_job_image
 
 logger = logging.getLogger(__name__)
 
@@ -77,3 +77,17 @@ class TestEsiRealTimeE2E:
         assert resp.status_code == 200, resp.dumps()
         assert 'img_presigned_urls' in resp.json()['data'], resp.dumps()
         assert len(resp.json()['data']['img_presigned_urls']) > 0, resp.dumps()
+        if resp.status_code == 504:
+            import time
+            time.sleep(5)
+
+    def test_4_esi_inference_real_time_content(self):
+        global inference_data
+
+        inference_id = inference_data["id"]
+
+        get_inference_job_image(
+            api_instance=self.api,
+            job_id=inference_id,
+            target_file="./data/api_params/extra-single-image-api-params.png"
+        )

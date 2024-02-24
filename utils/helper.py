@@ -84,7 +84,7 @@ def get_endpoint_status(api_instance, endpoint_name: str):
     return None
 
 
-def get_inference_job_status_new(api_instance, job_id):
+def get_inference_job_status(api_instance, job_id):
     resp = api_instance.get_inference_job(
         job_id=job_id,
         headers={
@@ -97,6 +97,31 @@ def get_inference_job_status_new(api_instance, job_id):
         logger.error(f"Failed inference: {resp.json()['data']}")
 
     return resp.json()['data']['status']
+
+
+def get_inference_job_image(api_instance, job_id: str, target_file: str):
+    resp = api_instance.get_inference_job(
+        job_id=job_id,
+        headers={
+            "x-api-key": config.api_key,
+            "username": config.username
+        },
+    )
+
+    if 'img_presigned_urls' not in resp.json()['data']:
+        raise Exception(f"img_presigned_urls not found in inference job: {resp.json()}")
+
+    img_presigned_urls = resp.json()['data']['img_presigned_urls']
+
+    for img_url in img_presigned_urls:
+        resp = requests.get(img_url)
+
+        if resp.content == open(target_file, "rb").read():
+            logger.info(f"Image same with {target_file}")
+            return
+        raise Exception(f"Image {target_file} not same with {img_url}")
+
+    raise Exception(f"Image not found in inference job: {resp.json()}")
 
 
 def delete_sagemaker_endpoint(api_instance):

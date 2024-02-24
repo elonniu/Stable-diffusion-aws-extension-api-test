@@ -2,7 +2,6 @@ from __future__ import print_function
 
 import logging
 import threading
-from datetime import datetime
 
 import config as config
 from utils.api import Api

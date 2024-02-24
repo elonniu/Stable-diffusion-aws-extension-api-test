@@ -10,7 +10,7 @@ import pytest
 import config as config
 from utils.api import Api
 from utils.enums import InferenceStatus, InferenceType
-from utils.helper import upload_with_put, get_inference_job_status_new, \
+from utils.helper import upload_with_put, get_inference_job_status, \
     delete_inference_jobs
 
 logger = logging.getLogger(__name__)
@@ -83,7 +83,7 @@ class TestXyzCheckpointE2E:
         timeout = datetime.now() + timedelta(minutes=2)
 
         while datetime.now() < timeout:
-            status = get_inference_job_status_new(
+            status = get_inference_job_status(
                 api_instance=self.api,
                 job_id=inference_id
             )
