@@ -29,6 +29,24 @@ class TestTurboE2E:
     def teardown_class(cls):
         pass
 
+    def test_0_delete_checkpoints_turbo(self):
+        headers = {
+            "x-api-key": config.api_key,
+            "username": config.username,
+        }
+
+        resp = self.api.list_checkpoints(headers=headers)
+        assert resp.status_code == 200, resp.dumps()
+        ckpts = resp.json()['data']['checkpoints']
+
+        for ckpt in ckpts:
+            if ckpt['name'][0] == filename:
+                data = {
+                    "checkpoint_id_list": [ckpt['id']]
+                }
+                resp = self.api.delete_checkpoints(headers=headers, data=data)
+                assert resp.status_code == 204, resp.dumps()
+
     def test_1_create_turbo_checkpoint(self):
         headers = {
             "x-api-key": config.api_key,
