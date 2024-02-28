@@ -66,6 +66,7 @@ class TestRoleE2E:
     def test_3_delete_roles_default(self):
         headers = {
             "x-api-key": config.api_key,
+            "username": config.username,
         }
 
         data = {
@@ -79,6 +80,7 @@ class TestRoleE2E:
     def test_4_delete_roles_succeed(self):
         headers = {
             "x-api-key": config.api_key,
+            "username": config.username,
         }
 
         data = {

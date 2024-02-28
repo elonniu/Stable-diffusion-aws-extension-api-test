@@ -99,6 +99,7 @@ class TestInferencesApi:
     def test_17_delete_inferences_succeed(self):
         headers = {
             "x-api-key": config.api_key,
+            "username": config.username
         }
 
         data = {

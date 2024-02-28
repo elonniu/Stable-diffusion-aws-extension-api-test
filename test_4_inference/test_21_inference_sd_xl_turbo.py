@@ -32,6 +32,7 @@ class TestTurboE2E:
     def test_1_create_turbo_checkpoint(self):
         headers = {
             "x-api-key": config.api_key,
+            "username": config.username,
         }
 
         data = {

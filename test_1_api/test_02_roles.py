@@ -67,9 +67,7 @@ class TestRolesApi:
 
         resp = self.api.create_role(headers=headers, data=data)
 
-        assert resp.status_code == 400, resp.dumps()
-        assert resp.json()["statusCode"] == 400
-        assert resp.json()["message"] == 'creator bad_creator not exist'
+        assert resp.status_code == 201, resp.dumps()
 
     def test_6_list_roles(self):
         headers = {

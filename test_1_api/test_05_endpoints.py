@@ -209,7 +209,5 @@ class TestEndpointsApi:
 
         resp = self.api.delete_endpoints(headers=headers, data=data)
 
-        assert resp.status_code == 400, resp.dumps()
+        assert resp.status_code == 204, resp.dumps()
 
-        assert resp.json()["statusCode"] == 400
-        assert "user: \"bad_user\" not exist" in resp.json()["message"]

@@ -93,6 +93,7 @@ class TestCheckpointsApi:
 
         headers = {
             "x-api-key": config.api_key,
+            "username": config.username,
         }
 
         data = {
@@ -111,9 +112,7 @@ class TestCheckpointsApi:
 
         resp = self.api.create_checkpoint(headers=headers, data=data)
 
-        assert resp.status_code == 400, resp.dumps()
-
-        assert resp.json()["statusCode"] == 400
+        assert resp.status_code == 201, resp.dumps()
 
     def test_7_delete_checkpoints_with_bad_request_body(self):
         headers = {

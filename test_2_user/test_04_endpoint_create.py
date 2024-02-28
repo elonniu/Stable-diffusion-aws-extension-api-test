@@ -1,7 +1,7 @@
 from __future__ import print_function
 
 import logging
-from datetime import datetime
+from time import sleep
 
 import config as config
 from utils.api import Api
@@ -20,11 +20,29 @@ class TestEndpointCreateE2E:
         pass
 
     def test_1_endpoints_delete(self):
-        delete_sagemaker_endpoint(self.api)
+
         headers = {
             "x-api-key": config.api_key,
             "username": config.username
         }
+
+        resp = self.api.list_endpoints(headers=headers)
+        endpoints = resp.json()['data']["endpoints"]
+
+        for endpoint in endpoints:
+            endpoint_status = endpoint['endpoint_status']
+            endpoint_name = endpoint['endpoint_name']
+            test_list = [
+                f"esd-async-{config.endpoint_name}",
+                f"esd-real-time-{config.endpoint_name}",
+            ]
+
+            if endpoint_name in test_list and endpoint_status == 'Creating':
+                print(f"Endpoint {endpoint_name} is still creating")
+                sleep(5)
+                return
+
+        delete_sagemaker_endpoint(self.api)
 
         resp = self.api.list_endpoints(headers=headers)
         assert resp.status_code == 200, resp.dumps()

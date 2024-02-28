@@ -49,8 +49,8 @@ class Api:
             dump_string += f"\nRequest params: {get_json(params)}"
         if resp.status_code:
             dump_string += f"\nResponse status_code: {resp.status_code}"
-        if resp.headers:
-            dump_string += f"\nResponse headers: {get_json(resp.headers)}"
+        # if resp.headers:
+        #     dump_string += f"\nResponse headers: {get_json(resp.headers)}"
         if resp.text:
             dump_string += f"\nResponse body: {get_json(resp.text)}"
 

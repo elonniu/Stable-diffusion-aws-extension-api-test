@@ -32,6 +32,7 @@ class TestCheckPointDeleteE2E:
 
         headers = {
             "x-api-key": config.api_key,
+            "username": config.username,
         }
 
         data = {

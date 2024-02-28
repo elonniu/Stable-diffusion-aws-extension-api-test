@@ -47,7 +47,10 @@ class TestUpdateCheckPointE2E:
             assert resp.status_code == 204, resp.dumps()
 
     def test_1_upload_lora_checkpoint_by_url(self):
-        headers = {"x-api-key": config.api_key}
+        headers = {
+            "x-api-key": config.api_key,
+            "username": config.username,
+        }
 
         data = {
             "checkpoint_type": "Lora",
@@ -67,7 +70,10 @@ class TestUpdateCheckPointE2E:
 
     def test_2_checkpoint_unique_by_url(self):
         sleep(5)
-        headers = {"x-api-key": config.api_key}
+        headers = {
+            "x-api-key": config.api_key,
+            "username": config.username,
+        }
 
         data = {
             "checkpoint_type": "Lora",

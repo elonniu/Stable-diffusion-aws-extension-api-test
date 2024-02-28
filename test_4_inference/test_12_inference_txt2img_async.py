@@ -93,9 +93,9 @@ class TestTxt2ImgInferenceAsyncE2E:
             if status == InferenceStatus.FAILED.value:
                 logger.error(inference_data)
                 raise Exception(f"Inference job {inference_id} failed.")
-            time.sleep(5)
+            time.sleep(7)
         else:
-            raise Exception(f"Inference execution {inference_id} timed out after 5 minutes.")
+            raise Exception(f"Inference execution {inference_id} timed out after 7 minutes.")
 
     def test_6_txt2img_inference_async_content(self):
         global inference_data

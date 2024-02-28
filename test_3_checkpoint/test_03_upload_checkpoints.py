@@ -47,6 +47,7 @@ class TestCheckPointE2E:
         checkpoint_type = "Stable-diffusion"
         headers = {
             "x-api-key": config.api_key,
+            "username": config.username,
         }
 
         data = {
@@ -142,6 +143,7 @@ class TestCheckPointE2E:
 
         headers = {
             "x-api-key": config.api_key,
+            "username": config.username,
         }
 
         data = {
