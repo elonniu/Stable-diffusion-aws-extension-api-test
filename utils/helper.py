@@ -119,7 +119,12 @@ def get_inference_job_image(api_instance, job_id: str, target_file: str):
         if resp.content == open(target_file, "rb").read():
             logger.info(f"Image same with {target_file}")
             return
-        raise Exception(f"Image {target_file} not same with {img_url}")
+
+        # write image to file
+        with open(f"tmp.png", "wb") as f:
+            f.write(resp.content)
+
+        raise Exception(f"Image {target_file} not same with ./tmp.png")
 
     raise Exception(f"Image not found in inference job: {resp.json()}")
 

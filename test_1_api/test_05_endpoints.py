@@ -139,7 +139,7 @@ class TestEndpointsApi:
 
         resp = self.api.create_endpoint(headers=headers, data=data)
         assert resp.status_code == 400, resp.dumps()
-        assert 'ResourceLimitExceeded' in resp.text
+        assert 'ResourceLimitExceeded' in resp.text, resp.dumps()
 
     def test_8_create_endpoint_with_larger(self):
         headers = {
@@ -210,4 +210,3 @@ class TestEndpointsApi:
         resp = self.api.delete_endpoints(headers=headers, data=data)
 
         assert resp.status_code == 204, resp.dumps()
-
