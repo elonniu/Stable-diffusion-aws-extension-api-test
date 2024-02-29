@@ -15,7 +15,7 @@ env:
     TEST_FAST: "false"
     TEST_LOG_LEVEL: "ERROR"
     SLA_BATCH_SIZE: 2
-    ASYNC_INSTANCE_TYPE: "ml.g4dn.xlarge"
+    ASYNC_INSTANCE_TYPE: "ml.g5.2xlarge"
     REAL_TIME_INSTANCE_TYPE: "ml.g5.2xlarge"
     TEMPLATE_FILE: "https://aws-gcr-solutions.s3.amazonaws.com/stable-diffusion-aws-extension-github-mainline/latest/custom-domain/Extension-for-Stable-Diffusion-on-AWS.template.json"
 phases:

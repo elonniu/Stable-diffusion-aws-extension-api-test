@@ -50,10 +50,10 @@ logger.info(f"config.dataset_name: {dataset_name}")
 model_name = "test-model"
 logger.info(f"config.model_name: {model_name}")
 
-async_instance_type = os.environ.get("ASYNC_INSTANCE_TYPE", "ml.g4dn.xlarge")
+async_instance_type = os.environ.get("ASYNC_INSTANCE_TYPE", "ml.g5.2xlarge")
 logger.info(f"config.async_instance_type: {async_instance_type}")
 
-real_time_instance_type = os.environ.get("REAL_TIME_INSTANCE_TYPE", "ml.g4dn.xlarge")
+real_time_instance_type = os.environ.get("REAL_TIME_INSTANCE_TYPE", "ml.g5.2xlarge")
 logger.info(f"config.real_time_instance_type: {real_time_instance_type}")
 
 initial_instance_count = "2"
