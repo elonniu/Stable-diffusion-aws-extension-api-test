@@ -218,7 +218,7 @@ class TestCheckPointE2E:
         assert checkpoint_id in [checkpoint["id"] for checkpoint in resp.json()['data']["checkpoints"]]
 
     @pytest.mark.skipif(config.test_fast, reason="test_fast")
-    def test_8_create_checkpoint_lora(self):
+    def test_8_create_checkpoint_lora_nendoroid(self):
         checkpoint_type = "Lora"
         filename = "nendoroid_xl_v7.safetensors"
 
@@ -253,7 +253,7 @@ class TestCheckPointE2E:
         signed_urls = resp.json()['data']["s3PresignUrl"][filename]
 
     @pytest.mark.skipif(config.test_fast, reason="test_fast")
-    def test_9_update_checkpoint_lora(self):
+    def test_9_update_checkpoint_lora_nendoroid(self):
         filename = "nendoroid_xl_v7.safetensors"
         local_path = f"data/models/Lora/{filename}"
         wget_file(
@@ -283,7 +283,169 @@ class TestCheckPointE2E:
         assert resp.json()['data']["checkpoint"]['type'] == checkpoint_type
 
     @pytest.mark.skipif(config.test_fast, reason="test_fast")
-    def test_10_list_checkpoints_lora_check(self):
+    def test_10_list_checkpoint_lora_nendoroid_check(self):
+        headers = {
+            "x-api-key": config.api_key,
+            "username": config.username,
+        }
+
+        params = {
+            "username": config.username
+        }
+
+        resp = self.api.list_checkpoints(headers=headers, params=params)
+
+        assert resp.status_code == 200, resp.dumps()
+        global checkpoint_id
+        assert checkpoint_id in [checkpoint["id"] for checkpoint in resp.json()['data']["checkpoints"]]
+
+    @pytest.mark.skipif(config.test_fast, reason="test_fast")
+    def test_8_create_checkpoint_lora_lcm_1_5(self):
+        checkpoint_type = "Lora"
+        filename = "lcm_lora_1_5.safetensors"
+
+        headers = {
+            "x-api-key": config.api_key,
+            "username": config.username,
+        }
+
+        data = {
+            "checkpoint_type": checkpoint_type,
+            "filenames": [
+                {
+                    "filename": filename,
+                    "parts_number": 1
+                }
+            ],
+            "params": {
+                "message": config.ckpt_message,
+                "creator": config.username
+            }
+        }
+
+        resp = self.api.create_checkpoint(headers=headers, data=data)
+
+        assert resp.status_code == 201, resp.dumps()
+        assert resp.json()["statusCode"] == 201
+        assert resp.json()['data']["checkpoint"]['type'] == checkpoint_type
+        assert len(resp.json()['data']["checkpoint"]['id']) == 36
+        global checkpoint_id
+        checkpoint_id = resp.json()['data']["checkpoint"]['id']
+        global signed_urls
+        signed_urls = resp.json()['data']["s3PresignUrl"][filename]
+
+    @pytest.mark.skipif(config.test_fast, reason="test_fast")
+    def test_9_update_checkpoint_lora_lcm_1_5(self):
+        filename = "lcm_lora_1_5.safetensors"
+        local_path = f"data/models/Lora/{filename}"
+        wget_file(
+            local_path,
+            'https://aws-gcr-solutions-us-east-1.s3.us-east-1.amazonaws.com/extension-for-stable-diffusion-on-aws/models/Lora/lcm_lora_1_5.safetensors'
+        )
+        checkpoint_type = "Lora"
+        global signed_urls
+        multiparts_tags = upload_multipart_file(signed_urls, local_path)
+        global checkpoint_id
+
+        data = {
+            "status": "Active",
+            "multi_parts_tags": {filename: multiparts_tags}
+        }
+
+        headers = {
+            "x-api-key": config.api_key,
+            "username": config.username,
+        }
+
+        resp = self.api.update_checkpoint(checkpoint_id=checkpoint_id, headers=headers, data=data)
+
+        assert resp.status_code == 200, resp.dumps()
+        assert resp.json()["statusCode"] == 200
+        assert resp.json()['data']["checkpoint"]['type'] == checkpoint_type
+
+    @pytest.mark.skipif(config.test_fast, reason="test_fast")
+    def test_10_list_checkpoint_lora_lcm_1_5_check(self):
+        headers = {
+            "x-api-key": config.api_key,
+            "username": config.username,
+        }
+
+        params = {
+            "username": config.username
+        }
+
+        resp = self.api.list_checkpoints(headers=headers, params=params)
+
+        assert resp.status_code == 200, resp.dumps()
+        global checkpoint_id
+        assert checkpoint_id in [checkpoint["id"] for checkpoint in resp.json()['data']["checkpoints"]]
+
+    @pytest.mark.skipif(config.test_fast, reason="test_fast")
+    def test_8_create_checkpoint_lora_lcm_xl(self):
+        checkpoint_type = "Lora"
+        filename = "lcm_lora_xl.safetensors"
+
+        headers = {
+            "x-api-key": config.api_key,
+            "username": config.username,
+        }
+
+        data = {
+            "checkpoint_type": checkpoint_type,
+            "filenames": [
+                {
+                    "filename": filename,
+                    "parts_number": 1
+                }
+            ],
+            "params": {
+                "message": config.ckpt_message,
+                "creator": config.username
+            }
+        }
+
+        resp = self.api.create_checkpoint(headers=headers, data=data)
+
+        assert resp.status_code == 201, resp.dumps()
+        assert resp.json()["statusCode"] == 201
+        assert resp.json()['data']["checkpoint"]['type'] == checkpoint_type
+        assert len(resp.json()['data']["checkpoint"]['id']) == 36
+        global checkpoint_id
+        checkpoint_id = resp.json()['data']["checkpoint"]['id']
+        global signed_urls
+        signed_urls = resp.json()['data']["s3PresignUrl"][filename]
+
+    @pytest.mark.skipif(config.test_fast, reason="test_fast")
+    def test_9_update_checkpoint_lora_lcm_xl(self):
+        filename = "lcm_lora_xl.safetensors"
+        local_path = f"data/models/Lora/{filename}"
+        wget_file(
+            local_path,
+            'https://aws-gcr-solutions-us-east-1.s3.us-east-1.amazonaws.com/extension-for-stable-diffusion-on-aws/models/Lora/lcm_lora_xl.safetensors'
+        )
+        checkpoint_type = "Lora"
+        global signed_urls
+        multiparts_tags = upload_multipart_file(signed_urls, local_path)
+        global checkpoint_id
+
+        data = {
+            "status": "Active",
+            "multi_parts_tags": {filename: multiparts_tags}
+        }
+
+        headers = {
+            "x-api-key": config.api_key,
+            "username": config.username,
+        }
+
+        resp = self.api.update_checkpoint(checkpoint_id=checkpoint_id, headers=headers, data=data)
+
+        assert resp.status_code == 200, resp.dumps()
+        assert resp.json()["statusCode"] == 200
+        assert resp.json()['data']["checkpoint"]['type'] == checkpoint_type
+
+    @pytest.mark.skipif(config.test_fast, reason="test_fast")
+    def test_10_list_checkpoint_lora_lcm_xl_check(self):
         headers = {
             "x-api-key": config.api_key,
             "username": config.username,
