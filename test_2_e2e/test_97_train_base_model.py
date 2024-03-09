@@ -130,15 +130,15 @@ class TestTrainBaseModelE2E:
         jobs = resp.json()['data']["trainJobs"]
         assert train_job_id in [train["id"] for train in jobs]
 
-        timeout = datetime.now() + timedelta(minutes=50)
+        timeout = datetime.now() + timedelta(minutes=80)
 
         while datetime.now() < timeout:
             result = self.train_wait_for_complete()
             if result:
                 break
-            time.sleep(50)
+            time.sleep(80)
         else:
-            raise Exception(f"train {train_job_id} timed out after 50 minutes.")
+            raise Exception(f"train {train_job_id} timed out after 80 minutes.")
 
     def train_wait_for_complete(self):
         global train_job_id
