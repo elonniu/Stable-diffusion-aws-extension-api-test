@@ -125,43 +125,6 @@ phases:
           properties+=("Deploy Duration: ${DEPLOY_DURATION_TIME}")
         fi
         
-        if [ "$REMOVE_STACK" = "yes" ]; then
-           echo "----------------------------------------------------------------"
-           echo "Remove the stack"
-           echo "----------------------------------------------------------------"
-           echo "Waiting for stack to be deleted..."
-           STARTED_TIME=$(date +%s)
-        
-           aws cloudformation delete-stack --stack-name $STACK_NAME
-           aws cloudformation wait stack-delete-complete --stack-name $STACK_NAME
-        
-           FINISHED_TIME=$(date +%s)
-           REMOVE_DURATION_TIME=$(( $FINISHED_TIME - $STARTED_TIME ))
-           REMOVE_DURATION_TIME=$(printf "%dm%ds\n" $(($REMOVE_DURATION_TIME/60)) $(($REMOVE_DURATION_TIME%60)))
-           properties+=("Remove Duration: ${REMOVE_DURATION_TIME}")
-        fi
-
-        if [ "$CLEAN_RESOURCES" = "yes" ]; then
-        
-           aws s3 rb s3://"$API_BUCKET" --force | jq
-
-           aws dynamodb delete-table --table-name "CheckpointTable" | jq
-           aws dynamodb delete-table --table-name "DatasetInfoTable" | jq
-           aws dynamodb delete-table --table-name "DatasetItemTable" | jq
-           aws dynamodb delete-table --table-name "ModelTable" | jq
-           aws dynamodb delete-table --table-name "MultiUserTable" | jq
-           # aws dynamodb delete-table --table-name "SDEndpointDeploymentJobTable" | jq
-           aws dynamodb delete-table --table-name "SDInferenceJobTable" | jq
-           aws dynamodb delete-table --table-name "TrainingTable" | jq
-
-           aws sns delete-topic --topic-arn "arn:aws:sns:$AWS_DEFAULT_REGION:$ACCOUNT_ID:failureCreateModel" | jq
-           aws sns delete-topic --topic-arn "arn:aws:sns:$AWS_DEFAULT_REGION:$ACCOUNT_ID:ReceiveSageMakerInferenceError" | jq
-           aws sns delete-topic --topic-arn "arn:aws:sns:$AWS_DEFAULT_REGION:$ACCOUNT_ID:ReceiveSageMakerInferenceSuccess" | jq
-           aws sns delete-topic --topic-arn "arn:aws:sns:$AWS_DEFAULT_REGION:$ACCOUNT_ID:sde-api-test-result" | jq
-           aws sns delete-topic --topic-arn "arn:aws:sns:$AWS_DEFAULT_REGION:$ACCOUNT_ID:StableDiffusionSnsUserTopic" | jq
-           aws sns delete-topic --topic-arn "arn:aws:sns:$AWS_DEFAULT_REGION:$ACCOUNT_ID:successCreateModel" | jq
-        fi
-        
         if [ $CODEBUILD_BUILD_SUCCEEDING -eq 0 ]; then
           result="Failed"
         else
@@ -172,6 +135,44 @@ phases:
           properties+=("img2img Task Type: OK")
           properties+=("rembg Task Type: OK")
           properties+=("extra-single-image Task Type: OK")
+        
+        
+          if [ "$REMOVE_STACK" = "yes" ]; then
+             echo "----------------------------------------------------------------"
+             echo "Remove the stack"
+             echo "----------------------------------------------------------------"
+             echo "Waiting for stack to be deleted..."
+             STARTED_TIME=$(date +%s)
+          
+             aws cloudformation delete-stack --stack-name $STACK_NAME
+             aws cloudformation wait stack-delete-complete --stack-name $STACK_NAME
+          
+             FINISHED_TIME=$(date +%s)
+             REMOVE_DURATION_TIME=$(( $FINISHED_TIME - $STARTED_TIME ))
+             REMOVE_DURATION_TIME=$(printf "%dm%ds\n" $(($REMOVE_DURATION_TIME/60)) $(($REMOVE_DURATION_TIME%60)))
+             properties+=("Remove Duration: ${REMOVE_DURATION_TIME}")
+          fi
+        
+          if [ "$CLEAN_RESOURCES" = "yes" ]; then
+             aws s3 rb s3://"$API_BUCKET" --force | jq
+  
+             aws dynamodb delete-table --table-name "CheckpointTable" | jq
+             aws dynamodb delete-table --table-name "DatasetInfoTable" | jq
+             aws dynamodb delete-table --table-name "DatasetItemTable" | jq
+             aws dynamodb delete-table --table-name "ModelTable" | jq
+             aws dynamodb delete-table --table-name "MultiUserTable" | jq
+             # aws dynamodb delete-table --table-name "SDEndpointDeploymentJobTable" | jq
+             aws dynamodb delete-table --table-name "SDInferenceJobTable" | jq
+             aws dynamodb delete-table --table-name "TrainingTable" | jq
+  
+             aws sns delete-topic --topic-arn "arn:aws:sns:$AWS_DEFAULT_REGION:$ACCOUNT_ID:failureCreateModel" | jq
+             aws sns delete-topic --topic-arn "arn:aws:sns:$AWS_DEFAULT_REGION:$ACCOUNT_ID:ReceiveSageMakerInferenceError" | jq
+             aws sns delete-topic --topic-arn "arn:aws:sns:$AWS_DEFAULT_REGION:$ACCOUNT_ID:ReceiveSageMakerInferenceSuccess" | jq
+             aws sns delete-topic --topic-arn "arn:aws:sns:$AWS_DEFAULT_REGION:$ACCOUNT_ID:sde-api-test-result" | jq
+             aws sns delete-topic --topic-arn "arn:aws:sns:$AWS_DEFAULT_REGION:$ACCOUNT_ID:StableDiffusionSnsUserTopic" | jq
+             aws sns delete-topic --topic-arn "arn:aws:sns:$AWS_DEFAULT_REGION:$ACCOUNT_ID:successCreateModel" | jq
+          fi
+        
         fi
         properties+=("Result: ${result}")
         
