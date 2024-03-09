@@ -1,10 +1,10 @@
 from __future__ import print_function
 
 import logging
-from datetime import datetime
 
 import config as config
 from utils.api import Api
+from utils.enums import InferenceType
 
 logger = logging.getLogger(__name__)
 
@@ -124,3 +124,24 @@ class TestInferencesApi:
         resp = self.api.get_inference_job(job_id=job_id, headers=headers)
         assert resp.status_code == 404, resp.dumps()
         assert f'inference with id {job_id} not found' == resp.json()["message"]
+
+    def test_20_inference_one_api_payload_string_check(self):
+        headers = {
+            "x-api-key": config.api_key,
+            "username": config.username
+        }
+
+        payload = {
+            "inference_type": "Real-time",
+            "task_type": InferenceType.TXT2IMG.value,
+            "models": {
+                "Stable-diffusion": ["filename"],
+                "embeddings": []
+            },
+            "payload_string": "string"
+
+        }
+
+        resp = self.api.create_inference(data=payload, headers=headers)
+        assert resp.status_code == 400, resp.dumps()
+        assert resp.json()['message'] == 'payload_string must be valid json string', resp.dumps()

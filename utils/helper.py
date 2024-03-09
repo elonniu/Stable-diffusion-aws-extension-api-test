@@ -4,6 +4,7 @@ import logging
 import math
 import os
 import subprocess
+import sys
 import tarfile
 
 import requests
@@ -185,3 +186,14 @@ def upload_multipart_file(signed_urls, local_path):
             print(f'model upload part {i + 1}: {response}')
 
         return parts
+
+
+# s_tmax: Infinity
+def parse_constant(c: str) -> float:
+    if c == "NaN":
+        raise ValueError("NaN is not valid JSON")
+
+    if c == 'Infinity':
+        return sys.float_info.max
+
+    return float(c)

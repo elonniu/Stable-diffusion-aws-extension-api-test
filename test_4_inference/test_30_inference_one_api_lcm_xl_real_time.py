@@ -20,7 +20,7 @@ class TestInferenceOneApiLcmXLRealTimeE2E:
     def teardown_class(cls):
         pass
 
-    def test_1_inference_one_api_lcm_15_real_time(self):
+    def test_1_inference_one_api_lcm_xl_real_time(self):
         headers = {
             "x-api-key": config.api_key,
             "username": config.username
@@ -38,10 +38,7 @@ class TestInferenceOneApiLcmXLRealTimeE2E:
         }
 
         with open("./data/api_params/txt2img_lcm_xl_api_param.json", 'rb') as data:
-            data = json.load(data)
-            if 's_tmax' in data:
-                data["s_tmax"] = 'Infinity'
-            payload["endpoint_payload"] = data
+            payload["payload_string"] = json.dumps(json.loads(data.read()))
             resp = self.api.create_inference(data=payload, headers=headers)
             assert resp.status_code == 200, resp.dumps()
             result = resp.json()['data']
