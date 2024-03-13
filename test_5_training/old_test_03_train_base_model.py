@@ -85,21 +85,7 @@ class TestTrainBaseModelE2E:
             s3_presign_url = resp.json()['data']["s3PresignUrl"]["db_config.tar"]
             upload_db_config(s3_presign_url)
 
-    @pytest.mark.skipif(config.test_fast, reason="test_fast")
-    def test_2_train_put(self):
-        global train_job_id
-        headers = {
-            "x-api-key": config.api_key,
-            "username": config.username
-        }
 
-        data = {
-            "status": "Training"
-        }
-
-        resp = self.api.start_training_job(training_id=train_job_id, headers=headers, data=data)
-        assert resp.status_code == 202, resp.dumps()
-        assert resp.json()["statusCode"] == 202
 
     @pytest.mark.skipif(config.test_fast, reason="test_fast")
     def test_3_trains_get(self):

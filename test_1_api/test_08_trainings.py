@@ -16,45 +16,6 @@ class TestTrainingsApi:
     def teardown_class(cls):
         pass
 
-    def test_1_start_training_job_without_key(self):
-        resp = self.api.start_training_job(training_id="id")
-
-        assert resp.status_code == 403, resp.dumps()
-        assert resp.json()["message"] == "Forbidden"
-
-    def test_2_start_training_job_with_bad_params(self):
-        headers = {
-            "x-api-key": config.api_key,
-            "username": config.username
-        }
-
-        data = {
-            "train_type": "Stable-diffusion",
-            "model_id": "bad-2222-3333-1111-b3f0c1c21cee"
-        }
-
-        resp = self.api.start_training_job(training_id="id", headers=headers, data=data)
-
-        assert resp.status_code == 404, resp.dumps()
-
-    def test_3_start_training_job_with_bad_id(self):
-        headers = {
-            "x-api-key": config.api_key,
-            "username": config.username
-        }
-
-        data = {
-            "status": "Training"
-        }
-
-        training_id = "train_job_id"
-
-        resp = self.api.start_training_job(training_id=training_id, headers=headers, data=data)
-
-        assert resp.status_code == 404, resp.dumps()
-        assert resp.json()["statusCode"] == 404
-        assert resp.json()["message"] == f"no such train job with id({training_id})"
-
     def test_4_create_training_job_without_key(self):
         resp = self.api.create_training_job()
 
@@ -64,8 +25,8 @@ class TestTrainingsApi:
     def test_5_list_trainings_without_key(self):
         resp = self.api.list_trainings()
 
-        assert resp.status_code == 401, resp.dumps()
-        assert resp.json()["message"] == "Unauthorized"
+        assert resp.status_code == 403, resp.dumps()
+        assert resp.json()["message"] == "Forbidden"
 
     def test_6_list_trainings(self):
         headers = {
@@ -97,6 +58,7 @@ class TestTrainingsApi:
     def test_8_delete_trainings_succeed(self):
         headers = {
             "x-api-key": config.api_key,
+            "username": config.username,
         }
 
         data = {
@@ -117,6 +79,7 @@ class TestTrainingsApi:
     def test_10_get_training_job_not_found(self):
         headers = {
             "x-api-key": config.api_key,
+            "username": config.username,
         }
 
         job_id = "job_uuid"
@@ -134,6 +97,7 @@ class TestTrainingsApi:
     def test_12_stop_training_job_without_bad_id(self):
         headers = {
             "x-api-key": config.api_key,
+            "username": config.username,
         }
 
         resp = self.api.stop_training_job(training_id="id", headers=headers)
