@@ -29,8 +29,8 @@ class TestTrainStartStopE2E:
 
         assert resp.status_code == 200, resp.dumps()
         assert resp.json()["statusCode"] == 200
-        assert 'trainJobs' in resp.json()["data"]
-        trainJobs = resp.json()["data"]["trainJobs"]
+        assert 'trainings' in resp.json()["data"]
+        trainJobs = resp.json()["data"]["trainings"]
         for trainJob in trainJobs:
             data = {
                 "training_id_list": [trainJob["id"]],
@@ -87,8 +87,8 @@ class TestTrainStartStopE2E:
 
         assert resp.status_code == 200, resp.dumps()
         assert resp.json()["statusCode"] == 200
-        assert 'trainJobs' in resp.json()["data"]
-        trainJobs = resp.json()["data"]["trainJobs"]
+        assert 'trainings' in resp.json()["data"]
+        trainJobs = resp.json()["data"]["trainings"]
         assert len(trainJobs) > 0
         for trainJob in trainJobs:
             print(trainJob)
