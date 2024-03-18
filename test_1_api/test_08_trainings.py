@@ -87,19 +87,3 @@ class TestTrainingsApi:
         resp = self.api.get_training_job(job_id=job_id, headers=headers)
         assert resp.status_code == 404, resp.dumps()
         assert resp.json()["message"] == f"Job with id {job_id} not found"
-
-    def test_11_stop_training_job_without_key(self):
-        resp = self.api.stop_training_job(training_id="id")
-
-        assert resp.status_code == 403, resp.dumps()
-        assert resp.json()["message"] == "Forbidden"
-
-    def test_12_stop_training_job_without_bad_id(self):
-        headers = {
-            "x-api-key": config.api_key,
-            "username": config.username,
-        }
-
-        resp = self.api.stop_training_job(training_id="id", headers=headers)
-
-        assert resp.status_code == 404, resp.dumps()

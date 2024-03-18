@@ -92,17 +92,3 @@ class TestTrainStartStopE2E:
         assert len(trainJobs) > 0
         for trainJob in trainJobs:
             print(trainJob)
-
-    @pytest.mark.skipif(config.test_fast, reason="test_fast")
-    def test_2_train_stop(self):
-        global train_job_id
-
-        if not train_job_id:
-            pass
-
-        headers = {
-            "x-api-key": config.api_key,
-        }
-
-        resp = self.api.stop_training_job(training_id=train_job_id, headers=headers)
-        assert resp.status_code == 200, resp.dumps()

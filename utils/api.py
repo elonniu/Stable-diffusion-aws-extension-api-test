@@ -337,14 +337,6 @@ class Api:
             params=params
         )
 
-    def stop_training_job(self, training_id: str, headers=None, data=None):
-        return self.req(
-            "PUT",
-            f"trainings/{training_id}/stop",
-            headers=headers,
-            data=data
-        )
-
     def create_training_job(self, headers=None, data=None):
         return self.req(
             "POST",
