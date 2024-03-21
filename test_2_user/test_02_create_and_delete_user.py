@@ -24,9 +24,9 @@ class TestUserE2E:
         }
 
         data = {
-            "username": "admin",
+            "username": "api",
             "password": "admin",
-            "creator": "admin",
+            "creator": "api",
             "roles": ['IT Operator', 'byoc'],
         }
 
@@ -44,7 +44,7 @@ class TestUserE2E:
         data = {
             "username": username,
             "password": username,
-            "creator": "admin",
+            "creator": "api",
             "roles": ['IT Operator', 'byoc'],
         }
 

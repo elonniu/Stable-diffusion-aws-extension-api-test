@@ -24,7 +24,7 @@ if not api_key:
     raise Exception("API_GATEWAY_URL_TOKEN is empty")
 logger.info(f"config.api_key: {api_key}")
 
-username = "admin"
+username = "api"
 logger.info(f"config.username: {username}")
 
 bucket = os.environ.get("API_BUCKET")

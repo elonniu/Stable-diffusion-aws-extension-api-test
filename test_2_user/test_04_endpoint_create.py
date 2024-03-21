@@ -81,7 +81,7 @@ class TestEndpointCreateE2E:
         resp = self.api.create_inference(headers=headers, data=data)
         assert resp.status_code == 400, resp.dumps()
         assert resp.json()["statusCode"] == 400
-        assert resp.json()["message"] == 'no available Async endpoints for user "admin"'
+        assert resp.json()["message"] == 'no available Async endpoints for user "api"'
 
     def test_3_create_endpoint_async(self):
         headers = {

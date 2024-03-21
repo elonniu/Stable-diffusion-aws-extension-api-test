@@ -24,7 +24,7 @@ class TestRoleE2E:
 
         data = {
             "role_name": config.role_name,
-            "creator": "admin",
+            "creator": "api",
             "permissions": ['train:all', 'checkpoint:all'],
         }
 
@@ -41,7 +41,7 @@ class TestRoleE2E:
 
         data = {
             "role_name": "byoc",
-            "creator": "admin",
+            "creator": "api",
             "permissions": ['sagemaker_endpoint:all'],
         }
 
