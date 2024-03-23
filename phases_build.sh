@@ -2,6 +2,8 @@ set -euxo pipefail
 
 export ACCOUNT_ID=$(aws sts get-caller-identity --query "Account" --output text)
 export API_BUCKET=esd-test-$ACCOUNT_ID-$AWS_DEFAULT_REGION-$CODEBUILD_BUILD_NUMBER
+echo "ACCOUNT_ID=$ACCOUNT_ID" > env.properties
+echo "API_BUCKET=$API_BUCKET" >> env.properties
 
 # aws logs describe-log-groups | jq -r '.logGroups[].logGroupName' | grep -v codebuild | xargs -I {} aws logs delete-log-group --log-group-name {}
 
@@ -33,6 +35,7 @@ if [ "$DEPLOY_STACK" = "cdk" ]; then
                   --require-approval never
    FINISHED_TIME=$(date +%s)
    export DEPLOY_DURATION_TIME=$(( $FINISHED_TIME - $STARTED_TIME ))
+   echo "DEPLOY_DURATION_TIME=$DEPLOY_DURATION_TIME" >> env.properties
    sleep $SLEEP_AFTER_DEPLOY
    popd
 fi
@@ -53,6 +56,7 @@ if [ "$DEPLOY_STACK" = "template" ]; then
    aws cloudformation wait stack-create-complete --stack-name "$STACK_NAME"
    FINISHED_TIME=$(date +%s)
    export DEPLOY_DURATION_TIME=$(( $FINISHED_TIME - $STARTED_TIME ))
+   echo "DEPLOY_DURATION_TIME=$DEPLOY_DURATION_TIME" >> env.properties
    sleep $SLEEP_AFTER_DEPLOY
 fi
 
@@ -79,6 +83,7 @@ echo "Running pytest..."
 echo "----------------------------------------------------------------"
 STARTED_TIME=$(date +%s)
 source venv/bin/activate
-pytest ./ --exitfirst -rA --log-cli-level=$TEST_LOG_LEVEL --json-report --json-report-summary --json-report-file=detailed_report.json --html="report-${CODEBUILD_BUILD_NUMBER}.html" --self-contained-html --continue-on-collection-errors
+pytest ./ --exitfirst -rA --log-cli-level="$TEST_LOG_LEVEL" --json-report --json-report-summary --json-report-file=detailed_report.json --html="report-${CODEBUILD_BUILD_NUMBER}.html" --self-contained-html --continue-on-collection-errors
 FINISHED_TIME=$(date +%s)
 export TEST_DURATION_TIME=$(( $FINISHED_TIME - $STARTED_TIME ))
+echo "TEST_DURATION_TIME=$TEST_DURATION_TIME" >> env.properties

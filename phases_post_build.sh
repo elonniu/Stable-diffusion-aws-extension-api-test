@@ -1,16 +1,17 @@
 export ACCOUNT_ID=$(aws sts get-caller-identity --query "Account" --output text)
 export API_BUCKET=esd-test-$ACCOUNT_ID-$AWS_DEFAULT_REGION-$CODEBUILD_BUILD_NUMBER
 
+printenv
+
 properties=("Account: $ACCOUNT_ID")
 properties+=("Repo: $CODE_REPO")
-properties+=("Branch: $CODE_BRANCH")
+properties+=("Version/Branch: $CODE_BRANCH")
 properties+=("Region: $AWS_DEFAULT_REGION")
-properties+=("Test Branch: $TEST_BRANCH")
+properties+=("Deploy Method: $DEPLOY_STACK")
 
 if [ -n "$DEPLOY_DURATION_TIME" ]; then
   DEPLOY_DURATION_TIME=$(printf "%dm%ds\n" $(($DEPLOY_DURATION_TIME/60)) $(($DEPLOY_DURATION_TIME%60)))
-  properties+=("Deploy Method: ${DEPLOY_STACK}")
-  properties+=("Deploy Duration: ${DEPLOY_DURATION_TIME}")
+  properties+=("Deploy Duration: $DEPLOY_DURATION_TIME")
 fi
 
 if [ "$CODEBUILD_BUILD_SUCCEEDING" -eq 0 ]; then
@@ -34,7 +35,7 @@ else
   FINISHED_TIME=$(date +%s)
   REMOVE_DURATION_TIME=$(( $FINISHED_TIME - $STARTED_TIME ))
   REMOVE_DURATION_TIME=$(printf "%dm%ds\n" $(($REMOVE_DURATION_TIME/60)) $(($REMOVE_DURATION_TIME%60)))
-  properties+=("Remove Duration: ${REMOVE_DURATION_TIME}")
+  properties+=("Remove Stack Duration: ${REMOVE_DURATION_TIME}")
 
   if [ "$CLEAN_RESOURCES" = "yes" ]; then
      aws s3 rb s3://"$API_BUCKET" --force | jq
