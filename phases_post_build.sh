@@ -21,19 +21,17 @@ else
   properties+=("rembg Task Type: OK")
   properties+=("extra-single-image Task Type: OK")
 
-   echo "----------------------------------------------------------------"
-   echo "Remove the stack"
-   echo "----------------------------------------------------------------"
-   echo "Waiting for stack to be deleted..."
-   STARTED_TIME=$(date +%s)
-
-   aws cloudformation delete-stack --stack-name "$STACK_NAME"
-   aws cloudformation wait stack-delete-complete --stack-name "$STACK_NAME"
-
-   FINISHED_TIME=$(date +%s)
-   REMOVE_DURATION_TIME=$(( $FINISHED_TIME - $STARTED_TIME ))
-   REMOVE_DURATION_TIME=$(printf "%dm%ds\n" $(($REMOVE_DURATION_TIME/60)) $(($REMOVE_DURATION_TIME%60)))
-   properties+=("Remove Duration: ${REMOVE_DURATION_TIME}")
+  echo "----------------------------------------------------------------"
+  echo "Remove the stack"
+  echo "----------------------------------------------------------------"
+  echo "Waiting for stack to be deleted..."
+  STARTED_TIME=$(date +%s)
+  aws cloudformation delete-stack --stack-name "$STACK_NAME"
+  aws cloudformation wait stack-delete-complete --stack-name "$STACK_NAME"
+  FINISHED_TIME=$(date +%s)
+  REMOVE_DURATION_TIME=$(( $FINISHED_TIME - $STARTED_TIME ))
+  REMOVE_DURATION_TIME=$(printf "%dm%ds\n" $(($REMOVE_DURATION_TIME/60)) $(($REMOVE_DURATION_TIME%60)))
+  properties+=("Remove Duration: ${REMOVE_DURATION_TIME}")
 
   if [ "$CLEAN_RESOURCES" = "yes" ]; then
      aws s3 rb s3://"$API_BUCKET" --force | jq
