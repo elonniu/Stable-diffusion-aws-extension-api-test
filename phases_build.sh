@@ -1,6 +1,7 @@
 set -euxo pipefail
 
 export ACCOUNT_ID=$(aws sts get-caller-identity --query "Account" --output text)
+export API_BUCKET=esd-test-$ACCOUNT_ID-$AWS_DEFAULT_REGION-$CODEBUILD_BUILD_NUMBER
 
 # aws logs describe-log-groups | jq -r '.logGroups[].logGroupName' | grep -v codebuild | xargs -I {} aws logs delete-log-group --log-group-name {}
 
@@ -12,8 +13,6 @@ echo "phases -> build -> commands"
 echo "----------------------------------------------------------------"
 python --version
 sudo yum install wget -y
-
-export API_BUCKET=esd-test-$ACCOUNT_ID-$AWS_DEFAULT_REGION-$CODEBUILD_BUILD_NUMBER
 
 if [ "$DEPLOY_STACK" = "cdk" ]; then
    echo "----------------------------------------------------------------"
