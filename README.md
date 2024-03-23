@@ -1,4 +1,4 @@
-# Stable-diffusion-aws-extension-api-test
+# esd-api-test
 
 ## Description
 
@@ -8,8 +8,6 @@ environment.
 # References
 
 You may need to refer to the following documents:
-
-- [API-Automation-Test-Framework-Design](https://code.amazon.com/packages/Stable-diffusion-aws-extension-api-test/trees/mainline)
 
 - Test locally
 - **Note**: You must test and successfully complete on the `dev` branch of `stable-diffusion-aws-extension` before you
@@ -25,8 +23,8 @@ mwint -k ~/.ssh/id_ecdsa.pub
 ```
 
 ```bash
-git clone ssh://git.amazon.com/pkg/Stable-diffusion-aws-extension-api-test
-cd Stable-diffusion-aws-extension-api-test
+git clone ssh://git.amazon.com/pkg/esd-api-test
+cd esd-api-test
 ```
 
 # Directory Struct
