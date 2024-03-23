@@ -4,6 +4,9 @@ export ACCOUNT_ID=$(aws sts get-caller-identity --query "Account" --output text)
 
 # aws logs describe-log-groups | jq -r '.logGroups[].logGroupName' | grep -v codebuild | xargs -I {} aws logs delete-log-group --log-group-name {}
 
+aws cloudformation delete-stack --stack-name $STACK_NAME
+aws cloudformation wait stack-delete-complete --stack-name $STACK_NAME
+
 echo "----------------------------------------------------------------"
 echo "phases -> build -> commands"
 echo "----------------------------------------------------------------"
