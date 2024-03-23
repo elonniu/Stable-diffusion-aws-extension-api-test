@@ -1,3 +1,5 @@
+#!/bin/bash
+
 set -e
 
 if [ -d "venv" ]; then
@@ -8,16 +10,14 @@ fi
 
 python3 -m venv venv
 
-if [ "$(uname)" == "Darwin" ]; then
-    source venv/bin/activate
-else
-    . venv/bin/activate
-fi
+source venv/bin/activate
 
 if [ -n "$AWS_REGION" ] && [[ $AWS_REGION == cn-* ]]; then
     pip config set global.index-url https://mirrors.aliyun.com/pypi/simple/
 fi
 
-pip3 --default-timeout=6000 install -r requirements.txt
+pip install --upgrade pip
+
+pip --default-timeout=6000 install -r requirements.txt
 
 echo "Done"
