@@ -41,7 +41,7 @@ logger.info(f"config.is_gcr: {is_gcr}")
 role_name = "role_name"
 logger.info(f"config.role_name: {role_name}")
 
-endpoint_name = "api-test"
+endpoint_name = "test"
 logger.info(f"config.endpoint_name: {endpoint_name}")
 
 dataset_name = "huahua"
