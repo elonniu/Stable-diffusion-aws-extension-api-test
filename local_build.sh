@@ -38,7 +38,7 @@ fi
 #pip3 install -e ../Solution-data-generator
 #cd ../
 
-#cd Stable-diffusion-aws-extension-api-test
+#cd esd-api-test
 pip3 --default-timeout=6000 install -r requirements.txt
 #pip3 install -e ../Solution-api-test-framework
 

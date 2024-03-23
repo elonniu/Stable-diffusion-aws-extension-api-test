@@ -71,8 +71,8 @@ echo "Download & Build SDE test case"
 echo "----------------------------------------------------------------"
 wget "$TEST_REPO/archive/refs/heads/$TEST_BRANCH.zip"
 unzip -q "$TEST_BRANCH.zip"
-mv Stable-diffusion-aws-extension-api-test-$TEST_BRANCH Stable-diffusion-aws-extension-api-test
-cd Stable-diffusion-aws-extension-api-test
+mv "esd-api-test-$TEST_BRANCH" esd-api-test
+cd esd-api-test
 make build
 
 echo "----------------------------------------------------------------"

@@ -1,4 +1,4 @@
-package.Stable-diffusion-aws-extension-api-test = {
+package.esd-api-test = {
     interfaces = (1.0);
 
     # See https://w.amazon.com/?BrazilPython3
