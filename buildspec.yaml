@@ -19,10 +19,9 @@ env:
 phases:
   build:
     commands:
-      - |
-        curl -sSL https://raw.githubusercontent.com/elonniu/esd-api-test/dev/phases_build.sh | bash
+      - curl -sSL https://raw.githubusercontent.com/elonniu/esd-api-test/dev/phases_build.sh | bash
 
   post_build:
     commands:
-      - |
-        curl -sSL https://raw.githubusercontent.com/elonniu/esd-api-test/dev/phases_post_build.sh | bash
+      - source env.properties
+      - curl -sSL https://raw.githubusercontent.com/elonniu/esd-api-test/dev/phases_post_build.sh | bash
