@@ -6,7 +6,6 @@ env:
     CODE_REPO: "https://github.com/awslabs/stable-diffusion-aws-extension"
     CODE_BRANCH: "dev"
     DEPLOY_STACK: "template"
-    REMOVE_STACK: "yes"
     CLEAN_RESOURCES: "no"
     SLEEP_AFTER_DEPLOY: 150
     TEST_REPO: "https://github.com/elonniu/Stable-diffusion-aws-extension-api-test"

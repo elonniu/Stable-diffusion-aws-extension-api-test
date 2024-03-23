@@ -10,7 +10,7 @@ if [ -n "$DEPLOY_DURATION_TIME" ]; then
   properties+=("Deploy Duration: ${DEPLOY_DURATION_TIME}")
 fi
 
-if [ $CODEBUILD_BUILD_SUCCEEDING -eq 0 ]; then
+if [ "$CODEBUILD_BUILD_SUCCEEDING" -eq 0 ]; then
   result="Failed"
 else
   result="Passed"
@@ -21,22 +21,19 @@ else
   properties+=("rembg Task Type: OK")
   properties+=("extra-single-image Task Type: OK")
 
+   echo "----------------------------------------------------------------"
+   echo "Remove the stack"
+   echo "----------------------------------------------------------------"
+   echo "Waiting for stack to be deleted..."
+   STARTED_TIME=$(date +%s)
 
-  if [ "$REMOVE_STACK" = "yes" ]; then
-     echo "----------------------------------------------------------------"
-     echo "Remove the stack"
-     echo "----------------------------------------------------------------"
-     echo "Waiting for stack to be deleted..."
-     STARTED_TIME=$(date +%s)
+   aws cloudformation delete-stack --stack-name "$STACK_NAME"
+   aws cloudformation wait stack-delete-complete --stack-name "$STACK_NAME"
 
-     aws cloudformation delete-stack --stack-name $STACK_NAME
-     aws cloudformation wait stack-delete-complete --stack-name $STACK_NAME
-
-     FINISHED_TIME=$(date +%s)
-     REMOVE_DURATION_TIME=$(( $FINISHED_TIME - $STARTED_TIME ))
-     REMOVE_DURATION_TIME=$(printf "%dm%ds\n" $(($REMOVE_DURATION_TIME/60)) $(($REMOVE_DURATION_TIME%60)))
-     properties+=("Remove Duration: ${REMOVE_DURATION_TIME}")
-  fi
+   FINISHED_TIME=$(date +%s)
+   REMOVE_DURATION_TIME=$(( $FINISHED_TIME - $STARTED_TIME ))
+   REMOVE_DURATION_TIME=$(printf "%dm%ds\n" $(($REMOVE_DURATION_TIME/60)) $(($REMOVE_DURATION_TIME%60)))
+   properties+=("Remove Duration: ${REMOVE_DURATION_TIME}")
 
   if [ "$CLEAN_RESOURCES" = "yes" ]; then
      aws s3 rb s3://"$API_BUCKET" --force | jq
@@ -46,7 +43,7 @@ else
      aws dynamodb delete-table --table-name "DatasetItemTable" | jq
      aws dynamodb delete-table --table-name "ModelTable" | jq
      aws dynamodb delete-table --table-name "MultiUserTable" | jq
-     # aws dynamodb delete-table --table-name "SDEndpointDeploymentJobTable" | jq
+     aws dynamodb delete-table --table-name "SDEndpointDeploymentJobTable" | jq
      aws dynamodb delete-table --table-name "SDInferenceJobTable" | jq
      aws dynamodb delete-table --table-name "TrainingTable" | jq
 
@@ -109,7 +106,7 @@ fi
 
 if [ -f "report-${CODEBUILD_BUILD_NUMBER}.html" ]; then
   report_file="report-${CODEBUILD_BUILD_NUMBER}.html"
-  aws s3 cp $report_file s3://$API_BUCKET/test_report/
+  aws s3 cp "$report_file" "s3://$API_BUCKET/test_report/"
   properties+=("Report: s3://$API_BUCKET/test_report/$report_file")
 fi
 
