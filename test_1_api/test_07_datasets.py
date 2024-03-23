@@ -19,8 +19,8 @@ class TestDatasetsApi:
     def test_1_list_datasets_without_key(self):
         resp = self.api.list_datasets()
 
-        assert resp.status_code == 401, resp.dumps()
-        assert resp.json()["message"] == "Unauthorized"
+        assert resp.status_code == 403, resp.dumps()
+        assert resp.json()["message"] == "Forbidden"
 
     def test_2_list_datasets_without_auth(self):
         headers = {"x-api-key": config.api_key}
@@ -32,7 +32,7 @@ class TestDatasetsApi:
     def test_3_list_datasets(self):
         headers = {
             "x-api-key": config.api_key,
-            "Authorization": config.bearer_token,
+            "username": config.username,
         }
 
         resp = self.api.list_datasets(headers=headers)
@@ -43,7 +43,7 @@ class TestDatasetsApi:
     def test_4_get_dataset_missing_name(self):
         headers = {
             "x-api-key": config.api_key,
-            "Authorization": config.bearer_token,
+            "username": config.username,
         }
 
         name = "not_exists"

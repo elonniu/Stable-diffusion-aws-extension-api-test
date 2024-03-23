@@ -4,6 +4,7 @@ import logging
 import math
 import os
 import subprocess
+import sys
 import tarfile
 
 import requests
@@ -69,7 +70,7 @@ def create_tar(json_string: str, path: str):
 def list_endpoints(api_instance):
     headers = {
         "x-api-key": config.api_key,
-        "Authorization": config.bearer_token
+        "username": config.username
     }
     resp = api_instance.list_endpoints(headers=headers)
     endpoints = resp.json()['data']["endpoints"]
@@ -84,12 +85,12 @@ def get_endpoint_status(api_instance, endpoint_name: str):
     return None
 
 
-def get_inference_job_status_new(api_instance, job_id):
-    resp = api_instance.get_inference_job_new(
+def get_inference_job_status(api_instance, job_id):
+    resp = api_instance.get_inference_job(
         job_id=job_id,
         headers={
             "x-api-key": config.api_key,
-            "Authorization": config.bearer_token
+            "username": config.username
         },
     )
 
@@ -99,10 +100,40 @@ def get_inference_job_status_new(api_instance, job_id):
     return resp.json()['data']['status']
 
 
+def get_inference_job_image(api_instance, job_id: str, target_file: str):
+    resp = api_instance.get_inference_job(
+        job_id=job_id,
+        headers={
+            "x-api-key": config.api_key,
+            "username": config.username
+        },
+    )
+
+    if 'img_presigned_urls' not in resp.json()['data']:
+        raise Exception(f"img_presigned_urls not found in inference job: {resp.json()}")
+
+    img_presigned_urls = resp.json()['data']['img_presigned_urls']
+
+    for img_url in img_presigned_urls:
+        resp = requests.get(img_url)
+
+        if resp.content == open(target_file, "rb").read():
+            logger.info(f"Image same with {target_file}")
+            return
+
+        # write image to file
+        with open(f"tmp.png", "wb") as f:
+            f.write(resp.content)
+
+        raise Exception(f"Image {target_file} not same with ./tmp.png")
+
+    raise Exception(f"Image not found in inference job: {resp.json()}")
+
+
 def delete_sagemaker_endpoint(api_instance):
     headers = {
         "x-api-key": config.api_key,
-        "Authorization": config.bearer_token
+        "username": config.username
     }
 
     data = {
@@ -155,3 +186,14 @@ def upload_multipart_file(signed_urls, local_path):
             print(f'model upload part {i + 1}: {response}')
 
         return parts
+
+
+# s_tmax: Infinity
+def parse_constant(c: str) -> float:
+    if c == "NaN":
+        raise ValueError("NaN is not valid JSON")
+
+    if c == 'Infinity':
+        return sys.float_info.max
+
+    return float(c)

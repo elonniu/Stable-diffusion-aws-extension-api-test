@@ -21,7 +21,7 @@ class TestCheckpointsApi:
     def test_0_clean_checkpoints(self):
         headers = {
             "x-api-key": config.api_key,
-            "Authorization": config.bearer_token
+            "username": config.username
         }
 
         resp = self.api.list_checkpoints(headers=headers)
@@ -45,8 +45,8 @@ class TestCheckpointsApi:
     def test_1_list_checkpoints_without_key(self):
         resp = self.api.list_checkpoints()
 
-        assert resp.status_code == 401, resp.dumps()
-        assert resp.json()["message"] == "Unauthorized"
+        assert resp.status_code == 403, resp.dumps()
+        assert resp.json()["message"] == "Forbidden"
 
     def test_2_list_checkpoints_without_auth(self):
         headers = {"x-api-key": config.api_key}
@@ -59,7 +59,7 @@ class TestCheckpointsApi:
     def test_3_list_checkpoints_without_username(self):
         headers = {
             "x-api-key": config.api_key,
-            "Authorization": config.bearer_token
+            "username": config.username
         }
 
         resp = self.api.list_checkpoints(headers=headers)
@@ -72,7 +72,7 @@ class TestCheckpointsApi:
     def test_4_list_checkpoints_with_user_name(self):
         headers = {
             "x-api-key": config.api_key,
-            "Authorization": config.bearer_token
+            "username": config.username
         }
 
         params = {"username": config.username}
@@ -93,6 +93,7 @@ class TestCheckpointsApi:
 
         headers = {
             "x-api-key": config.api_key,
+            "username": config.username,
         }
 
         data = {
@@ -111,9 +112,7 @@ class TestCheckpointsApi:
 
         resp = self.api.create_checkpoint(headers=headers, data=data)
 
-        assert resp.status_code == 400, resp.dumps()
-
-        assert resp.json()["statusCode"] == 400
+        assert resp.status_code == 201, resp.dumps()
 
     def test_7_delete_checkpoints_with_bad_request_body(self):
         headers = {

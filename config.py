@@ -1,4 +1,3 @@
-import base64
 import logging
 import os
 
@@ -25,10 +24,8 @@ if not api_key:
     raise Exception("API_GATEWAY_URL_TOKEN is empty")
 logger.info(f"config.api_key: {api_key}")
 
-username = "admin"
+username = "api"
 logger.info(f"config.username: {username}")
-
-bearer_token = f'Bearer {base64.b16encode(username.encode("utf-8")).decode("utf-8")}'
 
 bucket = os.environ.get("API_BUCKET")
 if not bucket:
@@ -53,7 +50,7 @@ logger.info(f"config.dataset_name: {dataset_name}")
 model_name = "test-model"
 logger.info(f"config.model_name: {model_name}")
 
-async_instance_type = os.environ.get("ASYNC_INSTANCE_TYPE", "ml.g4dn.xlarge")
+async_instance_type = os.environ.get("ASYNC_INSTANCE_TYPE", "ml.g5.2xlarge")
 logger.info(f"config.async_instance_type: {async_instance_type}")
 
 real_time_instance_type = os.environ.get("REAL_TIME_INSTANCE_TYPE", "ml.g5.2xlarge")

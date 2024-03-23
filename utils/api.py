@@ -49,8 +49,8 @@ class Api:
             dump_string += f"\nRequest params: {get_json(params)}"
         if resp.status_code:
             dump_string += f"\nResponse status_code: {resp.status_code}"
-        if resp.headers:
-            dump_string += f"\nResponse headers: {get_json(resp.headers)}"
+        # if resp.headers:
+        #     dump_string += f"\nResponse headers: {get_json(resp.headers)}"
         if resp.text:
             dump_string += f"\nResponse body: {get_json(resp.text)}"
 
@@ -246,16 +246,6 @@ class Api:
     def get_inference_job(self, job_id: str, headers=None):
         return self.req(
             "GET",
-            "inference/get-inference-job",
-            headers=headers,
-            params={
-                "jobID": job_id
-            }
-        )
-
-    def get_inference_job_new(self, job_id: str, headers=None):
-        return self.req(
-            "GET",
             f"inferences/{job_id}",
             headers=headers
         )
@@ -345,22 +335,6 @@ class Api:
             "models",
             headers=headers,
             params=params
-        )
-
-    def start_training_job(self, training_id: str, headers=None, data=None):
-        return self.req(
-            "PUT",
-            f"trainings/{training_id}/start",
-            headers=headers,
-            data=data
-        )
-
-    def stop_training_job(self, training_id: str, headers=None, data=None):
-        return self.req(
-            "PUT",
-            f"trainings/{training_id}/stop",
-            headers=headers,
-            data=data
         )
 
     def create_training_job(self, headers=None, data=None):
