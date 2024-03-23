@@ -2,243 +2,28 @@ version: 0.2
 
 env:
   variables:
-    ECR_IMAGE_TAG: "v1.4.0-200e0ea"
     STACK_NAME: "ESD"
     CODE_REPO: "https://github.com/awslabs/stable-diffusion-aws-extension"
     CODE_BRANCH: "dev"
-    DEPLOY_STACK: "cdk"
+    DEPLOY_STACK: "template"
     REMOVE_STACK: "yes"
-    CLEAN_RESOURCES: "yes"
+    CLEAN_RESOURCES: "no"
     SLEEP_AFTER_DEPLOY: 150
     TEST_REPO: "https://github.com/elonniu/Stable-diffusion-aws-extension-api-test"
-    TEST_BRANCH: "main"
+    TEST_BRANCH: "dev"
     TEST_FAST: "false"
     TEST_LOG_LEVEL: "ERROR"
     SLA_BATCH_SIZE: 2
-    ASYNC_INSTANCE_TYPE: "ml.g5.2xlarge"
-    REAL_TIME_INSTANCE_TYPE: "ml.g5.2xlarge"
-    TEMPLATE_FILE: "https://aws-gcr-solutions.s3.amazonaws.com/stable-diffusion-aws-extension-github-mainline/latest/custom-domain/Extension-for-Stable-Diffusion-on-AWS.template.json"
+    #ASYNC_INSTANCE_TYPE: "ml.g4dn.xlarge"
+    #REAL_TIME_INSTANCE_TYPE: "ml.g5.2xlarge"
+    TEMPLATE_FILE: "https://aws-gcr-solutions.s3.amazonaws.com/stable-diffusion-aws-extension-github-mainline/dev/custom-domain/Extension-for-Stable-Diffusion-on-AWS.template.json"
 phases:
   build:
     commands:
       - |
-        set -euxo pipefail
-        
-        ACCOUNT_ID=$(aws sts get-caller-identity --query "Account" --output text)
-        
-        aws logs describe-log-groups | jq -r '.logGroups[].logGroupName' | grep -v codebuild | xargs -I {} aws logs delete-log-group --log-group-name {}
-
-        echo "----------------------------------------------------------------"
-        echo "phases -> build -> commands"
-        echo "----------------------------------------------------------------"
-        python --version
-        sudo yum install wget -y
-        
-        API_BUCKET=sd-test-$ACCOUNT_ID-$AWS_DEFAULT_REGION-$CODEBUILD_BUILD_NUMBER
-        
-        if [ "$DEPLOY_STACK" = "cdk" ]; then
-           echo "----------------------------------------------------------------"
-           echo "cdk deploy start..."
-           echo "----------------------------------------------------------------"        
-           curl -L -o esd.zip $CODE_REPO/archive/refs/heads/$CODE_BRANCH.zip
-           unzip -q esd.zip
-        
-           pushd stable-diffusion-aws-extension-$CODE_BRANCH/infrastructure
-        
-           npm i -g pnpm
-           pnpm i
-           STARTED_TIME=$(date +%s)
-           npx cdk deploy --parameters Email=example@amazon.com \
-                          --parameters Bucket=$API_BUCKET \
-                          --parameters LogLevel=INFO \
-                          --parameters EcrImageTag=$ECR_IMAGE_TAG \
-                          --parameters SdExtensionApiKey=09876743210987654322 \
-                          --require-approval never
-           FINISHED_TIME=$(date +%s)
-           export DEPLOY_DURATION_TIME=$(( $FINISHED_TIME - $STARTED_TIME ))
-           sleep $SLEEP_AFTER_DEPLOY
-           popd
-        fi
-        
-        if [ "$DEPLOY_STACK" = "template" ]; then
-           echo "----------------------------------------------------------------"
-           echo "template deploy start..."
-           echo "----------------------------------------------------------------"        
-           STARTED_TIME=$(date +%s)
-           aws cloudformation create-stack --stack-name $STACK_NAME \
-                                           --template-url $TEMPLATE_FILE \
-                                           --capabilities CAPABILITY_NAMED_IAM \
-                                           --parameters ParameterKey=Email,ParameterValue=example@example.com \
-                                                        ParameterKey=Bucket,ParameterValue=$API_BUCKET \
-                                                        ParameterKey=LogLevel,ParameterValue=INFO \
-                                                        ParameterKey=SdExtensionApiKey,ParameterValue=09876743210987654322
-        
-           aws cloudformation wait stack-create-complete --stack-name $STACK_NAME
-           FINISHED_TIME=$(date +%s)
-           export DEPLOY_DURATION_TIME=$(( $FINISHED_TIME - $STARTED_TIME ))
-           sleep $SLEEP_AFTER_DEPLOY
-        fi
-        
-        echo "----------------------------------------------------------------"
-        echo "Get api gateway url & token"
-        echo "----------------------------------------------------------------"
-        stack_info=$(aws cloudformation describe-stacks --stack-name $STACK_NAME)
-        export API_GATEWAY_URL=$(echo $stack_info | jq -r '.Stacks[0].Outputs[] | select(.OutputKey=="ApiGatewayUrl").OutputValue')
-        export API_GATEWAY_URL_TOKEN=$(echo $stack_info | jq -r '.Stacks[0].Outputs[] | select(.OutputKey=="ApiGatewayUrlToken").OutputValue')
-        echo "API_GATEWAY_URL: $API_GATEWAY_URL"
-        echo "API_GATEWAY_URL_TOKEN: $API_GATEWAY_URL_TOKEN"
-
-        echo "----------------------------------------------------------------"
-        echo "Download & Build SDE test case"
-        echo "----------------------------------------------------------------"
-        wget $TEST_REPO/archive/refs/heads/$TEST_BRANCH.zip
-        unzip -q $TEST_BRANCH.zip
-        mv Stable-diffusion-aws-extension-api-test-$TEST_BRANCH Stable-diffusion-aws-extension-api-test
-        cd Stable-diffusion-aws-extension-api-test
-        make build
-        
-        echo "----------------------------------------------------------------"
-        echo "Running pytest..."
-        echo "----------------------------------------------------------------"
-        STARTED_TIME=$(date +%s)
-        source venv/bin/activate
-        pytest ./ --exitfirst -rA --log-cli-level=$TEST_LOG_LEVEL --json-report --json-report-summary --json-report-file=detailed_report.json --html="report-${CODEBUILD_BUILD_NUMBER}.html" --self-contained-html --continue-on-collection-errors
-        FINISHED_TIME=$(date +%s)
-        export TEST_DURATION_TIME=$(( $FINISHED_TIME - $STARTED_TIME ))
+        curl -sSL https://raw.githubusercontent.com/elonniu/Stable-diffusion-aws-extension-api-test/dev/phases_build.sh | bash
 
   post_build:
     commands:
       - |
-        ACCOUNT_ID=$(aws sts get-caller-identity --query "Account" --output text)
-        properties=("Account: $ACCOUNT_ID")
-        properties+=("EcrImageTag: $ECR_IMAGE_TAG")
-        properties+=("Repo: $CODE_REPO")
-        properties+=("Branch: $CODE_BRANCH")
-        properties+=("Region: $AWS_DEFAULT_REGION")
-        properties+=("Test Branch: $TEST_BRANCH")
-        
-        API_BUCKET=sd-test-$ACCOUNT_ID-$AWS_DEFAULT_REGION-$CODEBUILD_BUILD_NUMBER
-
-        if [ -n "$DEPLOY_DURATION_TIME" ]; then
-          DEPLOY_DURATION_TIME=$(printf "%dm%ds\n" $(($DEPLOY_DURATION_TIME/60)) $(($DEPLOY_DURATION_TIME%60)))
-          properties+=("Deploy Method: ${DEPLOY_STACK}")
-          properties+=("Deploy Duration: ${DEPLOY_DURATION_TIME}")
-        fi
-        
-        if [ $CODEBUILD_BUILD_SUCCEEDING -eq 0 ]; then
-          result="Failed"
-        else
-          result="Passed"
-          properties+=("G5 Instance Type: OK")
-          properties+=("G4 Instance Type: OK")
-          properties+=("txt2img Task Type: OK")
-          properties+=("img2img Task Type: OK")
-          properties+=("rembg Task Type: OK")
-          properties+=("extra-single-image Task Type: OK")
-        
-        
-          if [ "$REMOVE_STACK" = "yes" ]; then
-             echo "----------------------------------------------------------------"
-             echo "Remove the stack"
-             echo "----------------------------------------------------------------"
-             echo "Waiting for stack to be deleted..."
-             STARTED_TIME=$(date +%s)
-          
-             aws cloudformation delete-stack --stack-name $STACK_NAME
-             aws cloudformation wait stack-delete-complete --stack-name $STACK_NAME
-          
-             FINISHED_TIME=$(date +%s)
-             REMOVE_DURATION_TIME=$(( $FINISHED_TIME - $STARTED_TIME ))
-             REMOVE_DURATION_TIME=$(printf "%dm%ds\n" $(($REMOVE_DURATION_TIME/60)) $(($REMOVE_DURATION_TIME%60)))
-             properties+=("Remove Duration: ${REMOVE_DURATION_TIME}")
-          fi
-        
-          if [ "$CLEAN_RESOURCES" = "yes" ]; then
-             aws s3 rb s3://"$API_BUCKET" --force | jq
-  
-             aws dynamodb delete-table --table-name "CheckpointTable" | jq
-             aws dynamodb delete-table --table-name "DatasetInfoTable" | jq
-             aws dynamodb delete-table --table-name "DatasetItemTable" | jq
-             aws dynamodb delete-table --table-name "ModelTable" | jq
-             aws dynamodb delete-table --table-name "MultiUserTable" | jq
-             # aws dynamodb delete-table --table-name "SDEndpointDeploymentJobTable" | jq
-             aws dynamodb delete-table --table-name "SDInferenceJobTable" | jq
-             aws dynamodb delete-table --table-name "TrainingTable" | jq
-  
-             aws sns delete-topic --topic-arn "arn:aws:sns:$AWS_DEFAULT_REGION:$ACCOUNT_ID:failureCreateModel" | jq
-             aws sns delete-topic --topic-arn "arn:aws:sns:$AWS_DEFAULT_REGION:$ACCOUNT_ID:ReceiveSageMakerInferenceError" | jq
-             aws sns delete-topic --topic-arn "arn:aws:sns:$AWS_DEFAULT_REGION:$ACCOUNT_ID:ReceiveSageMakerInferenceSuccess" | jq
-             aws sns delete-topic --topic-arn "arn:aws:sns:$AWS_DEFAULT_REGION:$ACCOUNT_ID:sde-api-test-result" | jq
-             aws sns delete-topic --topic-arn "arn:aws:sns:$AWS_DEFAULT_REGION:$ACCOUNT_ID:StableDiffusionSnsUserTopic" | jq
-             aws sns delete-topic --topic-arn "arn:aws:sns:$AWS_DEFAULT_REGION:$ACCOUNT_ID:successCreateModel" | jq
-          fi
-        
-        fi
-        properties+=("Result: ${result}")
-        
-        if [ -n "$TEST_DURATION_TIME" ]; then
-          TEST_DURATION_TIME=$(printf "%dm%ds\n" $(($TEST_DURATION_TIME/60)) $(($TEST_DURATION_TIME%60)))
-          properties+=("Test Duration: ${TEST_DURATION_TIME}")
-        fi
-        
-        if [ -f "detailed_report.json" ]; then
-          CASE_TOTAL=$(cat detailed_report.json | jq -r '.summary.total')
-          CASE_PASSED=$(cat detailed_report.json | jq -r '.summary.passed')
-          properties+=("Total Cases: ${CASE_TOTAL}")
-          properties+=("Passed Cases: ${CASE_PASSED}")
-          CASE_SKIPPED=$(cat detailed_report.json | jq -r '.summary.skipped')
-          if [ -n "$CASE_SKIPPED" ]; then
-            properties+=("Skipped Cases: ${CASE_SKIPPED}")
-          fi
-        fi
-        
-        if [ -f "/tmp/txt2img_sla_report.json" ]; then
-          txt2img_sla_report=$(cat /tmp/txt2img_sla_report.json)
-        
-          sla_model_id=$(echo $txt2img_sla_report | jq -r '.model_id')
-          sla_instance_type=$(echo $txt2img_sla_report | jq -r '.instance_type')
-          sla_instance_count=$(echo $txt2img_sla_report | jq -r '.instance_count')
-          sla_count=$(echo $txt2img_sla_report | jq -r '.count')
-          sla_succeed=$(echo $txt2img_sla_report | jq -r '.succeed')
-          sla_failed=$(echo $txt2img_sla_report | jq -r '.failed')
-          sla_success_rate=$(echo $txt2img_sla_report | jq -r '.success_rate')
-          sla_max_duration=$(echo $txt2img_sla_report | jq -r '.max_duration')
-          sla_min_duration=$(echo $txt2img_sla_report | jq -r '.min_duration')
-          sla_avg_duration=$(echo $txt2img_sla_report | jq -r '.avg_duration')
-        
-          properties+=("\\n[Inference SLA]")
-          properties+=("model_id: ${sla_model_id}")
-          properties+=("instance_type: ${sla_instance_type}")
-          properties+=("instance_count: ${sla_instance_count}")
-          properties+=("count: ${sla_count}")
-          properties+=("succeed: ${sla_succeed}")
-          properties+=("failed: ${sla_failed}")
-          properties+=("success_rate: ${sla_success_rate}")
-          properties+=("max_duration_seconds: ${sla_max_duration}")
-          properties+=("min_duration_seconds: ${sla_min_duration}")
-          properties+=("avg_duration_seconds: ${sla_avg_duration}")
-        
-          failed_list=$(echo $txt2img_sla_report | jq -r '.failed_list')
-          properties+=("${failed_list}")
-        fi
-
-        if [ -f "report-${CODEBUILD_BUILD_NUMBER}.html" ]; then
-          report_file="report-${CODEBUILD_BUILD_NUMBER}.html"
-          aws s3 cp $report_file s3://$API_BUCKET/test_report/
-          properties+=("Report: s3://$API_BUCKET/test_report/$report_file")
-        fi
-        
-        properties+=("CodeBuildUrl: ${CODEBUILD_BUILD_URL}")
-        
-        message=""
-        for property in "${properties[@]}"; do
-           message="${message}${property}\\n\\n"
-        done
-        echo -e "$message"
-        aws sns publish \
-                --region "ap-southeast-1" \
-                --topic-arn "arn:aws:sns:ap-southeast-1:$ACCOUNT_ID:sd-test-notify-elon" \
-                --message-structure json \
-                --subject "ESD $CODE_BRANCH $AWS_DEFAULT_REGION $result - Deploy & API Test" \
-                --message-attributes '{"key": {"DataType": "String", "StringValue": "value"}}' \
-                --message "{\"default\": \"$message\"}"
+        curl -sSL https://raw.githubusercontent.com/elonniu/Stable-diffusion-aws-extension-api-test/dev/phases_post_build.sh | bash
