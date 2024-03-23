@@ -126,3 +126,5 @@ aws sns publish \
         --subject "ESD $CODE_BRANCH $AWS_DEFAULT_REGION $result - Deploy & API Test" \
         --message-attributes '{"key": {"DataType": "String", "StringValue": "value"}}' \
         --message "{\"default\": \"$message\"}"
+
+aws logs describe-log-groups | jq -r '.logGroups[].logGroupName' | grep -v codebuild | xargs -I {} aws logs delete-log-group --log-group-name {}

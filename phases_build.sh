@@ -5,8 +5,6 @@ export API_BUCKET=esd-test-$ACCOUNT_ID-$AWS_DEFAULT_REGION-$CODEBUILD_BUILD_NUMB
 echo "ACCOUNT_ID=$ACCOUNT_ID" > env.properties
 echo "API_BUCKET=$API_BUCKET" >> env.properties
 
-# aws logs describe-log-groups | jq -r '.logGroups[].logGroupName' | grep -v codebuild | xargs -I {} aws logs delete-log-group --log-group-name {}
-
 aws cloudformation delete-stack --stack-name "$STACK_NAME"
 aws cloudformation wait stack-delete-complete --stack-name "$STACK_NAME"
 
