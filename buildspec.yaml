@@ -16,6 +16,7 @@ env:
     #REAL_TIME_INSTANCE_TYPE: "ml.g5.2xlarge"
     TEMPLATE_FILE: "https://aws-gcr-solutions.s3.amazonaws.com/stable-diffusion-aws-extension-github-mainline/dev/custom-domain/Extension-for-Stable-Diffusion-on-AWS.template.json"
     SNS_REGION: "ap-northeast-1"
+    REPORT_BUCKET: "esd-test-dev"
 phases:
   build:
     commands:
