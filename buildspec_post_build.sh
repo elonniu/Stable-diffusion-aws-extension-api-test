@@ -3,6 +3,12 @@ source env.properties
 echo "----------------------------------------------------------------"
 printenv
 
+# if env ACCOUNT_ID not set, exit 1
+if [ -z "$ACCOUNT_ID" ]; then
+  echo "ACCOUNT_ID is not set"
+  exit 1
+fi
+
 echo "----------------------------------------------------------------"
 properties=("Account: $ACCOUNT_ID")
 properties+=("Repo: $CODE_REPO")
