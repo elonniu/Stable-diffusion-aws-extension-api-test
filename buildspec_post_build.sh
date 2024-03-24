@@ -140,4 +140,9 @@ aws sns publish \
         --message-attributes '{"key": {"DataType": "String", "StringValue": "value"}}' \
         --message "{\"default\": \"$message\"}"
 
-aws logs describe-log-groups | jq -r '.logGroups[].logGroupName' | grep -v codebuild | xargs -I {} aws logs delete-log-group --log-group-name {}
+if [ "$result" = "Passed" ]; then
+  echo "----------------------------------------------------------------"
+  echo "Delete log groups"
+  echo "----------------------------------------------------------------"
+  aws logs describe-log-groups | jq -r '.logGroups[].logGroupName' | grep -v codebuild | xargs -I {} aws logs delete-log-group --log-group-name {}
+fi
