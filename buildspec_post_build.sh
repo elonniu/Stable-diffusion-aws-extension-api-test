@@ -11,6 +11,8 @@ fi
 
 cd esd-api-test
 
+ls -la
+
 echo "----------------------------------------------------------------"
 properties=("Account: $ACCOUNT_ID")
 properties+=("Repo: $CODE_REPO")
@@ -27,12 +29,33 @@ if [ "$CODEBUILD_BUILD_SUCCEEDING" -eq 0 ]; then
   result="Failed"
 else
   result="Passed"
-  properties+=("G5 Instance Type: OK")
-  properties+=("G4 Instance Type: OK")
-  properties+=("txt2img Task Type: OK")
-  properties+=("img2img Task Type: OK")
-  properties+=("rembg Task Type: OK")
-  properties+=("extra-single-image Task Type: OK")
+fi
+
+properties+=("Result: ${result}")
+
+if [ -f "detailed_report.json" ]; then
+  CASE_TOTAL=$(cat detailed_report.json | jq -r '.summary.total')
+  CASE_PASSED=$(cat detailed_report.json | jq -r '.summary.passed')
+  properties+=("Total Cases: ${CASE_TOTAL}")
+  properties+=("Passed Cases: ${CASE_PASSED}")
+  CASE_SKIPPED=$(cat detailed_report.json | jq -r '.summary.skipped')
+  if [ -n "$CASE_SKIPPED" ]; then
+    properties+=("Skipped Cases: ${CASE_SKIPPED}")
+  fi
+fi
+
+if [ -n "$API_TEST_DURATION_TIME" ]; then
+  API_TEST_DURATION_TIME=$(printf "%dm%ds\n" $(($API_TEST_DURATION_TIME/60)) $(($API_TEST_DURATION_TIME%60)))
+  properties+=("Test Duration: ${API_TEST_DURATION_TIME}")
+fi
+
+if [ "$result" = "Passed" ]; then
+  properties+=("G5 Instance: OK")
+  properties+=("G4 Instance: OK")
+  properties+=("txt2img Task: OK")
+  properties+=("img2img Task: OK")
+  properties+=("rembg Task: OK")
+  properties+=("extra-single-image Task: OK")
 
   echo "----------------------------------------------------------------"
   echo "Remove the stack"
@@ -66,26 +89,6 @@ else
      aws sns delete-topic --topic-arn "arn:aws:sns:$AWS_DEFAULT_REGION:$ACCOUNT_ID:successCreateModel" | jq
   fi
 
-fi
-
-properties+=("Result: ${result}")
-
-if [ -n "$TEST_DURATION_TIME" ]; then
-  TEST_DURATION_TIME=$(printf "%dm%ds\n" $(($TEST_DURATION_TIME/60)) $(($TEST_DURATION_TIME%60)))
-  properties+=("Test Duration: ${TEST_DURATION_TIME}")
-fi
-
-ls -la
-
-if [ -f "detailed_report.json" ]; then
-  CASE_TOTAL=$(cat detailed_report.json | jq -r '.summary.total')
-  CASE_PASSED=$(cat detailed_report.json | jq -r '.summary.passed')
-  properties+=("Total Cases: ${CASE_TOTAL}")
-  properties+=("Passed Cases: ${CASE_PASSED}")
-  CASE_SKIPPED=$(cat detailed_report.json | jq -r '.summary.skipped')
-  if [ -n "$CASE_SKIPPED" ]; then
-    properties+=("Skipped Cases: ${CASE_SKIPPED}")
-  fi
 fi
 
 if [ -f "/tmp/txt2img_sla_report.json" ]; then

@@ -77,5 +77,5 @@ STARTED_TIME=$(date +%s)
 source venv/bin/activate
 pytest ./ --exitfirst -rA --log-cli-level="$TEST_LOG_LEVEL" --json-report --json-report-summary --json-report-file=detailed_report.json --html="report-${CODEBUILD_BUILD_NUMBER}.html" --self-contained-html --continue-on-collection-errors
 FINISHED_TIME=$(date +%s)
-export TEST_DURATION_TIME=$(( $FINISHED_TIME - $STARTED_TIME ))
-echo "export TEST_DURATION_TIME=$TEST_DURATION_TIME" >> env.properties
+export API_TEST_DURATION_TIME=$(( $FINISHED_TIME - $STARTED_TIME ))
+echo "export API_TEST_DURATION_TIME=$API_TEST_DURATION_TIME" >> env.properties
