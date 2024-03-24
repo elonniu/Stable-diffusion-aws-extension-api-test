@@ -19,10 +19,10 @@ env:
 phases:
   build:
     commands:
-      - git clone https://github.com/elonniu/esd-api-test.git --branch $TEST_BRANCH
+      - git clone https://github.com/elonniu/esd-api-test.git --branch $TEST_BRANCH --single-branch
       - bash esd-api-test/buildspec_build.sh
 
   post_build:
     commands:
-      - git clone https://github.com/elonniu/esd-api-test.git --branch $TEST_BRANCH
+      - git clone https://github.com/elonniu/esd-api-test.git --branch $TEST_BRANCH --single-branch
       - bash esd-api-test/buildspec_post_build.sh
