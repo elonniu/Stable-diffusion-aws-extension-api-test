@@ -45,7 +45,7 @@ else
   properties+=("Remove Stack Duration: ${REMOVE_DURATION_TIME}")
 
   if [ "$CLEAN_RESOURCES" = "yes" ]; then
-     aws s3 rb s3://"$API_BUCKET" --force | jq
+     aws s3 rb "s3://$API_BUCKET" --force | jq
 
      aws dynamodb delete-table --table-name "CheckpointTable" | jq
      aws dynamodb delete-table --table-name "DatasetInfoTable" | jq
@@ -65,12 +65,15 @@ else
   fi
 
 fi
+
 properties+=("Result: ${result}")
 
 if [ -n "$TEST_DURATION_TIME" ]; then
   TEST_DURATION_TIME=$(printf "%dm%ds\n" $(($TEST_DURATION_TIME/60)) $(($TEST_DURATION_TIME%60)))
   properties+=("Test Duration: ${TEST_DURATION_TIME}")
 fi
+
+ls -la
 
 if [ -f "detailed_report.json" ]; then
   CASE_TOTAL=$(cat detailed_report.json | jq -r '.summary.total')
