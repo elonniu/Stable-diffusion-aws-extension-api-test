@@ -117,8 +117,8 @@ for property in "${properties[@]}"; do
 done
 echo -e "$message"
 aws sns publish \
-        --region "ap-southeast-1" \
-        --topic-arn "arn:aws:sns:ap-southeast-1:860660600690:sd-test-notify-elon" \
+        --region "$SNS_REGION" \
+        --topic-arn "$SNS_ARN" \
         --message-structure json \
         --subject "ESD $CODE_BRANCH $AWS_DEFAULT_REGION $result - Deploy & API Test" \
         --message-attributes '{"key": {"DataType": "String", "StringValue": "value"}}' \
