@@ -44,7 +44,9 @@ if [ -f "detailed_report.json" ]; then
   fi
 fi
 
-if [ -n "$API_TEST_DURATION_TIME" ]; then
+if [ -n "$API_TEST_STARTED_TIME" ]; then
+  CURRENT_TIME=$(date +%s)
+  API_TEST_DURATION_TIME=$(( $CURRENT_TIME - $API_TEST_STARTED_TIME ))
   API_TEST_DURATION_TIME=$(printf "%dm%ds\n" $(($API_TEST_DURATION_TIME/60)) $(($API_TEST_DURATION_TIME%60)))
   properties+=("Test Duration: ${API_TEST_DURATION_TIME}")
 fi

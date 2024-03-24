@@ -73,9 +73,8 @@ make build
 echo "----------------------------------------------------------------"
 echo "Running pytest..."
 echo "----------------------------------------------------------------"
-STARTED_TIME=$(date +%s)
+API_TEST_STARTED_TIME=$(date +%s)
+echo "export API_TEST_STARTED_TIME=$API_TEST_STARTED_TIME" >> env.properties
 source venv/bin/activate
 pytest ./ --exitfirst -rA --log-cli-level="$TEST_LOG_LEVEL" --json-report --json-report-summary --json-report-file=detailed_report.json --html="report-${CODEBUILD_BUILD_NUMBER}.html" --self-contained-html --continue-on-collection-errors
 FINISHED_TIME=$(date +%s)
-export API_TEST_DURATION_TIME=$(( $FINISHED_TIME - $STARTED_TIME ))
-echo "export API_TEST_DURATION_TIME=$API_TEST_DURATION_TIME" >> env.properties
