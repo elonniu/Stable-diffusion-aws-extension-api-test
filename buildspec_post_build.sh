@@ -1,5 +1,9 @@
+source env.properties
+
+echo "----------------------------------------------------------------"
 printenv
 
+echo "----------------------------------------------------------------"
 properties=("Account: $ACCOUNT_ID")
 properties+=("Repo: $CODE_REPO")
 properties+=("Version/Branch: $CODE_BRANCH")
