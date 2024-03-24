@@ -8,7 +8,6 @@ env:
     DEPLOY_STACK: "template"
     CLEAN_RESOURCES: "no"
     SLEEP_AFTER_DEPLOY: 150
-    TEST_REPO: "https://github.com/elonniu/esd-api-test"
     TEST_BRANCH: "dev"
     TEST_FAST: "false"
     TEST_LOG_LEVEL: "ERROR"
@@ -17,7 +16,6 @@ env:
     #REAL_TIME_INSTANCE_TYPE: "ml.g5.2xlarge"
     TEMPLATE_FILE: "https://aws-gcr-solutions.s3.amazonaws.com/stable-diffusion-aws-extension-github-mainline/dev/custom-domain/Extension-for-Stable-Diffusion-on-AWS.template.json"
     SNS_REGION: "ap-northeast-1"
-    SNS_ARN: "arn:aws:sns:ap-northeast-1:860660600690:esd-notify-elon"
 phases:
   build:
     commands:

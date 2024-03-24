@@ -67,12 +67,6 @@ export API_GATEWAY_URL_TOKEN=$(echo $stack_info | jq -r '.Stacks[0].Outputs[] | 
 echo "export API_GATEWAY_URL=$API_GATEWAY_URL" >> env.properties
 echo "export API_GATEWAY_URL_TOKEN=$API_GATEWAY_URL_TOKEN" >> env.properties
 
-echo "----------------------------------------------------------------"
-echo "Download & Build SDE test case"
-echo "----------------------------------------------------------------"
-wget "$TEST_REPO/archive/refs/heads/$TEST_BRANCH.zip"
-unzip -q "$TEST_BRANCH.zip"
-mv "esd-api-test-$TEST_BRANCH" esd-api-test
 cd esd-api-test
 make build
 
