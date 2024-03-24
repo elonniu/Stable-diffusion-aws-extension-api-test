@@ -2,8 +2,8 @@ set -euxo pipefail
 
 export ACCOUNT_ID=$(aws sts get-caller-identity --query "Account" --output text)
 export API_BUCKET=esd-test-$ACCOUNT_ID-$AWS_DEFAULT_REGION-$CODEBUILD_BUILD_NUMBER
-echo "ACCOUNT_ID=$ACCOUNT_ID" > env.properties
-echo "API_BUCKET=$API_BUCKET" >> env.properties
+echo "export ACCOUNT_ID=$ACCOUNT_ID" > env.properties
+echo "export API_BUCKET=$API_BUCKET" >> env.properties
 
 ls -la
 exit 0
@@ -36,7 +36,7 @@ if [ "$DEPLOY_STACK" = "cdk" ]; then
                   --require-approval never
    FINISHED_TIME=$(date +%s)
    export DEPLOY_DURATION_TIME=$(( $FINISHED_TIME - $STARTED_TIME ))
-   echo "DEPLOY_DURATION_TIME=$DEPLOY_DURATION_TIME" >> env.properties
+   echo "export DEPLOY_DURATION_TIME=$DEPLOY_DURATION_TIME" >> env.properties
    sleep $SLEEP_AFTER_DEPLOY
    popd
 fi
@@ -57,7 +57,7 @@ if [ "$DEPLOY_STACK" = "template" ]; then
    aws cloudformation wait stack-create-complete --stack-name "$STACK_NAME"
    FINISHED_TIME=$(date +%s)
    export DEPLOY_DURATION_TIME=$(( $FINISHED_TIME - $STARTED_TIME ))
-   echo "DEPLOY_DURATION_TIME=$DEPLOY_DURATION_TIME" >> env.properties
+   echo "export DEPLOY_DURATION_TIME=$DEPLOY_DURATION_TIME" >> env.properties
    sleep $SLEEP_AFTER_DEPLOY
 fi
 
@@ -67,8 +67,8 @@ echo "----------------------------------------------------------------"
 stack_info=$(aws cloudformation describe-stacks --stack-name "$STACK_NAME")
 export API_GATEWAY_URL=$(echo $stack_info | jq -r '.Stacks[0].Outputs[] | select(.OutputKey=="ApiGatewayUrl").OutputValue')
 export API_GATEWAY_URL_TOKEN=$(echo $stack_info | jq -r '.Stacks[0].Outputs[] | select(.OutputKey=="ApiGatewayUrlToken").OutputValue')
-echo "API_GATEWAY_URL: $API_GATEWAY_URL"
-echo "API_GATEWAY_URL_TOKEN: $API_GATEWAY_URL_TOKEN"
+echo "export API_GATEWAY_URL=$API_GATEWAY_URL" >> env.properties
+echo "export API_GATEWAY_URL_TOKEN=$API_GATEWAY_URL_TOKEN" >> env.properties
 
 echo "----------------------------------------------------------------"
 echo "Download & Build SDE test case"
@@ -87,4 +87,4 @@ source venv/bin/activate
 pytest ./ --exitfirst -rA --log-cli-level="$TEST_LOG_LEVEL" --json-report --json-report-summary --json-report-file=detailed_report.json --html="report-${CODEBUILD_BUILD_NUMBER}.html" --self-contained-html --continue-on-collection-errors
 FINISHED_TIME=$(date +%s)
 export TEST_DURATION_TIME=$(( $FINISHED_TIME - $STARTED_TIME ))
-echo "TEST_DURATION_TIME=$TEST_DURATION_TIME" >> env.properties
+echo "export TEST_DURATION_TIME=$TEST_DURATION_TIME" >> env.properties
