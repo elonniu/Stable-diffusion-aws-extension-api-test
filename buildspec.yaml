@@ -8,7 +8,6 @@ env:
     DEPLOY_STACK: "template"
     CLEAN_RESOURCES: "no"
     SLEEP_AFTER_DEPLOY: 150
-    TEST_REPO: "https://github.com/elonniu/esd-api-test"
     TEST_BRANCH: "dev"
     TEST_FAST: "false"
     TEST_LOG_LEVEL: "ERROR"
