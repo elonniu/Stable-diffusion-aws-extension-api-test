@@ -1,7 +1,5 @@
 printenv
 
-exit 0
-
 properties=("Account: $ACCOUNT_ID")
 properties+=("Repo: $CODE_REPO")
 properties+=("Version/Branch: $CODE_BRANCH")

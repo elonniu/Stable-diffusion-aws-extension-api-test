@@ -5,9 +5,6 @@ export API_BUCKET=esd-test-$ACCOUNT_ID-$AWS_DEFAULT_REGION-$CODEBUILD_BUILD_NUMB
 echo "export ACCOUNT_ID=$ACCOUNT_ID" > env.properties
 echo "export API_BUCKET=$API_BUCKET" >> env.properties
 
-ls -la
-exit 0
-
 aws cloudformation delete-stack --stack-name "$STACK_NAME"
 aws cloudformation wait stack-delete-complete --stack-name "$STACK_NAME"
 
