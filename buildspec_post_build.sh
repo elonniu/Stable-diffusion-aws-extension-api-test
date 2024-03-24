@@ -89,16 +89,16 @@ fi
 if [ -f "/tmp/txt2img_sla_report.json" ]; then
   txt2img_sla_report=$(cat /tmp/txt2img_sla_report.json)
 
-  sla_model_id=$(echo $txt2img_sla_report | jq -r '.model_id')
-  sla_instance_type=$(echo $txt2img_sla_report | jq -r '.instance_type')
-  sla_instance_count=$(echo $txt2img_sla_report | jq -r '.instance_count')
-  sla_count=$(echo $txt2img_sla_report | jq -r '.count')
-  sla_succeed=$(echo $txt2img_sla_report | jq -r '.succeed')
-  sla_failed=$(echo $txt2img_sla_report | jq -r '.failed')
-  sla_success_rate=$(echo $txt2img_sla_report | jq -r '.success_rate')
-  sla_max_duration=$(echo $txt2img_sla_report | jq -r '.max_duration')
-  sla_min_duration=$(echo $txt2img_sla_report | jq -r '.min_duration')
-  sla_avg_duration=$(echo $txt2img_sla_report | jq -r '.avg_duration')
+  sla_model_id=$(echo "$txt2img_sla_report" | jq -r '.model_id')
+  sla_instance_type=$(echo "$txt2img_sla_report" | jq -r '.instance_type')
+  sla_instance_count=$(echo "$txt2img_sla_report" | jq -r '.instance_count')
+  sla_count=$(echo "$txt2img_sla_report" | jq -r '.count')
+  sla_succeed=$(echo "$txt2img_sla_report" | jq -r '.succeed')
+  sla_failed=$(echo "$txt2img_sla_report" | jq -r '.failed')
+  sla_success_rate=$(echo "$txt2img_sla_report" | jq -r '.success_rate')
+  sla_max_duration=$(echo "$txt2img_sla_report" | jq -r '.max_duration')
+  sla_min_duration=$(echo "$txt2img_sla_report" | jq -r '.min_duration')
+  sla_avg_duration=$(echo "$txt2img_sla_report" | jq -r '.avg_duration')
 
   properties+=("\\n[Inference SLA]")
   properties+=("model_id: ${sla_model_id}")
@@ -112,7 +112,7 @@ if [ -f "/tmp/txt2img_sla_report.json" ]; then
   properties+=("min_duration_seconds: ${sla_min_duration}")
   properties+=("avg_duration_seconds: ${sla_avg_duration}")
 
-  failed_list=$(echo $txt2img_sla_report | jq -r '.failed_list')
+  failed_list=$(echo "$txt2img_sla_report" | jq -r '.failed_list')
   properties+=("${failed_list}")
 fi
 
@@ -128,6 +128,7 @@ message=""
 for property in "${properties[@]}"; do
    message="${message}${property}\\n\\n"
 done
+
 echo -e "$message"
 aws sns publish \
         --region "$SNS_REGION" \

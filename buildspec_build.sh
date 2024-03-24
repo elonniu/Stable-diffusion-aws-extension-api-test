@@ -62,8 +62,8 @@ echo "----------------------------------------------------------------"
 echo "Get api gateway url & token"
 echo "----------------------------------------------------------------"
 stack_info=$(aws cloudformation describe-stacks --stack-name "$STACK_NAME")
-export API_GATEWAY_URL=$(echo $stack_info | jq -r '.Stacks[0].Outputs[] | select(.OutputKey=="ApiGatewayUrl").OutputValue')
-export API_GATEWAY_URL_TOKEN=$(echo $stack_info | jq -r '.Stacks[0].Outputs[] | select(.OutputKey=="ApiGatewayUrlToken").OutputValue')
+export API_GATEWAY_URL=$(echo "$stack_info" | jq -r '.Stacks[0].Outputs[] | select(.OutputKey=="ApiGatewayUrl").OutputValue')
+export API_GATEWAY_URL_TOKEN=$(echo "$stack_info" | jq -r '.Stacks[0].Outputs[] | select(.OutputKey=="ApiGatewayUrlToken").OutputValue')
 echo "export API_GATEWAY_URL=$API_GATEWAY_URL" >> env.properties
 echo "export API_GATEWAY_URL_TOKEN=$API_GATEWAY_URL_TOKEN" >> env.properties
 
