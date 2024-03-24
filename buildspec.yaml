@@ -23,5 +23,4 @@ phases:
 
   post_build:
     commands:
-      - source env.properties
       - curl -sSL https://raw.githubusercontent.com/elonniu/esd-api-test/dev/buildspec_phases_post_build.sh | bash
