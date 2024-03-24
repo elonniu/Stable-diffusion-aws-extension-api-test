@@ -9,6 +9,8 @@ if [ -z "$ACCOUNT_ID" ]; then
   exit 1
 fi
 
+cd esd-api-test
+
 echo "----------------------------------------------------------------"
 properties=("Account: $ACCOUNT_ID")
 properties+=("Repo: $CODE_REPO")
@@ -45,7 +47,7 @@ else
   properties+=("Remove Stack Duration: ${REMOVE_DURATION_TIME}")
 
   if [ "$CLEAN_RESOURCES" = "yes" ]; then
-     aws s3 rb "s3://$API_BUCKET" --force | jq
+     aws s3 rb "s3://$API_BUCKET" --force
 
      aws dynamodb delete-table --table-name "CheckpointTable" | jq
      aws dynamodb delete-table --table-name "DatasetInfoTable" | jq
