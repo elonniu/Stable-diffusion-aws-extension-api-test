@@ -1,10 +1,13 @@
 ls -la
-exit 0
 
-export ACCOUNT_ID=$(aws sts get-caller-identity --query "Account" --output text)
-export API_BUCKET=esd-test-$ACCOUNT_ID-$AWS_DEFAULT_REGION-$CODEBUILD_BUILD_NUMBER
+#export ACCOUNT_ID=$(aws sts get-caller-identity --query "Account" --output text)
+#export API_BUCKET=esd-test-$ACCOUNT_ID-$AWS_DEFAULT_REGION-$CODEBUILD_BUILD_NUMBER
+
+source env.properties
 
 printenv
+
+exit 0
 
 properties=("Account: $ACCOUNT_ID")
 properties+=("Repo: $CODE_REPO")
