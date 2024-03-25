@@ -1,7 +1,7 @@
 from __future__ import print_function
 
 import logging
-
+import time
 import config as config
 from utils.api import Api
 
@@ -66,6 +66,7 @@ class TestTrainStartDeleteE2E:
         }
 
         resp = self.api.create_training_job(headers=headers, data=payload)
+        time.sleep(40)
         assert resp.status_code == 201, resp.dumps()
 
     def test_3_delete_all_trains_jobs(self):
