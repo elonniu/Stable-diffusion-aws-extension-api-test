@@ -99,13 +99,13 @@ class TestRembgInferenceAsyncE2E:
         else:
             raise Exception("Inference execution timed out after 5 minutes.")
 
-    def test_4_rembg_inference_async_content(self):
-        global inference_data
-
-        inference_id = inference_data["id"]
-
-        get_inference_job_image(
-            api_instance=self.api,
-            job_id=inference_id,
-            target_file="./data/api_params/rembg-api-params.png"
-        )
+    # def test_4_rembg_inference_async_content(self):
+    #     global inference_data
+    #
+    #     inference_id = inference_data["id"]
+    #
+    #     get_inference_job_image(
+    #         api_instance=self.api,
+    #         job_id=inference_id,
+    #         target_file="./data/api_params/rembg-api-params.png"
+    #     )

@@ -49,7 +49,7 @@ class TestTrainStartDeleteE2E:
             "params": {
                 "training_params": {
                     "training_instance_type": "ml.g5.2xlarge",
-                    "model": "v1-5-pruned-emaonly.safetensors",
+                    "model": config.default_model_id,
                     "dataset": config.dataset_name,
                     "fm_type": "sd_1_5"
                 },

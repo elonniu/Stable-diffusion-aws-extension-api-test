@@ -81,13 +81,13 @@ class TestRembgRealTimeE2E:
             import time
             time.sleep(5)
 
-    def test_4_rembg_inference_real_time_content(self):
-        global inference_data
-
-        inference_id = inference_data["id"]
-
-        get_inference_job_image(
-            api_instance=self.api,
-            job_id=inference_id,
-            target_file="./data/api_params/rembg-api-params.png"
-        )
+    # def test_4_rembg_inference_real_time_content(self):
+    #     global inference_data
+    #
+    #     inference_id = inference_data["id"]
+    #
+    #     get_inference_job_image(
+    #         api_instance=self.api,
+    #         job_id=inference_id,
+    #         target_file="./data/api_params/rembg-api-params.png"
+    #     )

@@ -52,7 +52,7 @@ class TestTrainStartCompleteE2E:
             "params": {
                 "training_params": {
                     "training_instance_type": "ml.g5.2xlarge",
-                    "model": "v1-5-pruned-emaonly.safetensors",
+                    "model": config.default_model_id,
                     "dataset": config.dataset_name,
                     "fm_type": "sd_1_5"
                 },
@@ -72,7 +72,6 @@ class TestTrainStartCompleteE2E:
         assert resp.status_code == 201, resp.dumps()
 
     def test_3_wait_train_job_complete(self):
-        time.sleep(50)
         headers = {
             "x-api-key": config.api_key,
             "username": config.username
@@ -92,7 +91,7 @@ class TestTrainStartCompleteE2E:
                 resp = self.api.get_training_job(job_id=trainJob["id"], headers=headers)
                 assert resp.status_code == 200, resp.dumps()
                 job_status = resp.json()["data"]['job_status']
-                if job_status == "Failed":
+                if job_status == "Failed" or job_status == "Fail":
                     raise Exception("Train failed.")
                 if job_status == "Completed":
                     break
