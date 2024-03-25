@@ -41,6 +41,7 @@ class TestCreateAndDeleteDatasetE2E:
             'dataset_name': dataset_name,
             'content': dataset_content,
             'creator': config.username,
+            'prefix': '10_technic',
             'params': {'description': 'this is description'}
         }
 
