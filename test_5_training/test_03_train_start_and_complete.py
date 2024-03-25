@@ -86,7 +86,7 @@ class TestTrainStartCompleteE2E:
         train_jobs = resp.json()["data"]["trainings"]
         assert len(train_jobs) > 0
         for trainJob in train_jobs:
-            timeout = datetime.now() + timedelta(minutes=60)
+            timeout = datetime.now() + timedelta(minutes=30)
 
             while datetime.now() < timeout:
                 resp = self.api.get_training_job(job_id=trainJob["id"], headers=headers)
@@ -99,4 +99,4 @@ class TestTrainStartCompleteE2E:
                 logger.info("Train job status: %s", job_status)
                 time.sleep(20)
             else:
-                raise Exception("Function execution timed out after 60 minutes.")
+                raise Exception("Function execution timed out after 30 minutes.")
