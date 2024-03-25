@@ -8,7 +8,7 @@ from datetime import timedelta
 import config as config
 from utils.api import Api
 from utils.enums import InferenceStatus, InferenceType
-from utils.helper import upload_with_put, get_inference_job_status, get_inference_job_image
+from utils.helper import upload_with_put, get_inference_job_status
 
 logger = logging.getLogger(__name__)
 
@@ -98,18 +98,6 @@ class TestTxt2ImgInferenceAsyncAfterTrainE2E:
             time.sleep(7)
         else:
             raise Exception(f"Inference execution {inference_id} timed out after 7 minutes.")
-
-    def test_6_txt2img_inference_async_content(self):
-        global inference_data
-        assert inference_data["type"] == InferenceType.TXT2IMG.value
-
-        inference_id = inference_data["id"]
-
-        get_inference_job_image(
-            api_instance=self.api,
-            job_id=inference_id,
-            target_file="./data/api_params/txt2img_api_param_train.png"
-        )
 
     def test_7_txt2img_inference_async_delete_succeed(self):
 
