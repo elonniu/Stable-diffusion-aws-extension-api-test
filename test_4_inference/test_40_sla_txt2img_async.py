@@ -16,7 +16,7 @@ from utils.enums import InferenceStatus, InferenceType
 from utils.helper import get_inference_job_status
 
 logger = logging.getLogger(__name__)
-sla_batch_size = int(os.environ.get("SLA_BATCH_SIZE", 100))
+sla_batch_size = int(os.environ.get("SLA_BATCH_SIZE", 5))
 inference_data = {}
 
 
