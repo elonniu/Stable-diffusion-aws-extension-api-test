@@ -2,6 +2,7 @@ from __future__ import print_function
 
 import logging
 import time
+
 import config as config
 from utils.api import Api
 
@@ -55,7 +56,7 @@ class TestTrainStartDeleteE2E:
                 },
                 "config_params": {
                     "saving_arguments": {
-                        "output_name": "model_name",
+                        "output_name": "model_name_temp",
                         "save_every_n_epochs": 1
                     },
                     "training_arguments": {
@@ -91,3 +92,34 @@ class TestTrainStartDeleteE2E:
                 headers=headers
             )
             assert resp.status_code == 204, resp.dumps()
+
+    def test_4_train_job_create_for_name_check(self):
+        headers = {
+            "x-api-key": config.api_key,
+            "username": config.username
+        }
+
+        payload = {
+            "lora_train_type": "kohya",
+            "params": {
+                "training_params": {
+                    "training_instance_type": "ml.g5.2xlarge",
+                    "model": config.default_model_id,
+                    "dataset": config.dataset_name,
+                    "fm_type": "sd_1_5"
+                },
+                "config_params": {
+                    "saving_arguments": {
+                        "output_name": "v1-5-pruned-emaonly",
+                        "save_every_n_epochs": 1
+                    },
+                    "training_arguments": {
+                        "max_train_epochs": 1
+                    }
+                }
+            }
+        }
+
+        resp = self.api.create_training_job(headers=headers, data=payload)
+        assert resp.status_code == 400, resp.dumps()
+        assert "v1-5-pruned-emaonly" in resp.json()["message"], resp.dumps()
