@@ -44,8 +44,11 @@ logger.info(f"config.role_name: {role_name}")
 endpoint_name = "test"
 logger.info(f"config.endpoint_name: {endpoint_name}")
 
-dataset_name = "huahua"
+dataset_name = "dataset_name"
 logger.info(f"config.dataset_name: {dataset_name}")
+
+train_model_name = "train_model_name"
+logger.info(f"config.train_model_name: {train_model_name}")
 
 model_name = "test-model"
 logger.info(f"config.model_name: {model_name}")
