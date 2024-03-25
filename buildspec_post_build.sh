@@ -1,5 +1,19 @@
+source env.properties
+
+echo "----------------------------------------------------------------"
 printenv
 
+# if env ACCOUNT_ID not set, exit 1
+if [ -z "$ACCOUNT_ID" ]; then
+  echo "ACCOUNT_ID is not set"
+  exit 1
+fi
+
+cd esd-api-test
+
+ls -la
+
+echo "----------------------------------------------------------------"
 properties=("Account: $ACCOUNT_ID")
 properties+=("Repo: $CODE_REPO")
 properties+=("Version/Branch: $CODE_BRANCH")
@@ -15,12 +29,35 @@ if [ "$CODEBUILD_BUILD_SUCCEEDING" -eq 0 ]; then
   result="Failed"
 else
   result="Passed"
-  properties+=("G5 Instance Type: OK")
-  properties+=("G4 Instance Type: OK")
-  properties+=("txt2img Task Type: OK")
-  properties+=("img2img Task Type: OK")
-  properties+=("rembg Task Type: OK")
-  properties+=("extra-single-image Task Type: OK")
+fi
+
+properties+=("Result: ${result}")
+
+if [ -f "detailed_report.json" ]; then
+  CASE_TOTAL=$(cat detailed_report.json | jq -r '.summary.total')
+  CASE_PASSED=$(cat detailed_report.json | jq -r '.summary.passed')
+  properties+=("Total Cases: ${CASE_TOTAL}")
+  properties+=("Passed Cases: ${CASE_PASSED}")
+  CASE_SKIPPED=$(cat detailed_report.json | jq -r '.summary.skipped')
+  if [ -n "$CASE_SKIPPED" ]; then
+    properties+=("Skipped Cases: ${CASE_SKIPPED}")
+  fi
+fi
+
+if [ -n "$API_TEST_STARTED_TIME" ]; then
+  CURRENT_TIME=$(date +%s)
+  API_TEST_DURATION_TIME=$(( $CURRENT_TIME - $API_TEST_STARTED_TIME ))
+  API_TEST_DURATION_TIME=$(printf "%dm%ds\n" $(($API_TEST_DURATION_TIME/60)) $(($API_TEST_DURATION_TIME%60)))
+  properties+=("Test Duration: ${API_TEST_DURATION_TIME}")
+fi
+
+if [ "$result" = "Passed" ]; then
+  properties+=("G5 Instance: OK")
+  properties+=("G4 Instance: OK")
+  properties+=("txt2img Task: OK")
+  properties+=("img2img Task: OK")
+  properties+=("rembg Task: OK")
+  properties+=("extra-single-image Task: OK")
 
   echo "----------------------------------------------------------------"
   echo "Remove the stack"
@@ -35,7 +72,7 @@ else
   properties+=("Remove Stack Duration: ${REMOVE_DURATION_TIME}")
 
   if [ "$CLEAN_RESOURCES" = "yes" ]; then
-     aws s3 rb s3://"$API_BUCKET" --force | jq
+     aws s3 rb "s3://$API_BUCKET" --force
 
      aws dynamodb delete-table --table-name "CheckpointTable" | jq
      aws dynamodb delete-table --table-name "DatasetInfoTable" | jq
@@ -55,37 +92,20 @@ else
   fi
 
 fi
-properties+=("Result: ${result}")
-
-if [ -n "$TEST_DURATION_TIME" ]; then
-  TEST_DURATION_TIME=$(printf "%dm%ds\n" $(($TEST_DURATION_TIME/60)) $(($TEST_DURATION_TIME%60)))
-  properties+=("Test Duration: ${TEST_DURATION_TIME}")
-fi
-
-if [ -f "detailed_report.json" ]; then
-  CASE_TOTAL=$(cat detailed_report.json | jq -r '.summary.total')
-  CASE_PASSED=$(cat detailed_report.json | jq -r '.summary.passed')
-  properties+=("Total Cases: ${CASE_TOTAL}")
-  properties+=("Passed Cases: ${CASE_PASSED}")
-  CASE_SKIPPED=$(cat detailed_report.json | jq -r '.summary.skipped')
-  if [ -n "$CASE_SKIPPED" ]; then
-    properties+=("Skipped Cases: ${CASE_SKIPPED}")
-  fi
-fi
 
 if [ -f "/tmp/txt2img_sla_report.json" ]; then
   txt2img_sla_report=$(cat /tmp/txt2img_sla_report.json)
 
-  sla_model_id=$(echo $txt2img_sla_report | jq -r '.model_id')
-  sla_instance_type=$(echo $txt2img_sla_report | jq -r '.instance_type')
-  sla_instance_count=$(echo $txt2img_sla_report | jq -r '.instance_count')
-  sla_count=$(echo $txt2img_sla_report | jq -r '.count')
-  sla_succeed=$(echo $txt2img_sla_report | jq -r '.succeed')
-  sla_failed=$(echo $txt2img_sla_report | jq -r '.failed')
-  sla_success_rate=$(echo $txt2img_sla_report | jq -r '.success_rate')
-  sla_max_duration=$(echo $txt2img_sla_report | jq -r '.max_duration')
-  sla_min_duration=$(echo $txt2img_sla_report | jq -r '.min_duration')
-  sla_avg_duration=$(echo $txt2img_sla_report | jq -r '.avg_duration')
+  sla_model_id=$(echo "$txt2img_sla_report" | jq -r '.model_id')
+  sla_instance_type=$(echo "$txt2img_sla_report" | jq -r '.instance_type')
+  sla_instance_count=$(echo "$txt2img_sla_report" | jq -r '.instance_count')
+  sla_count=$(echo "$txt2img_sla_report" | jq -r '.count')
+  sla_succeed=$(echo "$txt2img_sla_report" | jq -r '.succeed')
+  sla_failed=$(echo "$txt2img_sla_report" | jq -r '.failed')
+  sla_success_rate=$(echo "$txt2img_sla_report" | jq -r '.success_rate')
+  sla_max_duration=$(echo "$txt2img_sla_report" | jq -r '.max_duration')
+  sla_min_duration=$(echo "$txt2img_sla_report" | jq -r '.min_duration')
+  sla_avg_duration=$(echo "$txt2img_sla_report" | jq -r '.avg_duration')
 
   properties+=("\\n[Inference SLA]")
   properties+=("model_id: ${sla_model_id}")
@@ -99,14 +119,16 @@ if [ -f "/tmp/txt2img_sla_report.json" ]; then
   properties+=("min_duration_seconds: ${sla_min_duration}")
   properties+=("avg_duration_seconds: ${sla_avg_duration}")
 
-  failed_list=$(echo $txt2img_sla_report | jq -r '.failed_list')
+  failed_list=$(echo "$txt2img_sla_report" | jq -r '.failed_list')
   properties+=("${failed_list}")
 fi
 
+properties+=("SNS_ARN: ${SNS_ARN}")
+
 if [ -f "report-${CODEBUILD_BUILD_NUMBER}.html" ]; then
   report_file="report-${CODEBUILD_BUILD_NUMBER}.html"
-  aws s3 cp "$report_file" "s3://$API_BUCKET/test_report/"
-  properties+=("Report: s3://$API_BUCKET/test_report/$report_file")
+  aws s3 cp "$report_file" "s3://$REPORT_BUCKET/test_report/"
+  properties+=("Report: s3://$REPORT_BUCKET/test_report/$report_file")
 fi
 
 properties+=("CodeBuildUrl: ${CODEBUILD_BUILD_URL}")
@@ -115,6 +137,7 @@ message=""
 for property in "${properties[@]}"; do
    message="${message}${property}\\n\\n"
 done
+
 echo -e "$message"
 aws sns publish \
         --region "$SNS_REGION" \
@@ -124,4 +147,9 @@ aws sns publish \
         --message-attributes '{"key": {"DataType": "String", "StringValue": "value"}}' \
         --message "{\"default\": \"$message\"}"
 
-aws logs describe-log-groups | jq -r '.logGroups[].logGroupName' | grep -v codebuild | xargs -I {} aws logs delete-log-group --log-group-name {}
+if [ "$result" = "Passed" ]; then
+  echo "----------------------------------------------------------------"
+  echo "Delete log groups"
+  echo "----------------------------------------------------------------"
+  aws logs describe-log-groups | jq -r '.logGroups[].logGroupName' | grep -v codebuild | xargs -I {} aws logs delete-log-group --log-group-name {}
+fi

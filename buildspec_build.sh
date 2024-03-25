@@ -62,8 +62,8 @@ echo "----------------------------------------------------------------"
 echo "Get api gateway url & token"
 echo "----------------------------------------------------------------"
 stack_info=$(aws cloudformation describe-stacks --stack-name "$STACK_NAME")
-export API_GATEWAY_URL=$(echo $stack_info | jq -r '.Stacks[0].Outputs[] | select(.OutputKey=="ApiGatewayUrl").OutputValue')
-export API_GATEWAY_URL_TOKEN=$(echo $stack_info | jq -r '.Stacks[0].Outputs[] | select(.OutputKey=="ApiGatewayUrlToken").OutputValue')
+export API_GATEWAY_URL=$(echo "$stack_info" | jq -r '.Stacks[0].Outputs[] | select(.OutputKey=="ApiGatewayUrl").OutputValue')
+export API_GATEWAY_URL_TOKEN=$(echo "$stack_info" | jq -r '.Stacks[0].Outputs[] | select(.OutputKey=="ApiGatewayUrlToken").OutputValue')
 echo "export API_GATEWAY_URL=$API_GATEWAY_URL" >> env.properties
 echo "export API_GATEWAY_URL_TOKEN=$API_GATEWAY_URL_TOKEN" >> env.properties
 
@@ -73,9 +73,8 @@ make build
 echo "----------------------------------------------------------------"
 echo "Running pytest..."
 echo "----------------------------------------------------------------"
-STARTED_TIME=$(date +%s)
+API_TEST_STARTED_TIME=$(date +%s)
+echo "export API_TEST_STARTED_TIME=$API_TEST_STARTED_TIME" >> env.properties
 source venv/bin/activate
 pytest ./ --exitfirst -rA --log-cli-level="$TEST_LOG_LEVEL" --json-report --json-report-summary --json-report-file=detailed_report.json --html="report-${CODEBUILD_BUILD_NUMBER}.html" --self-contained-html --continue-on-collection-errors
 FINISHED_TIME=$(date +%s)
-export TEST_DURATION_TIME=$(( $FINISHED_TIME - $STARTED_TIME ))
-echo "export TEST_DURATION_TIME=$TEST_DURATION_TIME" >> env.properties
