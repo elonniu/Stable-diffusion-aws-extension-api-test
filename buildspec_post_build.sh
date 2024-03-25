@@ -25,10 +25,13 @@ if [ -n "$DEPLOY_DURATION_TIME" ]; then
   properties+=("Deploy Duration: $DEPLOY_DURATION_TIME")
 fi
 
+
 if [ "$CODEBUILD_BUILD_SUCCEEDING" -eq 0 ]; then
   result="Failed"
+  CASE_PASSED_RESULT="Failed"
 else
   result="Passed"
+  CASE_PASSED_RESULT="Passed"
 fi
 
 properties+=("Result: ${result}")
@@ -38,6 +41,7 @@ if [ -f "detailed_report.json" ]; then
   CASE_PASSED=$(cat detailed_report.json | jq -r '.summary.passed')
   properties+=("Total Cases: ${CASE_TOTAL}")
   properties+=("Passed Cases: ${CASE_PASSED}")
+  CASE_PASSED_RESULT="$CASE_PASSED Cases Passed"
   CASE_SKIPPED=$(cat detailed_report.json | jq -r '.summary.skipped')
   if [ -n "$CASE_SKIPPED" ]; then
     properties+=("Skipped Cases: ${CASE_SKIPPED}")
@@ -143,7 +147,7 @@ aws sns publish \
         --region "$SNS_REGION" \
         --topic-arn "$SNS_ARN" \
         --message-structure json \
-        --subject "ESD $CODE_BRANCH $AWS_DEFAULT_REGION $result - Deploy & API Test" \
+        --subject "ESD $CODE_BRANCH $CASE_PASSED_RESULT - Deploy & API Test" \
         --message-attributes '{"key": {"DataType": "String", "StringValue": "value"}}' \
         --message "{\"default\": \"$message\"}"
 
