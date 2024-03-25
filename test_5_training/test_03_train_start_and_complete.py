@@ -92,7 +92,7 @@ class TestTrainStartCompleteE2E:
                 assert resp.status_code == 200, resp.dumps()
                 job_status = resp.json()["data"]['job_status']
                 if job_status == "Failed" or job_status == "Fail":
-                    raise Exception("Train failed.")
+                    raise Exception(f"Train is {job_status}.")
                 if job_status == "Completed":
                     break
                 logger.info("Train job status: %s", job_status)
