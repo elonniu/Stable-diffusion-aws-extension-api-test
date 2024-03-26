@@ -49,7 +49,7 @@ class TestTrainStartDeleteE2E:
             "lora_train_type": "kohya",
             "params": {
                 "training_params": {
-                    "training_instance_type": "ml.g5.2xlarge",
+                    "training_instance_type": config.train_instance_type,
                     "model": config.default_model_id,
                     "dataset": config.dataset_name,
                     "fm_type": "sd_1_5"
@@ -103,7 +103,7 @@ class TestTrainStartDeleteE2E:
             "lora_train_type": "kohya",
             "params": {
                 "training_params": {
-                    "training_instance_type": "ml.g5.2xlarge",
+                    "training_instance_type": config.train_instance_type,
                     "model": config.default_model_id,
                     "dataset": config.dataset_name,
                     "fm_type": "sd_1_5"

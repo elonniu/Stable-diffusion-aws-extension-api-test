@@ -3,13 +3,12 @@ source env.properties
 echo "----------------------------------------------------------------"
 printenv
 
-# if env ACCOUNT_ID not set, exit 1
 if [ -z "$ACCOUNT_ID" ]; then
   echo "ACCOUNT_ID is not set"
   exit 1
 fi
 
-cd esd-api-test
+cd esd-api-test || exit
 
 ls -la
 
@@ -68,6 +67,7 @@ if [ "$result" = "Passed" ]; then
   properties+=("img2img Task: OK")
   properties+=("rembg Task: OK")
   properties+=("extra-single-image Task: OK")
+  properties+=("train_instance_type: ${TRAIN_INSTANCE_TYPE}")
 
   echo "----------------------------------------------------------------"
   echo "Remove the stack"
