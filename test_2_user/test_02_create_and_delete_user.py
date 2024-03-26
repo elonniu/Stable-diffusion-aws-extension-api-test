@@ -76,8 +76,8 @@ class TestUserE2E:
         assert resp.status_code == 200, resp.dumps()
         users = resp.json()["data"]["users"]
         for user in users:
-            if user["username"] == username:
-                assert user["password"] == username
+            if user["username"] == config.username:
+                assert user["password"] == config.username
 
     def test_3_delete_users(self):
         headers = {
