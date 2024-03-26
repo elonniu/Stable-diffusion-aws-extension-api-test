@@ -48,6 +48,10 @@ if [ -f "detailed_report.json" ]; then
   fi
 fi
 
+if [ "$CODEBUILD_BUILD_SUCCEEDING" -eq 0 ]; then
+  CASE_PASSED_RESULT="Failed"
+fi
+
 if [ -n "$API_TEST_STARTED_TIME" ]; then
   CURRENT_TIME=$(date +%s)
   API_TEST_DURATION_TIME=$(( $CURRENT_TIME - $API_TEST_STARTED_TIME ))
