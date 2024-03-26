@@ -23,10 +23,9 @@ if [ "$DEPLOY_STACK" = "cdk" ]; then
    echo "----------------------------------------------------------------"
    echo "cdk deploy start..."
    echo "----------------------------------------------------------------"
-   curl -L -o esd.zip "$CODE_REPO/archive/refs/heads/$CODE_BRANCH.zip"
-   unzip -q esd.zip
+   git clone https://github.com/awslabs/stable-diffusion-aws-extension.git --branch "$CODE_BRANCH" --single-branch
 
-   pushd "stable-diffusion-aws-extension-$CODE_BRANCH/infrastructure"
+   pushd "stable-diffusion-aws-extension/infrastructure"
 
    npm i -g pnpm
    pnpm i
