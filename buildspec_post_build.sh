@@ -41,7 +41,7 @@ if [ -f "detailed_report.json" ]; then
   CASE_PASSED=$(cat detailed_report.json | jq -r '.summary.passed')
   properties+=("Total Cases: ${CASE_TOTAL}")
   properties+=("Passed Cases: ${CASE_PASSED}")
-  CASE_PASSED_RESULT="$CASE_PASSED Cases Passed"
+  CASE_PASSED_RESULT="Cases $CASE_PASSED Passed"
   CASE_SKIPPED=$(cat detailed_report.json | jq -r '.summary.skipped')
   if [ -n "$CASE_SKIPPED" ]; then
     properties+=("Skipped Cases: ${CASE_SKIPPED}")
@@ -58,6 +58,8 @@ fi
 if [ "$result" = "Passed" ]; then
   properties+=("G5 Instance: OK")
   properties+=("G4 Instance: OK")
+  properties+=("train Task: OK")
+  properties+=("Lora Task: OK")
   properties+=("txt2img Task: OK")
   properties+=("img2img Task: OK")
   properties+=("rembg Task: OK")
