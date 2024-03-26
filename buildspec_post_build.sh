@@ -158,7 +158,7 @@ aws sns publish \
         --region "$SNS_REGION" \
         --topic-arn "$SNS_ARN" \
         --message-structure json \
-        --subject "ESD $CODE_BRANCH Deploy & API $CASE_PASSED_RESULT $AWS_DEFAULT_REGION" \
+        --subject "ESD $CODE_BRANCH $CASE_PASSED_RESULT $AWS_DEFAULT_REGION" \
         --message-attributes '{"key": {"DataType": "String", "StringValue": "value"}}' \
         --message "{\"default\": \"$message\"}"
 
