@@ -66,7 +66,7 @@ class TestTxt2ImgInferenceAsyncAfterTrainE2E:
         resp = self.api.get_inference_job(headers=headers, job_id=inference_data["id"])
         assert resp.status_code == 200, resp.dumps()
 
-    def test_5_txt2img_inference_async_start_and_succeed(self):
+    def test_3_txt2img_inference_async_start_and_succeed(self):
         global inference_data
         assert inference_data["type"] == InferenceType.TXT2IMG.value
 
@@ -99,7 +99,7 @@ class TestTxt2ImgInferenceAsyncAfterTrainE2E:
         else:
             raise Exception(f"Inference execution {inference_id} timed out after 7 minutes.")
 
-    def test_7_txt2img_inference_async_delete_succeed(self):
+    def test_4_txt2img_inference_async_delete_succeed(self):
 
         global inference_data
         assert inference_data["type"] == InferenceType.TXT2IMG.value

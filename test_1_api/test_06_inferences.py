@@ -56,20 +56,20 @@ class TestInferencesApi:
 
         assert 'object has missing required properties' in resp.json()['message']
 
-    def test_12_list_inferences_without_key(self):
+    def test_4_list_inferences_without_key(self):
         resp = self.api.list_inferences()
 
         assert resp.status_code == 403, resp.dumps()
         assert resp.json()["message"] == "Forbidden"
 
-    def test_13_list_inferences_without_auth(self):
+    def test_5_list_inferences_without_auth(self):
         headers = {"x-api-key": config.api_key}
 
         resp = self.api.list_inferences(headers=headers)
 
         assert resp.status_code == 200, resp.dumps()
 
-    def test_16_delete_inferences_with_bad_request_body(self):
+    def test_6_delete_inferences_with_bad_request_body(self):
         headers = {
             "x-api-key": config.api_key,
         }
@@ -84,7 +84,7 @@ class TestInferencesApi:
         assert 'object has missing required properties' in resp.json()["message"]
         assert 'inference_id_list' in resp.json()["message"]
 
-    def test_17_delete_inferences_without_key(self):
+    def test_7_delete_inferences_without_key(self):
         headers = {}
 
         data = {
@@ -96,7 +96,7 @@ class TestInferencesApi:
 
         assert 'Forbidden' == resp.json()["message"]
 
-    def test_17_delete_inferences_succeed(self):
+    def test_8_delete_inferences_succeed(self):
         headers = {
             "x-api-key": config.api_key,
             "username": config.username
@@ -109,12 +109,12 @@ class TestInferencesApi:
         resp = self.api.delete_inferences(headers=headers, data=data)
         assert resp.status_code == 204, resp.dumps()
 
-    def test_18_get_inference_job_without_key(self):
+    def test_9_get_inference_job_without_key(self):
         resp = self.api.get_inference_job(job_id="job_id")
         assert resp.status_code == 403, resp.dumps()
         assert 'Forbidden' == resp.json()["message"]
 
-    def test_19_get_inference_job_not_found(self):
+    def test_10_get_inference_job_not_found(self):
         headers = {
             "x-api-key": config.api_key,
         }
@@ -125,7 +125,7 @@ class TestInferencesApi:
         assert resp.status_code == 404, resp.dumps()
         assert f'inference with id {job_id} not found' == resp.json()["message"]
 
-    def test_20_inference_one_api_payload_string_check(self):
+    def test_11_inference_one_api_payload_string_check(self):
         headers = {
             "x-api-key": config.api_key,
             "username": config.username

@@ -71,7 +71,7 @@ class TestTrainStartCompleteE2E:
         resp = self.api.create_training_job(headers=headers, data=payload)
         assert resp.status_code == 201, resp.dumps()
 
-    def test_3_wait_train_job_complete(self):
+    def test_2_wait_train_job_complete(self):
         headers = {
             "x-api-key": config.api_key,
             "username": config.username

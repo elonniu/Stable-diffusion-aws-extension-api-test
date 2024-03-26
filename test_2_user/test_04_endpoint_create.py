@@ -123,7 +123,7 @@ class TestEndpointCreateE2E:
         assert resp.status_code == 202, resp.dumps()
         assert resp.json()["data"]["endpoint_status"] == "Creating"
 
-    def test_4_create_endpoint_exists(self):
+    def test_5_create_endpoint_exists(self):
         headers = {
             "x-api-key": config.api_key,
             "username": config.username
