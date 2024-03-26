@@ -95,7 +95,7 @@ class TestTrainStartCompleteE2E:
                     raise Exception(f"Train is {job_status}.")
                 if job_status == "Completed":
                     break
-                logger.info("Train job status: %s", job_status)
+                logger.info("Train job is %s", job_status)
                 time.sleep(20)
             else:
                 raise Exception("Function execution timed out after 30 minutes.")
