@@ -148,6 +148,10 @@ for property in "${properties[@]}"; do
    message="${message}${property}\\n\\n"
 done
 
+properties+=("PYTHON_311_VERSION: ${PYTHON_311_VERSION}")
+properties+=("PYTHON_PIP_VERSION: ${PYTHON_PIP_VERSION}")
+properties+=("CODEBUILD_BUILD_IMAGE: ${CODEBUILD_BUILD_IMAGE}")
+
 echo -e "$message"
 aws sns publish \
         --region "$SNS_REGION" \
