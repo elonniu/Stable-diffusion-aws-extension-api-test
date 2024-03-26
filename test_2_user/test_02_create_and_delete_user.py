@@ -65,20 +65,6 @@ class TestUserE2E:
         users = resp.json()["data"]["users"]
         assert username in [user["username"] for user in users]
 
-    def test_3_list_users_pwd(self):
-        headers = {
-            "x-api-key": config.api_key,
-            "username": config.username,
-        }
-
-        resp = self.api.list_users(headers=headers, params={"show_password": True})
-
-        assert resp.status_code == 200, resp.dumps()
-        users = resp.json()["data"]["users"]
-        for user in users:
-            if user["username"] == config.username:
-                assert user["password"] == config.username
-
     def test_3_delete_users(self):
         headers = {
             "x-api-key": config.api_key,
@@ -104,3 +90,35 @@ class TestUserE2E:
         assert resp.status_code == 200, resp.dumps()
         users = resp.json()["data"]["users"]
         assert username not in [user["username"] for user in users]
+
+    def test_5_list_users_pwd_create_user(self):
+        headers = {
+            "x-api-key": config.api_key,
+            "username": config.username,
+        }
+
+        data = {
+            "username": "user",
+            "password": "user",
+            "creator": "api",
+            "roles": ['IT Operator', 'byoc'],
+        }
+
+        resp = self.api.create_user(headers=headers, data=data)
+
+        assert resp.status_code == 201, resp.dumps()
+        assert resp.json()["statusCode"] == 201
+
+    def test_6_list_users_pwd(self):
+        headers = {
+            "x-api-key": config.api_key,
+            "username": config.username,
+        }
+
+        resp = self.api.list_users(headers=headers, params={"show_password": True})
+
+        assert resp.status_code == 200, resp.dumps()
+        users = resp.json()["data"]["users"]
+        for user in users:
+            if user["username"] == "user":
+                assert user["password"] == "user"
