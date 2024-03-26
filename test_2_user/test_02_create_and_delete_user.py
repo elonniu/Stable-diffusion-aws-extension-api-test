@@ -65,6 +65,20 @@ class TestUserE2E:
         users = resp.json()["data"]["users"]
         assert username in [user["username"] for user in users]
 
+    def test_3_list_users_pwd(self):
+        headers = {
+            "x-api-key": config.api_key,
+            "username": config.username,
+        }
+
+        resp = self.api.list_users(headers=headers, params={"show_password": True})
+
+        assert resp.status_code == 200, resp.dumps()
+        users = resp.json()["data"]["users"]
+        for user in users:
+            if user["username"] == username:
+                assert user["password"] == username
+
     def test_3_delete_users(self):
         headers = {
             "x-api-key": config.api_key,
