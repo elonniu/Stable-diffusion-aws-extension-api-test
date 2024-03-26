@@ -1,5 +1,6 @@
 set -euxo pipefail
 
+export STACK_NAME="Extension-for-Stable-Diffusion-on-AWS"
 export ACCOUNT_ID=$(aws sts get-caller-identity --query "Account" --output text)
 export API_BUCKET=esd-test-$ACCOUNT_ID-$AWS_DEFAULT_REGION
 
@@ -9,6 +10,7 @@ fi
 
 echo "export ACCOUNT_ID=$ACCOUNT_ID" > env.properties
 echo "export API_BUCKET=$API_BUCKET" >> env.properties
+echo "export STACK_NAME=$STACK_NAME" >> env.properties
 
 aws cloudformation delete-stack --stack-name "$STACK_NAME"
 aws cloudformation wait stack-delete-complete --stack-name "$STACK_NAME"
