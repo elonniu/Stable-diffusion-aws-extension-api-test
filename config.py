@@ -74,4 +74,3 @@ train_instance_type = os.environ.get("TRAIN_INSTANCE_TYPE", "ml.g5.2xlarge")
 if region_name == "ap-southeast-1":
     train_instance_type = "ml.g4dn.12xlarge"
 logger.info(f"config.train_instance_type: {train_instance_type}")
-os.environ["TRAIN_INSTANCE_TYPE"] = train_instance_type
