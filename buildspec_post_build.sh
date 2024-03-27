@@ -83,6 +83,7 @@ if [ "$result" = "Passed" ]; then
 
   if [ "$CLEAN_RESOURCES" = "yes" ]; then
      aws s3 rb "s3://$API_BUCKET" --force
+     aws s3 rb "s3://sagemaker-$AWS_DEFAULT_REGION-$ACCOUNT_ID" --force
 
      aws dynamodb delete-table --table-name "CheckpointTable" | jq
      aws dynamodb delete-table --table-name "DatasetInfoTable" | jq
