@@ -3,13 +3,12 @@ source env.properties
 echo "----------------------------------------------------------------"
 printenv
 
-# if env ACCOUNT_ID not set, exit 1
 if [ -z "$ACCOUNT_ID" ]; then
   echo "ACCOUNT_ID is not set"
   exit 1
 fi
 
-cd esd-api-test
+cd esd-api-test || exit
 
 ls -la
 
@@ -41,11 +40,15 @@ if [ -f "detailed_report.json" ]; then
   CASE_PASSED=$(cat detailed_report.json | jq -r '.summary.passed')
   properties+=("Total Cases: ${CASE_TOTAL}")
   properties+=("Passed Cases: ${CASE_PASSED}")
-  CASE_PASSED_RESULT="$CASE_PASSED Cases Passed"
+  CASE_PASSED_RESULT="Passed $CASE_PASSED Cases"
   CASE_SKIPPED=$(cat detailed_report.json | jq -r '.summary.skipped')
   if [ -n "$CASE_SKIPPED" ]; then
     properties+=("Skipped Cases: ${CASE_SKIPPED}")
   fi
+fi
+
+if [ "$CODEBUILD_BUILD_SUCCEEDING" -eq 0 ]; then
+  CASE_PASSED_RESULT="Failed"
 fi
 
 if [ -n "$API_TEST_STARTED_TIME" ]; then
@@ -58,10 +61,13 @@ fi
 if [ "$result" = "Passed" ]; then
   properties+=("G5 Instance: OK")
   properties+=("G4 Instance: OK")
+  properties+=("train Task: OK")
+  properties+=("Lora Task: OK")
   properties+=("txt2img Task: OK")
   properties+=("img2img Task: OK")
   properties+=("rembg Task: OK")
   properties+=("extra-single-image Task: OK")
+  properties+=("train_instance_type: ${TRAIN_INSTANCE_TYPE}")
 
   echo "----------------------------------------------------------------"
   echo "Remove the stack"
@@ -77,6 +83,7 @@ if [ "$result" = "Passed" ]; then
 
   if [ "$CLEAN_RESOURCES" = "yes" ]; then
      aws s3 rb "s3://$API_BUCKET" --force
+     aws s3 rb "s3://sagemaker-$AWS_DEFAULT_REGION-$ACCOUNT_ID" --force
 
      aws dynamodb delete-table --table-name "CheckpointTable" | jq
      aws dynamodb delete-table --table-name "DatasetInfoTable" | jq
@@ -142,12 +149,17 @@ for property in "${properties[@]}"; do
    message="${message}${property}\\n\\n"
 done
 
+properties+=("CLEAN_RESOURCES: ${CLEAN_RESOURCES}")
+properties+=("PYTHON_311_VERSION: ${PYTHON_311_VERSION}")
+properties+=("PYTHON_PIP_VERSION: ${PYTHON_PIP_VERSION}")
+properties+=("CODEBUILD_BUILD_IMAGE: ${CODEBUILD_BUILD_IMAGE}")
+
 echo -e "$message"
 aws sns publish \
         --region "$SNS_REGION" \
         --topic-arn "$SNS_ARN" \
         --message-structure json \
-        --subject "ESD $CODE_BRANCH $CASE_PASSED_RESULT - Deploy & API Test" \
+        --subject "ESD $CODE_BRANCH $CASE_PASSED_RESULT $AWS_DEFAULT_REGION" \
         --message-attributes '{"key": {"DataType": "String", "StringValue": "value"}}' \
         --message "{\"default\": \"$message\"}"
 

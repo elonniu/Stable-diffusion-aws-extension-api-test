@@ -49,7 +49,7 @@ class TestTrainStartDeleteE2E:
             "lora_train_type": "kohya",
             "params": {
                 "training_params": {
-                    "training_instance_type": "ml.g5.2xlarge",
+                    "training_instance_type": config.train_instance_type,
                     "model": config.default_model_id,
                     "dataset": config.dataset_name,
                     "fm_type": "sd_1_5"
@@ -70,7 +70,7 @@ class TestTrainStartDeleteE2E:
         time.sleep(40)
         assert resp.status_code == 201, resp.dumps()
 
-    def test_3_delete_all_trains_jobs(self):
+    def test_2_delete_all_trains_jobs(self):
         headers = {
             "x-api-key": config.api_key,
             "username": config.username
@@ -93,7 +93,7 @@ class TestTrainStartDeleteE2E:
             )
             assert resp.status_code == 204, resp.dumps()
 
-    def test_4_train_job_create_for_name_check(self):
+    def test_3_train_job_create_for_name_check(self):
         headers = {
             "x-api-key": config.api_key,
             "username": config.username
@@ -103,7 +103,7 @@ class TestTrainStartDeleteE2E:
             "lora_train_type": "kohya",
             "params": {
                 "training_params": {
-                    "training_instance_type": "ml.g5.2xlarge",
+                    "training_instance_type": config.train_instance_type,
                     "model": config.default_model_id,
                     "dataset": config.dataset_name,
                     "fm_type": "sd_1_5"

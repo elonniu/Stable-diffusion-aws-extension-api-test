@@ -50,7 +50,7 @@ class TestRoleE2E:
 
         assert resp.json()["statusCode"] == 201
 
-    def test_2_list_roles_exists(self):
+    def test_3_list_roles_exists(self):
         headers = {
             "x-api-key": config.api_key,
             "username": config.username,
@@ -63,7 +63,7 @@ class TestRoleE2E:
         roles = resp.json()['data']["roles"]
         assert config.role_name in [user["role_name"] for user in roles]
 
-    def test_3_delete_roles_default(self):
+    def test_4_delete_roles_default(self):
         headers = {
             "x-api-key": config.api_key,
             "username": config.username,
@@ -77,7 +77,7 @@ class TestRoleE2E:
         assert resp.status_code == 400, resp.dumps()
         assert 'cannot delete default role' in resp.json()["message"]
 
-    def test_4_delete_roles_succeed(self):
+    def test_5_delete_roles_succeed(self):
         headers = {
             "x-api-key": config.api_key,
             "username": config.username,

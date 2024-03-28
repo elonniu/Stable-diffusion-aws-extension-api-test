@@ -51,7 +51,7 @@ class TestTrainStartCompleteE2E:
             "lora_train_type": "kohya",
             "params": {
                 "training_params": {
-                    "training_instance_type": "ml.g5.2xlarge",
+                    "training_instance_type": config.train_instance_type,
                     "model": config.default_model_id,
                     "dataset": config.dataset_name,
                     "fm_type": "sd_1_5"
@@ -71,7 +71,7 @@ class TestTrainStartCompleteE2E:
         resp = self.api.create_training_job(headers=headers, data=payload)
         assert resp.status_code == 201, resp.dumps()
 
-    def test_3_wait_train_job_complete(self):
+    def test_2_wait_train_job_complete(self):
         headers = {
             "x-api-key": config.api_key,
             "username": config.username
@@ -95,7 +95,7 @@ class TestTrainStartCompleteE2E:
                     raise Exception(f"Train is {job_status}.")
                 if job_status == "Completed":
                     break
-                logger.info("Train job status: %s", job_status)
+                logger.info("Train job is %s", job_status)
                 time.sleep(20)
             else:
                 raise Exception("Function execution timed out after 30 minutes.")

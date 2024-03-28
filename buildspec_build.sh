@@ -1,9 +1,16 @@
 set -euxo pipefail
 
+export STACK_NAME="Extension-for-Stable-Diffusion-on-AWS"
 export ACCOUNT_ID=$(aws sts get-caller-identity --query "Account" --output text)
-export API_BUCKET=esd-test-$ACCOUNT_ID-$AWS_DEFAULT_REGION-$CODEBUILD_BUILD_NUMBER
+export API_BUCKET=esd-test-$ACCOUNT_ID-$AWS_DEFAULT_REGION
+
+if [ "$CLEAN_RESOURCES" = "yes" ]; then
+   export API_BUCKET=esd-test-$ACCOUNT_ID-$AWS_DEFAULT_REGION-$CODEBUILD_BUILD_NUMBER
+fi
+
 echo "export ACCOUNT_ID=$ACCOUNT_ID" > env.properties
 echo "export API_BUCKET=$API_BUCKET" >> env.properties
+echo "export STACK_NAME=$STACK_NAME" >> env.properties
 
 aws cloudformation delete-stack --stack-name "$STACK_NAME"
 aws cloudformation wait stack-delete-complete --stack-name "$STACK_NAME"
@@ -18,10 +25,9 @@ if [ "$DEPLOY_STACK" = "cdk" ]; then
    echo "----------------------------------------------------------------"
    echo "cdk deploy start..."
    echo "----------------------------------------------------------------"
-   curl -L -o esd.zip "$CODE_REPO/archive/refs/heads/$CODE_BRANCH.zip"
-   unzip -q esd.zip
+   git clone https://github.com/awslabs/stable-diffusion-aws-extension.git --branch "$CODE_BRANCH" --single-branch
 
-   pushd "stable-diffusion-aws-extension-$CODE_BRANCH/infrastructure"
+   pushd "stable-diffusion-aws-extension/infrastructure"
 
    npm i -g pnpm
    pnpm i
@@ -76,5 +82,6 @@ echo "----------------------------------------------------------------"
 API_TEST_STARTED_TIME=$(date +%s)
 echo "export API_TEST_STARTED_TIME=$API_TEST_STARTED_TIME" >> env.properties
 source venv/bin/activate
+TEST_LOG_LEVEL="INFO"
 pytest ./ --exitfirst -rA --log-cli-level="$TEST_LOG_LEVEL" --json-report --json-report-summary --json-report-file=detailed_report.json --html="report-${CODEBUILD_BUILD_NUMBER}.html" --self-contained-html --continue-on-collection-errors
 FINISHED_TIME=$(date +%s)

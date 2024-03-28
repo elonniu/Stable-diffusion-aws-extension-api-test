@@ -16,19 +16,19 @@ class TestTrainingsApi:
     def teardown_class(cls):
         pass
 
-    def test_4_create_training_job_without_key(self):
+    def test_1_create_training_job_without_key(self):
         resp = self.api.create_training_job()
 
         assert resp.status_code == 403, resp.dumps()
         assert resp.json()["message"] == "Forbidden"
 
-    def test_5_list_trainings_without_key(self):
+    def test_2_list_trainings_without_key(self):
         resp = self.api.list_trainings()
 
         assert resp.status_code == 403, resp.dumps()
         assert resp.json()["message"] == "Forbidden"
 
-    def test_6_list_trainings(self):
+    def test_3_list_trainings(self):
         headers = {
             "x-api-key": config.api_key,
             "username": config.username
@@ -40,7 +40,7 @@ class TestTrainingsApi:
         assert resp.json()["statusCode"] == 200
         assert len(resp.json()['data']["trainings"]) >= 0
 
-    def test_7_delete_trainings_with_bad_request_body(self):
+    def test_4_delete_trainings_with_bad_request_body(self):
         headers = {
             "x-api-key": config.api_key,
         }
@@ -55,7 +55,7 @@ class TestTrainingsApi:
         assert 'object has missing required properties' in resp.json()["message"]
         assert 'training_id_list' in resp.json()["message"]
 
-    def test_8_delete_trainings_succeed(self):
+    def test_5_delete_trainings_succeed(self):
         headers = {
             "x-api-key": config.api_key,
             "username": config.username,
@@ -68,7 +68,7 @@ class TestTrainingsApi:
         resp = self.api.delete_trainings(headers=headers, data=data)
         assert resp.status_code == 204, resp.dumps()
 
-    def test_9_get_training_job_without_key(self):
+    def test_6_get_training_job_without_key(self):
         headers = {
         }
 
@@ -76,7 +76,7 @@ class TestTrainingsApi:
         assert resp.status_code == 403, resp.dumps()
         assert resp.json()["message"] == "Forbidden"
 
-    def test_10_get_training_job_not_found(self):
+    def test_7_get_training_job_not_found(self):
         headers = {
             "x-api-key": config.api_key,
             "username": config.username,
