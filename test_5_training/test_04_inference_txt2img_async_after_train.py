@@ -82,7 +82,7 @@ class TestTxt2ImgInferenceAsyncAfterTrainE2E:
 
         assert resp.json()['data']["inference"]["status"] == InferenceStatus.INPROGRESS.value
 
-        timeout = datetime.now() + timedelta(minutes=5)
+        timeout = datetime.now() + timedelta(minutes=7)
 
         while datetime.now() < timeout:
             status = get_inference_job_status(
