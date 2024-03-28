@@ -80,7 +80,7 @@ class TestTxt2ImgInferenceRealtimeAfterTrainE2E:
         resp = self.api.get_inference_job(headers=headers, job_id=inference_data["id"])
         assert resp.status_code == 200, resp.dumps()
 
-        assert resp.json()['data']['status'] == InferenceStatus.FAILED.value, resp.dumps()
+        assert resp.json()['data']['status'] == InferenceStatus.SUCCEED.value, resp.dumps()
 
     def test_4_txt2img_inference_real_time_delete_succeed(self):
         global inference_data
